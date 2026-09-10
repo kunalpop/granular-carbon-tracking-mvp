@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "stageId": 8,
+  "stage": "Use-phase electricity",
+  "reportedBy": "Corporate IT (use phase)",
+  "activity": "150 kWh lifetime electricity",
+  "emissionFactor": "400 gCO2e per kWh lifetime electricity",
+  "efSource": "PLACEHOLDER / SOURCE NEEDED: IEA or national grid factor for use country, averaged over service life",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

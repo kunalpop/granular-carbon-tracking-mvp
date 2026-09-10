@@ -1,0 +1,90 @@
+<svg viewBox="0 0 904 910" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 22 = 11 pt, 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt.
+       Design-principle and functional-requirement tags sit in each layer
+       header rather than in a right-hand margin column. -->
+  <rect x="0" y="0" width="904" height="910" fill="#ffffff"/>
+
+  <!-- Layer 5 -->
+  <rect x="25" y="30" width="854" height="118" rx="10" fill="#eef3fa" stroke="#9db6d8" stroke-width="2"/>
+  <text x="45" y="58" font-size="22" font-weight="700" fill="#1f3a5f">Layer 5: Application and audit</text>
+  <text x="859" y="58" font-size="18" font-weight="700" fill="#1f3a5f" text-anchor="end">FR6</text>
+  <rect x="45" y="72" width="395" height="62" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="242" y="98" font-size="18" text-anchor="middle">Audit and query interface</text>
+  <text x="242" y="120" font-size="16" text-anchor="middle" fill="#555">provenance, integrity checks, reports</text>
+  <rect x="464" y="72" width="395" height="62" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="661" y="98" font-size="18" text-anchor="middle">Baseline replicas</text>
+  <text x="661" y="120" font-size="16" text-anchor="middle" fill="#555">spreadsheet + SQLite (Study A comparators)</text>
+
+  <!-- Layer 4 -->
+  <rect x="25" y="184" width="854" height="118" rx="10" fill="#f2f7f2" stroke="#a5c8a5" stroke-width="2"/>
+  <text x="45" y="212" font-size="22" font-weight="700" fill="#2c5530">Layer 4: Off-chain data and oracle</text>
+  <text x="859" y="212" font-size="18" font-weight="700" fill="#2c5530" text-anchor="end">DP1, FR7</text>
+  <rect x="45" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="174" y="252" font-size="18" text-anchor="middle">Activity-data adapter</text>
+  <text x="174" y="274" font-size="16" text-anchor="middle" fill="#555">simulated oracle</text>
+  <rect x="323" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="452" y="252" font-size="18" text-anchor="middle">Emission-factor library</text>
+  <text x="452" y="274" font-size="16" text-anchor="middle" fill="#555">verified-cited factors</text>
+  <rect x="601" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="730" y="252" font-size="18" text-anchor="middle">Evidence store</text>
+  <text x="730" y="274" font-size="16" text-anchor="middle" fill="#555">off-chain files, hash-anchored</text>
+
+  <!-- Layer 3 -->
+  <rect x="25" y="338" width="854" height="262" rx="10" fill="#fdf6ec" stroke="#d8bc8a" stroke-width="2"/>
+  <text x="45" y="366" font-size="22" font-weight="700" fill="#7a5c1e">Layer 3: Smart contracts (Solidity, EVM)</text>
+  <text x="859" y="366" font-size="18" font-weight="700" fill="#7a5c1e" text-anchor="end">DP1, DP4, DP5, DP11</text>
+
+  <rect x="45" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="174" y="412" font-size="18" text-anchor="middle">ParticipantRegistry</text>
+  <text x="174" y="436" font-size="16" text-anchor="middle" fill="#555">roles, stage write-gates</text>
+  <rect x="323" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="404" font-size="18" text-anchor="middle">EmissionEventRegistry /</text>
+  <text x="452" y="424" font-size="18" text-anchor="middle">ProductPassport</text>
+  <text x="452" y="444" font-size="16" text-anchor="middle" fill="#555">append-only, hash-linked</text>
+  <rect x="601" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="730" y="412" font-size="18" text-anchor="middle">CarbonToken (ERC-1155)</text>
+  <text x="730" y="436" font-size="16" text-anchor="middle" fill="#555">passport NFT + gCO2e tokens</text>
+
+  <rect x="45" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="174" y="498" font-size="18" text-anchor="middle">AggregationContract</text>
+  <text x="174" y="522" font-size="16" text-anchor="middle" fill="#555">deterministic roll-up</text>
+  <rect x="323" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="492" font-size="18" text-anchor="middle">GovernanceModule</text>
+  <text x="452" y="514" font-size="16" text-anchor="middle" fill="#555">corrections, escalation</text>
+  <text x="452" y="534" font-size="16" text-anchor="middle" fill="#555">UUPS proxy</text>
+  <rect x="601" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="730" y="498" font-size="18" text-anchor="middle">OntologyRegistry</text>
+  <text x="730" y="522" font-size="16" text-anchor="middle" fill="#555">schema versioning</text>
+
+  <rect x="45" y="552" width="814" height="40" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="578" font-size="17" text-anchor="middle">ConsortiumMultisig: 2-of-3 executor, sole holder of the GovernanceModule upgrade role</text>
+
+  <!-- Layer 2 -->
+  <rect x="25" y="636" width="854" height="104" rx="10" fill="#f6eef7" stroke="#c3a3c9" stroke-width="2"/>
+  <text x="45" y="664" font-size="22" font-weight="700" fill="#5d3268">Layer 2: Consensus and network</text>
+  <text x="859" y="664" font-size="18" font-weight="700" fill="#5d3268" text-anchor="end">DP2, DP9</text>
+  <rect x="45" y="678" width="814" height="52" rx="6" fill="#ffffff" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="452" y="702" font-size="18" text-anchor="middle">Hyperledger Besu, QBFT proof-of-authority: 4 validators + 1 regulator/observer node</text>
+  <text x="452" y="722" font-size="16" text-anchor="middle" fill="#555">immediate deterministic finality, no mining, node permissioning</text>
+
+  <!-- Layer 1 -->
+  <rect x="25" y="776" width="854" height="104" rx="10" fill="#f4f4f4" stroke="#b5b5b5" stroke-width="2"/>
+  <text x="45" y="804" font-size="22" font-weight="700" fill="#333">Layer 1: Identity</text>
+  <text x="859" y="804" font-size="18" font-weight="700" fill="#333" text-anchor="end">FR2, DP2, DP8</text>
+  <rect x="45" y="818" width="814" height="52" rx="6" fill="#ffffff" stroke="#888" stroke-width="2"/>
+  <text x="452" y="842" font-size="17" text-anchor="middle">Permissioned accounts: smelter · PCB supplier · battery maker · screen supplier · OEM ·</text>
+  <text x="452" y="862" font-size="17" text-anchor="middle" fill="#555">logistics · use-phase agent · repairer · recycler · auditor (account allowlist)</text>
+
+  <!-- inter-layer connectors -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="452" y1="160" x2="452" y2="172"/>
+    <polygon points="452,150 446,160 458,160"/><polygon points="452,182 446,172 458,172"/>
+    <line x1="452" y1="314" x2="452" y2="326"/>
+    <polygon points="452,304 446,314 458,314"/><polygon points="452,336 446,326 458,326"/>
+    <line x1="452" y1="612" x2="452" y2="624"/>
+    <polygon points="452,602 446,612 458,612"/><polygon points="452,634 446,624 458,624"/>
+    <line x1="452" y1="752" x2="452" y2="764"/>
+    <polygon points="452,742 446,752 458,752"/><polygon points="452,774 446,764 458,764"/>
+  </g>
+</svg>

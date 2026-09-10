@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "stageId": 2,
+  "stage": "Circuit board (PCB)",
+  "reportedBy": "Shenzhen PCB Works",
+  "activity": "0.4 kg populated PCB",
+  "emissionFactor": "150000 gCO2e per kg populated PCB",
+  "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent printed wiring board + PCF literature",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

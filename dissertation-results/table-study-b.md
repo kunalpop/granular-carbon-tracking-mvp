@@ -1,0 +1,17 @@
+| Check | Description | Result | Detail |
+|---|---|---|---|
+| B1 | product 1: independent total == on-chain aggregate | PASS | 200620 g (off-chain recompute) vs 200620 g (contract view) |
+| B2 | product 1: all 10 per-stage sub-totals agree | PASS | 10/10 stages agree |
+| B3 | product 1: hash chain verifies | PASS | verifyChain -> true |
+| B4 | product 1: every event traceable to a registered actor | PASS | 10 events -> 9 named actors |
+| B5 | product 1: full lifecycle reported complete | PASS | isComplete -> true (10/10 stages expected) |
+| B1 | product 2: independent total == on-chain aggregate | PASS | 146475 g (off-chain recompute) vs 146475 g (contract view) |
+| B2 | product 2: all 10 per-stage sub-totals agree | PASS | 10/10 stages agree |
+| B3 | product 2: hash chain verifies | PASS | verifyChain -> true |
+| B4 | product 2: every event traceable to a registered actor | PASS | 3 events -> 2 named actors |
+| B5 | product 2: known-incomplete product correctly flagged | PASS | isComplete -> false (incomplete expected; Study A artefact) |
+| F1 | missing event: completeness check flags the gap (no silent total) | PASS | product 3: isComplete -> false; missing stages [10]; a bare total (203620 g) is only reportable WITH this flag |
+| F2 | inconsistent event: crossCheck raises a reconciliation error | PASS | product 4: events 96000 g vs tokens 90000 g -> consistent=false |
+| F0 | control: auditor verification of the genuine copy is clean | PASS | 0 findings on untampered data |
+| F3 | auditor copy with an event removed: chain break detected | PASS | event 4: chain link broken |
+| F4 | auditor copy with a value altered: hash + formula violations detected | PASS | event 1: hash mismatch; event 1: co2e violates activity x factor |

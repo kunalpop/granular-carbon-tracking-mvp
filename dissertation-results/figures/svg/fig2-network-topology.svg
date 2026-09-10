@@ -1,0 +1,60 @@
+<svg viewBox="0 0 904 640" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="640" fill="#ffffff"/>
+
+  <!-- full mesh among validators -->
+  <g stroke="#4472c4" stroke-width="3">
+    <line x1="177" y1="145" x2="487" y2="145"/>
+    <line x1="177" y1="385" x2="487" y2="385"/>
+    <line x1="177" y1="145" x2="177" y2="385"/>
+    <line x1="487" y1="145" x2="487" y2="385"/>
+    <line x1="177" y1="145" x2="487" y2="385"/>
+    <line x1="487" y1="145" x2="177" y2="385"/>
+  </g>
+
+  <!-- observer links -->
+  <g stroke="#888" stroke-width="2.5" stroke-dasharray="8 5">
+    <line x1="722" y1="265" x2="177" y2="145"/>
+    <line x1="722" y1="265" x2="487" y2="145"/>
+    <line x1="722" y1="265" x2="177" y2="385"/>
+    <line x1="722" y1="265" x2="487" y2="385"/>
+  </g>
+
+  <!-- validators -->
+  <circle cx="177" cy="145" r="78" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+  <text x="177" y="139" font-size="18" text-anchor="middle" font-weight="700">Validator 1</text>
+  <text x="177" y="163" font-size="16" text-anchor="middle" fill="#555">RPC :8545</text>
+
+  <circle cx="487" cy="145" r="78" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+  <text x="487" y="139" font-size="18" text-anchor="middle" font-weight="700">Validator 2</text>
+  <text x="487" y="163" font-size="16" text-anchor="middle" fill="#555">RPC :8546</text>
+
+  <circle cx="177" cy="385" r="78" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+  <text x="177" y="379" font-size="18" text-anchor="middle" font-weight="700">Validator 3</text>
+  <text x="177" y="403" font-size="16" text-anchor="middle" fill="#555">RPC :8547</text>
+
+  <circle cx="487" cy="385" r="78" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+  <text x="487" y="379" font-size="18" text-anchor="middle" font-weight="700">Validator 4</text>
+  <text x="487" y="403" font-size="16" text-anchor="middle" fill="#555">RPC :8548</text>
+
+  <!-- regulator observer -->
+  <circle cx="722" cy="265" r="84" fill="#fdf6ec" stroke="#c09543" stroke-width="3" stroke-dasharray="10 5"/>
+  <text x="722" y="245" font-size="18" text-anchor="middle" font-weight="700">Regulator /</text>
+  <text x="722" y="267" font-size="18" text-anchor="middle" font-weight="700">observer</text>
+  <text x="722" y="291" font-size="16" text-anchor="middle" fill="#555">RPC :8549, no vote</text>
+
+  <!-- centre annotation -->
+  <rect x="252" y="237" width="160" height="56" rx="6" fill="#ffffff"/>
+  <text x="332" y="259" font-size="17" text-anchor="middle" fill="#4472c4" font-weight="700">QBFT consensus,</text>
+  <text x="332" y="281" font-size="17" text-anchor="middle" fill="#4472c4" font-weight="700">full mesh</text>
+
+  <!-- legend -->
+  <rect x="25" y="490" width="854" height="136" rx="8" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+  <line x1="45" y1="517" x2="105" y2="517" stroke="#4472c4" stroke-width="3"/>
+  <text x="117" y="522" font-size="16">validator link: QBFT voting and block gossip (2 s blocks, immediate finality)</text>
+  <line x1="45" y1="545" x2="105" y2="545" stroke="#888" stroke-width="2.5" stroke-dasharray="8 5"/>
+  <text x="117" y="550" font-size="16">observer link: full replication and verification, no consensus vote (Archetype 2 to 3/4 toggle)</text>
+  <text x="117" y="578" font-size="16" font-weight="600" fill="#333">N = 4 = 3f + 1: tolerates f = 1 Byzantine validator</text>
+  <text x="117" y="606" font-size="16" fill="#555">joining requires the enode allowlist (node permissioning)</text>
+</svg>

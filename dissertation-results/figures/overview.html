@@ -1,0 +1,423 @@
+<!doctype html><html><head>
+<meta charset="utf-8"><title>Dissertation figures - overview</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 54rem; margin: 2rem auto; padding: 0 1rem; }
+  section { margin: 2.5rem 0; page-break-inside: avoid; }
+  svg { width: 100%; height: auto; border: 1px solid #eee; }
+  .caption { font-size: 0.95rem; line-height: 1.5; margin-top: 0.6rem; }
+</style></head><body>
+<h1>Figures 1-9 with captions</h1>
+<p>Masters in <code>svg/</code>; Word-ready exports in <code>png/</code> (300 dpi)
+and <code>emf/</code> (vector). Captions are also collected in
+<code>captions.md</code>.</p>
+<section><svg viewBox="0 0 904 910" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 22 = 11 pt, 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt.
+       Design-principle and functional-requirement tags sit in each layer
+       header rather than in a right-hand margin column. -->
+  <rect x="0" y="0" width="904" height="910" fill="#ffffff"/>
+
+  <!-- Layer 5 -->
+  <rect x="25" y="30" width="854" height="118" rx="10" fill="#eef3fa" stroke="#9db6d8" stroke-width="2"/>
+  <text x="45" y="58" font-size="22" font-weight="700" fill="#1f3a5f">Layer 5: Application and audit</text>
+  <text x="859" y="58" font-size="18" font-weight="700" fill="#1f3a5f" text-anchor="end">FR6</text>
+  <rect x="45" y="72" width="395" height="62" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="242" y="98" font-size="18" text-anchor="middle">Audit and query interface</text>
+  <text x="242" y="120" font-size="16" text-anchor="middle" fill="#555">provenance, integrity checks, reports</text>
+  <rect x="464" y="72" width="395" height="62" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="661" y="98" font-size="18" text-anchor="middle">Baseline replicas</text>
+  <text x="661" y="120" font-size="16" text-anchor="middle" fill="#555">spreadsheet + SQLite (Study A comparators)</text>
+
+  <!-- Layer 4 -->
+  <rect x="25" y="184" width="854" height="118" rx="10" fill="#f2f7f2" stroke="#a5c8a5" stroke-width="2"/>
+  <text x="45" y="212" font-size="22" font-weight="700" fill="#2c5530">Layer 4: Off-chain data and oracle</text>
+  <text x="859" y="212" font-size="18" font-weight="700" fill="#2c5530" text-anchor="end">DP1, FR7</text>
+  <rect x="45" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="174" y="252" font-size="18" text-anchor="middle">Activity-data adapter</text>
+  <text x="174" y="274" font-size="16" text-anchor="middle" fill="#555">simulated oracle</text>
+  <rect x="323" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="452" y="252" font-size="18" text-anchor="middle">Emission-factor library</text>
+  <text x="452" y="274" font-size="16" text-anchor="middle" fill="#555">verified-cited factors</text>
+  <rect x="601" y="226" width="258" height="62" rx="6" fill="#ffffff" stroke="#5b9358" stroke-width="2"/>
+  <text x="730" y="252" font-size="18" text-anchor="middle">Evidence store</text>
+  <text x="730" y="274" font-size="16" text-anchor="middle" fill="#555">off-chain files, hash-anchored</text>
+
+  <!-- Layer 3 -->
+  <rect x="25" y="338" width="854" height="262" rx="10" fill="#fdf6ec" stroke="#d8bc8a" stroke-width="2"/>
+  <text x="45" y="366" font-size="22" font-weight="700" fill="#7a5c1e">Layer 3: Smart contracts (Solidity, EVM)</text>
+  <text x="859" y="366" font-size="18" font-weight="700" fill="#7a5c1e" text-anchor="end">DP1, DP4, DP5, DP11</text>
+
+  <rect x="45" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="174" y="412" font-size="18" text-anchor="middle">ParticipantRegistry</text>
+  <text x="174" y="436" font-size="16" text-anchor="middle" fill="#555">roles, stage write-gates</text>
+  <rect x="323" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="404" font-size="18" text-anchor="middle">EmissionEventRegistry /</text>
+  <text x="452" y="424" font-size="18" text-anchor="middle">ProductPassport</text>
+  <text x="452" y="444" font-size="16" text-anchor="middle" fill="#555">append-only, hash-linked</text>
+  <rect x="601" y="380" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="730" y="412" font-size="18" text-anchor="middle">CarbonToken (ERC-1155)</text>
+  <text x="730" y="436" font-size="16" text-anchor="middle" fill="#555">passport NFT + gCO2e tokens</text>
+
+  <rect x="45" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="174" y="498" font-size="18" text-anchor="middle">AggregationContract</text>
+  <text x="174" y="522" font-size="16" text-anchor="middle" fill="#555">deterministic roll-up</text>
+  <rect x="323" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="492" font-size="18" text-anchor="middle">GovernanceModule</text>
+  <text x="452" y="514" font-size="16" text-anchor="middle" fill="#555">corrections, escalation</text>
+  <text x="452" y="534" font-size="16" text-anchor="middle" fill="#555">UUPS proxy</text>
+  <rect x="601" y="466" width="258" height="76" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="730" y="498" font-size="18" text-anchor="middle">OntologyRegistry</text>
+  <text x="730" y="522" font-size="16" text-anchor="middle" fill="#555">schema versioning</text>
+
+  <rect x="45" y="552" width="814" height="40" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="452" y="578" font-size="17" text-anchor="middle">ConsortiumMultisig: 2-of-3 executor, sole holder of the GovernanceModule upgrade role</text>
+
+  <!-- Layer 2 -->
+  <rect x="25" y="636" width="854" height="104" rx="10" fill="#f6eef7" stroke="#c3a3c9" stroke-width="2"/>
+  <text x="45" y="664" font-size="22" font-weight="700" fill="#5d3268">Layer 2: Consensus and network</text>
+  <text x="859" y="664" font-size="18" font-weight="700" fill="#5d3268" text-anchor="end">DP2, DP9</text>
+  <rect x="45" y="678" width="814" height="52" rx="6" fill="#ffffff" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="452" y="702" font-size="18" text-anchor="middle">Hyperledger Besu, QBFT proof-of-authority: 4 validators + 1 regulator/observer node</text>
+  <text x="452" y="722" font-size="16" text-anchor="middle" fill="#555">immediate deterministic finality, no mining, node permissioning</text>
+
+  <!-- Layer 1 -->
+  <rect x="25" y="776" width="854" height="104" rx="10" fill="#f4f4f4" stroke="#b5b5b5" stroke-width="2"/>
+  <text x="45" y="804" font-size="22" font-weight="700" fill="#333">Layer 1: Identity</text>
+  <text x="859" y="804" font-size="18" font-weight="700" fill="#333" text-anchor="end">FR2, DP2, DP8</text>
+  <rect x="45" y="818" width="814" height="52" rx="6" fill="#ffffff" stroke="#888" stroke-width="2"/>
+  <text x="452" y="842" font-size="17" text-anchor="middle">Permissioned accounts: smelter · PCB supplier · battery maker · screen supplier · OEM ·</text>
+  <text x="452" y="862" font-size="17" text-anchor="middle" fill="#555">logistics · use-phase agent · repairer · recycler · auditor (account allowlist)</text>
+
+  <!-- inter-layer connectors -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="452" y1="160" x2="452" y2="172"/>
+    <polygon points="452,150 446,160 458,160"/><polygon points="452,182 446,172 458,172"/>
+    <line x1="452" y1="314" x2="452" y2="326"/>
+    <polygon points="452,304 446,314 458,314"/><polygon points="452,336 446,326 458,326"/>
+    <line x1="452" y1="612" x2="452" y2="624"/>
+    <polygon points="452,602 446,612 458,612"/><polygon points="452,634 446,624 458,624"/>
+    <line x1="452" y1="752" x2="452" y2="764"/>
+    <polygon points="452,742 446,752 458,752"/><polygon points="452,774 446,764 458,764"/>
+  </g>
+</svg>
+<p class="caption">Figure 1. Layered architecture of the prototype. The five layers separate identity (permissioned actor accounts), consensus (a QBFT proof-of-authority network), the six smart contracts, the off-chain data and oracle layer, and the application and audit layer; the right-hand margin names the design principles and functional requirements instantiated at each layer. Data enters at Layer 4, is committed through Layers 1–3, and is reconstructed and verified at Layer 5, with the spreadsheet and SQLite replicas (dashed) serving only as Study A comparators.</p></section>
+<section><svg viewBox="0 0 1000 660" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="660" fill="#ffffff"/>
+  <!-- full mesh among validators -->
+  <g stroke="#4472c4" stroke-width="3">
+    <line x1="270" y1="170" x2="620" y2="170"/>
+    <line x1="270" y1="470" x2="620" y2="470"/>
+    <line x1="270" y1="170" x2="270" y2="470"/>
+    <line x1="620" y1="170" x2="620" y2="470"/>
+    <line x1="270" y1="170" x2="620" y2="470"/>
+    <line x1="620" y1="170" x2="270" y2="470"/>
+  </g>
+  <!-- observer links (dashed) -->
+  <g stroke="#888" stroke-width="2.5" stroke-dasharray="8 5">
+    <line x1="845" y1="320" x2="270" y2="170"/>
+    <line x1="845" y1="320" x2="620" y2="170"/>
+    <line x1="845" y1="320" x2="270" y2="470"/>
+    <line x1="845" y1="320" x2="620" y2="470"/>
+  </g>
+  <!-- validators -->
+  <g>
+    <circle cx="270" cy="170" r="72" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+    <text x="270" y="162" font-size="18" text-anchor="middle" font-weight="700">Validator 1</text>
+    <text x="270" y="186" font-size="14" text-anchor="middle" fill="#555">RPC :8545</text>
+    <circle cx="620" cy="170" r="72" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+    <text x="620" y="162" font-size="18" text-anchor="middle" font-weight="700">Validator 2</text>
+    <text x="620" y="186" font-size="14" text-anchor="middle" fill="#555">RPC :8546</text>
+    <circle cx="270" cy="470" r="72" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+    <text x="270" y="462" font-size="18" text-anchor="middle" font-weight="700">Validator 3</text>
+    <text x="270" y="486" font-size="14" text-anchor="middle" fill="#555">RPC :8547</text>
+    <circle cx="620" cy="470" r="72" fill="#eef3fa" stroke="#4472c4" stroke-width="3"/>
+    <text x="620" y="462" font-size="18" text-anchor="middle" font-weight="700">Validator 4</text>
+    <text x="620" y="486" font-size="14" text-anchor="middle" fill="#555">RPC :8548</text>
+  </g>
+  <!-- regulator observer -->
+  <circle cx="845" cy="320" r="78" fill="#fdf6ec" stroke="#c09543" stroke-width="3" stroke-dasharray="10 5"/>
+  <text x="845" y="304" font-size="18" text-anchor="middle" font-weight="700">Regulator /</text>
+  <text x="845" y="326" font-size="18" text-anchor="middle" font-weight="700">observer</text>
+  <text x="845" y="350" font-size="14" text-anchor="middle" fill="#555">RPC :8549 · no vote</text>
+
+  <!-- annotations -->
+  <text x="445" y="330" font-size="15" text-anchor="middle" fill="#4472c4" font-weight="600">QBFT consensus,</text>
+  <text x="445" y="350" font-size="15" text-anchor="middle" fill="#4472c4" font-weight="600">full mesh</text>
+
+  <rect x="40" y="575" width="920" height="65" rx="8" fill="#f7f7f7" stroke="#ccc"/>
+  <line x1="60" y1="597" x2="120" y2="597" stroke="#4472c4" stroke-width="3"/>
+  <text x="130" y="602" font-size="14">validator link: QBFT voting + block gossip (2 s blocks, immediate finality)</text>
+  <line x1="60" y1="624" x2="120" y2="624" stroke="#888" stroke-width="2.5" stroke-dasharray="8 5"/>
+  <text x="130" y="629" font-size="14">observer link: full replication and verification, no consensus vote (Archetype 2 → 3/4 toggle)</text>
+  <text x="670" y="602" font-size="14" font-weight="600" fill="#333">N = 4 = 3f + 1: tolerates f = 1 Byzantine validator</text>
+  <text x="670" y="629" font-size="14" fill="#555">joining requires the enode allowlist (node permissioning)</text>
+</svg>
+<p class="caption">Figure 2. Permissioned network topology, instantiating DP2 (distributed verification). Four QBFT validators form a fully connected consensus mesh (solid links) producing finalised blocks every two seconds, and with N = 4 = 3f + 1 the network tolerates one Byzantine validator. The regulator node (dashed) replicates and verifies the complete ledger without holding a consensus vote — the configuration toggle from Archetype 2 towards Archetypes 3/4 — and node permissioning restricts membership to the enode allowlist. The proof-of-authority design involves no mining, grounding DP9 (environmental proportionality).</p></section>
+<section><svg viewBox="0 0 904 595" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="595" fill="#ffffff"/>
+
+  <text x="299" y="48" font-size="16" text-anchor="middle" font-weight="700" fill="#1f3a5f">hash-link</text>
+  <text x="603" y="48" font-size="16" text-anchor="middle" font-weight="700" fill="#1f3a5f">hash-link</text>
+
+  <!-- event 0 -->
+  <rect x="25" y="62" width="244" height="220" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="147" y="92" font-size="18" text-anchor="middle" font-weight="700">Event 0 · stage 1</text>
+  <text x="43" y="120" font-size="16">actor: smelter (signed)</text>
+  <text x="43" y="142" font-size="16">co2e computed on-chain</text>
+  <text x="43" y="164" font-size="16">timestamp: block clock</text>
+  <text x="43" y="186" font-size="16">evidenceHash: 0x93cc…</text>
+  <rect x="39" y="198" width="216" height="30" rx="4" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="47" y="218" font-size="16" font-weight="600">prevEventHash: genesis</text>
+  <rect x="39" y="236" width="216" height="30" rx="4" fill="#dce8f8" stroke="#4472c4" stroke-width="2"/>
+  <text x="47" y="256" font-size="16" font-weight="700">eventHash = keccak256</text>
+
+  <!-- event 1 -->
+  <rect x="329" y="62" width="244" height="220" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="451" y="92" font-size="18" text-anchor="middle" font-weight="700">Event 1 · stage 2</text>
+  <text x="347" y="120" font-size="16">actor: PCB supplier (signed)</text>
+  <text x="347" y="142" font-size="16">co2e computed on-chain</text>
+  <text x="347" y="164" font-size="16">timestamp: block clock</text>
+  <text x="347" y="186" font-size="16">evidenceHash: 0xfc40…</text>
+  <rect x="343" y="198" width="216" height="30" rx="4" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="351" y="218" font-size="16" font-weight="600">prevEventHash = Event 0</text>
+  <rect x="343" y="236" width="216" height="30" rx="4" fill="#dce8f8" stroke="#4472c4" stroke-width="2"/>
+  <text x="351" y="256" font-size="16" font-weight="700">eventHash = keccak256</text>
+
+  <!-- event 2 -->
+  <rect x="633" y="62" width="244" height="220" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="755" y="92" font-size="18" text-anchor="middle" font-weight="700">Event 2 · stage 3</text>
+  <text x="651" y="120" font-size="16">actor: battery maker (signed)</text>
+  <text x="651" y="142" font-size="16">co2e computed on-chain</text>
+  <text x="651" y="164" font-size="16">timestamp: block clock</text>
+  <text x="651" y="186" font-size="16">evidenceHash: 0x4807…</text>
+  <rect x="647" y="198" width="216" height="30" rx="4" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="655" y="218" font-size="16" font-weight="600">prevEventHash = Event 1</text>
+  <rect x="647" y="236" width="216" height="30" rx="4" fill="#dce8f8" stroke="#4472c4" stroke-width="2"/>
+  <text x="655" y="256" font-size="16" font-weight="700">eventHash = keccak256</text>
+
+  <!-- chain links -->
+  <g stroke="#1f3a5f" stroke-width="3" fill="#1f3a5f">
+    <path d="M 269 251 C 300 251 300 213 325 213" fill="none"/>
+    <polygon points="329,213 315,206 315,220"/>
+    <path d="M 573 251 C 604 251 604 213 629 213" fill="none"/>
+    <polygon points="633,213 619,206 619,220"/>
+  </g>
+
+  <!-- off-chain evidence -->
+  <rect x="52" y="340" width="190" height="58" rx="6" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="147" y="366" font-size="16" text-anchor="middle">meter-reading.pdf</text>
+  <text x="147" y="387" font-size="16" text-anchor="middle" fill="#555">off-chain evidence</text>
+  <rect x="356" y="340" width="190" height="58" rx="6" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="451" y="366" font-size="16" text-anchor="middle">invoice-4411.pdf</text>
+  <text x="451" y="387" font-size="16" text-anchor="middle" fill="#555">off-chain evidence</text>
+  <rect x="660" y="340" width="190" height="58" rx="6" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="755" y="366" font-size="16" text-anchor="middle">cell-batch-log.csv</text>
+  <text x="755" y="387" font-size="16" text-anchor="middle" fill="#555">off-chain evidence</text>
+
+  <g stroke="#5b9358" stroke-width="2.5" stroke-dasharray="7 4" fill="#5b9358">
+    <line x1="147" y1="338" x2="147" y2="296"/><polygon points="147,286 141,296 153,296"/>
+    <line x1="451" y1="338" x2="451" y2="296"/><polygon points="451,286 445,296 457,296"/>
+    <line x1="755" y1="338" x2="755" y2="296"/><polygon points="755,286 749,296 761,296"/>
+  </g>
+  <text x="180" y="322" font-size="16" fill="#2c5530">keccak256 anchor (DP1 hybrid hash)</text>
+
+  <!-- tamper consequence band -->
+  <rect x="25" y="425" width="854" height="145" rx="8" fill="#fdf0f0" stroke="#c44" stroke-width="2.5"/>
+  <text x="45" y="455" font-size="18" font-weight="700" fill="#8b1a1a">Why tampering is detectable</text>
+  <text x="45" y="485" font-size="17" fill="#5a1010">Altering any stored field of Event 1 changes its recomputed keccak256, which no longer equals</text>
+  <text x="45" y="507" font-size="17" fill="#5a1010">its stored eventHash. Event 2's stored prevEventHash then points to a hash that no longer</text>
+  <text x="45" y="529" font-size="17" fill="#5a1010">exists, breaking every later link. Swapping an off-chain evidence file breaks its anchor the</text>
+  <text x="45" y="551" font-size="17" fill="#5a1010">same way. The chain head is replicated across all five nodes.</text>
+</svg>
+<p class="caption">Figure 3. Hash-linked emission-event chain with hybrid evidence anchoring, instantiating DP1 (granularity with hybrid hash architecture). Each event stores the keccak-256 hash of all its fields, and every subsequent event embeds its predecessor's hash, so the events of one product form a tamper-evident chain; bulky evidence remains off-chain with only its fingerprint anchored on-chain (FR7). Altering any recorded field, or substituting an evidence file, invalidates the stored hashes of every later event, as summarised in the lower panel (FR4).</p></section>
+<section><svg viewBox="0 0 904 600" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="600" fill="#ffffff"/>
+
+  <!-- left: append-only registry -->
+  <rect x="25" y="30" width="400" height="390" rx="10" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="225" y="62" font-size="18" text-anchor="middle" font-weight="700">EmissionEventRegistry (append-only)</text>
+
+  <rect x="45" y="80" width="360" height="58" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="60" y="104" font-size="17" font-weight="600">Event 0 · stage 1, smelter</text>
+  <text x="60" y="126" font-size="16" fill="#555">96.0 kg CO2e · hash 0x51aa…</text>
+
+  <rect x="45" y="150" width="360" height="80" rx="6" fill="#fff8e6" stroke="#c09543" stroke-width="2.5"/>
+  <text x="60" y="174" font-size="17" font-weight="600">Event 1 · stage 5, OEM (erroneous)</text>
+  <text x="60" y="196" font-size="16" fill="#555">2.475 kg CO2e · hash 0x6a7b…</text>
+  <text x="60" y="218" font-size="16" font-weight="600" fill="#8a6b2a">never modified</text>
+
+  <rect x="45" y="242" width="360" height="58" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="60" y="266" font-size="17" font-weight="600">Event 2 · stage 7, logistics</text>
+  <text x="60" y="288" font-size="16" fill="#555">1.05 kg CO2e · hash 0x5c54…</text>
+
+  <rect x="45" y="316" width="360" height="80" rx="6" fill="#f4f4f4" stroke="#888" stroke-width="2"/>
+  <text x="60" y="340" font-size="16" font-weight="700">No write path exists</text>
+  <text x="60" y="362" font-size="16" fill="#333">state-changing functions are createProduct</text>
+  <text x="60" y="384" font-size="16" fill="#333">and recordEvent only: no update, no delete</text>
+
+  <!-- right: governance module -->
+  <rect x="465" y="30" width="414" height="390" rx="10" fill="#fdf6ec" stroke="#c09543" stroke-width="2.5"/>
+  <text x="672" y="62" font-size="18" text-anchor="middle" font-weight="700">GovernanceModule (append-only)</text>
+
+  <rect x="485" y="80" width="374" height="105" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="500" y="104" font-size="17" font-weight="700">Correction #1 → corrects Event 1</text>
+  <text x="500" y="128" font-size="16" fill="#333">cross-references Event 1 by index and hash</text>
+  <text x="500" y="150" font-size="16" fill="#333">corrected value, reason, evidence, corrector</text>
+  <text x="500" y="172" font-size="16" fill="#555">role-gated; emits CorrectionLogged</text>
+
+  <rect x="485" y="197" width="374" height="80" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="500" y="221" font-size="17" font-weight="700">Correction #2 → supersedes #1</text>
+  <text x="500" y="245" font-size="16" fill="#333">corrections form their own visible chain;</text>
+  <text x="500" y="267" font-size="16" fill="#555">nothing is erased, latest correction reports</text>
+
+  <rect x="485" y="289" width="374" height="58" rx="6" fill="#f6eef7" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="500" y="313" font-size="16" font-weight="600" fill="#5d3268">DP5 escalation: thresholds + auditor flags</text>
+  <text x="500" y="335" font-size="16" fill="#5d3268">breach ⇒ EscalationRaised, logged once</text>
+
+  <rect x="485" y="359" width="374" height="58" rx="6" fill="#f4f4f4" stroke="#888" stroke-width="2"/>
+  <text x="500" y="383" font-size="16" font-weight="600">Upgrade (regulator override): only via the</text>
+  <text x="500" y="405" font-size="16">2-of-3 multisig: joint, logged, never alone</text>
+
+  <!-- cross-reference arrow -->
+  <g stroke="#c09543" stroke-width="3" fill="#c09543">
+    <path d="M 483 128 C 450 128 450 190 411 190" fill="none" stroke-dasharray="8 5"/>
+    <polygon points="405,190 419,183 419,197"/>
+  </g>
+
+  <!-- bottom band -->
+  <rect x="25" y="445" width="854" height="130" rx="10" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <text x="45" y="477" font-size="18" font-weight="700" fill="#2c5530">Two totals, both auditable: the difference is the audit trail</text>
+  <text x="45" y="507" font-size="17" fill="#1e3a20">raw total = sum of original events (never changes once recorded)</text>
+  <text x="45" y="531" font-size="17" fill="#1e3a20">effective total = raw events with the latest logged correction applied per event</text>
+  <text x="45" y="555" font-size="17" fill="#555">Any auditor can recompute both and reconcile them against the CorrectionLogged history.</text>
+</svg>
+<p class="caption">Figure 4. The governed correction pathway, instantiating DP4 (governed immutability) and DP5 (automated escalation). The event registry (left) exposes no update or delete functions, so recorded events are never modified; corrections (right) are appended, role-gated records that cross-reference the original event by index and hash, announce themselves through CorrectionLogged events, and may themselves be superseded, forming a visible chain. Reporting applies the latest correction (the effective total) while the raw total remains recomputable, so the difference between the two figures is exactly the logged correction history; threshold breaches raise EscalationRaised events, and logic upgrades require the 2-of-3 consortium multisig.</p></section>
+<section><svg viewBox="0 0 904 570" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 20 = 10 pt, 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="570" fill="#ffffff"/>
+
+  <!-- column headers -->
+  <text x="287" y="45" font-size="18" text-anchor="middle" font-weight="700">T-a: lower a past value</text>
+  <text x="527" y="45" font-size="18" text-anchor="middle" font-weight="700">T-b: delete an event</text>
+  <text x="767" y="45" font-size="18" text-anchor="middle" font-weight="700">T-c: back-date an event</text>
+
+  <!-- row headers -->
+  <text x="25" y="115" font-size="20" font-weight="700">Spreadsheet</text>
+  <text x="25" y="138" font-size="17" fill="#555">(CSV)</text>
+  <text x="25" y="253" font-size="20" font-weight="700">Centralised DB</text>
+  <text x="25" y="276" font-size="17" fill="#555">(SQLite)</text>
+  <text x="25" y="391" font-size="20" font-weight="700">Blockchain</text>
+  <text x="25" y="414" font-size="17" fill="#555">(Besu QBFT)</text>
+
+  <!-- row 1: spreadsheet -->
+  <rect x="175" y="62" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="287" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, silent</text>
+  <text x="287" y="120" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="287" y="142" font-size="16" text-anchor="middle" fill="#58151c">goes undetected;</text>
+  <text x="287" y="164" font-size="16" text-anchor="middle" fill="#58151c">culprit unidentifiable</text>
+
+  <rect x="415" y="62" width="224" height="120" rx="8" fill="#fff3cd" stroke="#b8912f" stroke-width="2.5"/>
+  <text x="527" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#664d03">Possible, silent</text>
+  <text x="527" y="120" font-size="16" text-anchor="middle" fill="#664d03">whole-stage gap caught</text>
+  <text x="527" y="142" font-size="16" text-anchor="middle" fill="#664d03">by the 10-stage rule;</text>
+  <text x="527" y="164" font-size="16" text-anchor="middle" fill="#664d03">culprit unknown</text>
+
+  <rect x="655" y="62" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="767" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, silent</text>
+  <text x="767" y="120" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="767" y="142" font-size="16" text-anchor="middle" fill="#58151c">goes undetected;</text>
+  <text x="767" y="164" font-size="16" text-anchor="middle" fill="#58151c">culprit unidentifiable</text>
+
+  <!-- row 2: centralised database -->
+  <rect x="175" y="200" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="287" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, routine SQL</text>
+  <text x="287" y="258" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="287" y="280" font-size="16" text-anchor="middle" fill="#58151c">undetected; logs owned</text>
+  <text x="287" y="302" font-size="16" text-anchor="middle" fill="#58151c">by the same admin</text>
+
+  <rect x="415" y="200" width="224" height="120" rx="8" fill="#fff3cd" stroke="#b8912f" stroke-width="2.5"/>
+  <text x="527" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#664d03">Possible, routine SQL</text>
+  <text x="527" y="258" font-size="16" text-anchor="middle" fill="#664d03">whole-stage gap caught</text>
+  <text x="527" y="280" font-size="16" text-anchor="middle" fill="#664d03">by the 10-stage rule;</text>
+  <text x="527" y="302" font-size="16" text-anchor="middle" fill="#664d03">culprit unknown</text>
+
+  <rect x="655" y="200" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="767" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, routine SQL</text>
+  <text x="767" y="258" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="767" y="280" font-size="16" text-anchor="middle" fill="#58151c">undetected; logs owned</text>
+  <text x="767" y="302" font-size="16" text-anchor="middle" fill="#58151c">by the same admin</text>
+
+  <!-- row 3: ledger -->
+  <rect x="175" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="287" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">No silent path</text>
+  <text x="287" y="396" font-size="16" text-anchor="middle" fill="#145214">rejected in ~15 ms,</text>
+  <text x="287" y="418" font-size="16" text-anchor="middle" fill="#145214">sender identified;</text>
+  <text x="287" y="440" font-size="16" text-anchor="middle" fill="#145214">restatement is visible</text>
+
+  <rect x="415" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="527" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">Not expressible</text>
+  <text x="527" y="396" font-size="16" text-anchor="middle" fill="#145214">no delete interface;</text>
+  <text x="527" y="418" font-size="16" text-anchor="middle" fill="#145214">node tampering caught</text>
+  <text x="527" y="440" font-size="16" text-anchor="middle" fill="#145214">by 4-of-5 quorum &lt;1 s</text>
+
+  <rect x="655" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="767" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">Not expressible</text>
+  <text x="767" y="396" font-size="16" text-anchor="middle" fill="#145214">no timestamp parameter;</text>
+  <text x="767" y="418" font-size="16" text-anchor="middle" fill="#145214">block clock assigns</text>
+  <text x="767" y="440" font-size="16" text-anchor="middle" fill="#145214">event time</text>
+
+  <!-- legend -->
+  <rect x="25" y="485" width="854" height="54" rx="8" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+  <rect x="45" y="501" width="22" height="22" rx="4" fill="#f8d7da" stroke="#c44" stroke-width="2"/>
+  <text x="78" y="518" font-size="16">silent and unattributable</text>
+  <rect x="316" y="501" width="22" height="22" rx="4" fill="#fff3cd" stroke="#b8912f" stroke-width="2"/>
+  <text x="349" y="518" font-size="16">heuristic only, if audited</text>
+  <rect x="587" y="501" width="22" height="22" rx="4" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2"/>
+  <text x="620" y="518" font-size="16">prevented and attributed</text>
+</svg>
+<p class="caption">Figure 5. Study A outcome matrix: three tampering threats applied to three systems holding identical records, operationalising DP4 and DP5. Red cells mark attacks that succeed silently and cannot be attributed to a person (a competent insider recomputes the file-internal hash columns, defeating file-only audits); amber cells mark attacks caught only by a business-rule heuristic and only if an audit is run; green cells mark the ledger, where no silent alteration path exists and every attempt or restatement is signed and attributed. Full results including the naive-attacker condition are given in the accompanying results table.</p></section>
+<section><svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 640 146" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="640" height="146" fill="#ffffff"/>
+    <text x="8" y="20" font-size="15" font-weight="700">Throughput</text><text x="162" y="62" text-anchor="end" font-size="13">4 validators</text>
+      <rect x="170" y="40" width="380" height="34" rx="4" fill="#4472c4"/>
+      <text x="556" y="62" font-size="13" font-weight="600">40.2 TPS</text><text x="162" y="110" text-anchor="end" font-size="13">7 validators</text>
+      <rect x="170" y="88" width="206.38490136674605" height="34" rx="4" fill="#7c9ed9"/>
+      <text x="382.384901366746" y="110" font-size="13" font-weight="600">21.9 TPS</text></svg>
+<p class="caption">Figure 6. Sustained throughput of the prototype under open-loop load (300 recordEvent transactions of ≈407,000 gas each from five writer accounts), for the 4-validator and 7-validator configurations. The decline at seven validators reflects both QBFT's quadratically growing message complexity and CPU contention among co-located containers on the single benchmark host, and is therefore an upper bound on the protocol effect (single laptop; hardware specification in the Study C report).</p></section>
+<section><svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 640 242" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="640" height="242" fill="#ffffff"/>
+    <text x="8" y="20" font-size="15" font-weight="700">Transaction latency (open-loop burst)</text><text x="162" y="62" text-anchor="end" font-size="13">4 validators avg</text>
+      <rect x="170" y="40" width="150.49049487072762" height="34" rx="4" fill="#4472c4"/>
+      <text x="326.4904948707276" y="62" font-size="13" font-weight="600">4185.2 ms</text><text x="162" y="110" text-anchor="end" font-size="13">4 validators p95</text>
+      <rect x="170" y="88" width="201.54469843626396" height="34" rx="4" fill="#4472c4"/>
+      <text x="377.54469843626396" y="110" font-size="13" font-weight="600">5605.1 ms</text><text x="162" y="158" text-anchor="end" font-size="13">7 validators avg</text>
+      <rect x="170" y="136" width="293.78087966968377" height="34" rx="4" fill="#7c9ed9"/>
+      <text x="469.78087966968377" y="158" font-size="13" font-weight="600">8170.3 ms</text><text x="162" y="206" text-anchor="end" font-size="13">7 validators p95</text>
+      <rect x="170" y="184" width="380" height="34" rx="4" fill="#7c9ed9"/>
+      <text x="556" y="206" font-size="13" font-weight="600">10568.1 ms</text></svg>
+<p class="caption">Figure 7. Transaction latency (submission to finalised receipt) under burst load, mean and 95th percentile, for the 4-validator and 7-validator configurations. Because all 300 transactions were submitted within seconds, latency is dominated by queueing for block space; steady-state latency would approach the two-second block interval. Under QBFT, inclusion latency equals time-to-finality, as finality is immediate and deterministic at block inclusion.</p></section>
+<section><svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 640 146" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="640" height="146" fill="#ffffff"/>
+    <text x="8" y="20" font-size="15" font-weight="700">Observed block time under load</text><text x="162" y="62" text-anchor="end" font-size="13">4 validators</text>
+      <rect x="170" y="40" width="253.33333333333331" height="34" rx="4" fill="#4472c4"/>
+      <text x="429.3333333333333" y="62" font-size="13" font-weight="600">2.00 s</text><text x="162" y="110" text-anchor="end" font-size="13">7 validators</text>
+      <rect x="170" y="88" width="380" height="34" rx="4" fill="#7c9ed9"/>
+      <text x="556" y="110" font-size="13" font-weight="600">3.00 s</text></svg>
+<p class="caption">Figure 8. Observed block interval under load, computed from block timestamps across the block range occupied by the benchmark. The 4-validator network held its configured two-second block period; the 7-validator network stretched to three seconds as consensus rounds lengthened under message overhead and host CPU saturation.</p></section>
+<section><svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 680 314" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="680" height="314" fill="#ffffff"/>
+    <text x="8" y="22" font-size="16" font-weight="700">Energy per transaction: PoA prototype vs published PoW/PoS anchors</text>
+    <text x="8" y="302" font-size="13" fill="#666">Log-scale comparison. Red bars are published anchors from Sedlmeir et al. (2020).</text><text x="192" y="66" text-anchor="end" font-size="13">This prototype, 4 validators</text>
+      <rect x="200" y="44" width="42.498379548711874" height="34" rx="4" fill="#2e9e4f"/>
+      <text x="248.49837954871188" y="66" font-size="13" font-weight="600">0.6 J/tx</text><text x="192" y="114" text-anchor="end" font-size="13">This prototype, 7 validators</text>
+      <rect x="200" y="92" width="72.5118772059929" height="34" rx="4" fill="#2e9e4f"/>
+      <text x="278.5118772059929" y="114" font-size="13" font-weight="600">3.8 J/tx</text><text x="192" y="162" text-anchor="end" font-size="13">Permissioned, ~10 nodes</text>
+      <rect x="200" y="140" width="51.15384615384615" height="34" rx="4" fill="#c44"/>
+      <text x="257.1538461538462" y="162" font-size="13" font-weight="600">1.0 J/tx</text><text x="192" y="210" text-anchor="end" font-size="13">Non-PoW permissionless</text>
+      <rect x="200" y="188" width="160.76923076923077" height="34" rx="4" fill="#c44"/>
+      <text x="366.7692307692308" y="210" font-size="13" font-weight="600">1000.0 J/tx</text><text x="192" y="258" text-anchor="end" font-size="13">Bitcoin proof-of-work</text>
+      <rect x="200" y="236" width="380" height="34" rx="4" fill="#c44"/>
+      <text x="586" y="258" font-size="13" font-weight="600">1.0e+9 J/tx</text></svg>
+<p class="caption">Figure 9. First-order energy per transaction of the proof-of-authority prototype (green, measured via container CPU utilisation and nominal processor TDP) contrasted with the published estimates of Sedlmeir et al. (2020) (red), on a logarithmic scale, instantiating DP9 (environmental proportionality). The prototype's ≈0.6 J per transaction lies about nine orders of magnitude below Bitcoin proof-of-work (~10^9 J), about three orders below large non-PoW permissionless networks (~10^3 J), and directly corroborates the ~1 J estimate for small permissioned deployments.</p></section>
+</body></html>

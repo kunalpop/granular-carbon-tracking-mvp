@@ -1,0 +1,18 @@
+{
+  "_DATA_STATUS": "SYNTHETIC fleet summary",
+  "seed": 20260806,
+  "fleetSize": 300,
+  "totalKg": {
+    "min": 143.7,
+    "p05": 163.3,
+    "median": 192.3,
+    "p95": 225,
+    "max": 240.5,
+    "mean": 192.9
+  },
+  "anchorRange": [
+    150,
+    450
+  ],
+  "instancesOutsidePublishedRange": 2
+}

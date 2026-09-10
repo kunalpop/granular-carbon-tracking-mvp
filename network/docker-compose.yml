@@ -1,0 +1,190 @@
+# Carbon MVP private network: Hyperledger Besu, QBFT consensus.
+# 4 validators (consortium members) + 1 regulator/observer node.
+# Start:  docker compose up -d      Stop:  docker compose down
+# Reset chain to genesis:  docker compose down -v
+
+services:
+  validator1:
+    image: hyperledger/besu:26.7.1
+    container_name: carbon-validator1
+    environment: { BESU_OPTS: "-Xmx768m" }
+    command: >-
+      --genesis-file=/config/genesis.json
+      --node-private-key-file=/keys/key
+      --data-path=/data
+      --p2p-host=172.25.0.11
+      --bootnodes=enode://24350f6267f689a7d7e3bb3964cac26fa6bbf880480e7ed901c91b5d8be77a8ca671f0c8e4a08faa1031a6799868f91ec6596906e97a61337625b78fe4fb86b3@172.25.0.12:30303,enode://d3522d1fea5e32d93cc5e35611b715244347377f0a54cedc27d69ea2b1305f279e3e09d59a86a7934ddc8483612aab52d7cabcb1b5912cf54c7538a129b2be84@172.25.0.13:30303,enode://36288596d5d423aebdadc59f34d8548554ed9fd8266e277904289d7e6209926dfd891abb37b5743d7ef06d8cc6ce3bf299ce9d3d90bc86d1b78d0d5fcda4d2d1@172.25.0.14:30303
+      --permissions-nodes-config-file-enabled
+      --permissions-nodes-config-file=/config/permissions_config.toml
+      --permissions-accounts-config-file-enabled
+      --permissions-accounts-config-file=/config/permissions_config.toml
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-api=ETH,NET,WEB3,QBFT,ADMIN,PERM,TXPOOL
+      --rpc-http-cors-origins=all
+      --host-allowlist=*
+      --min-gas-price=0
+    volumes:
+      - ./genesis.json:/config/genesis.json:ro
+      # NOT read-only: Besu verifies at startup that it can persist
+      # runtime allowlist amendments back to this file.
+      - ./permissions_config.toml:/config/permissions_config.toml
+      - ./nodes/validator1:/keys:ro
+      - validator1-data:/data
+    ports:
+      - "8545:8545"
+    networks:
+      carbon-net:
+        ipv4_address: 172.25.0.11
+
+  validator2:
+    image: hyperledger/besu:26.7.1
+    container_name: carbon-validator2
+    environment: { BESU_OPTS: "-Xmx768m" }
+    command: >-
+      --genesis-file=/config/genesis.json
+      --node-private-key-file=/keys/key
+      --data-path=/data
+      --p2p-host=172.25.0.12
+      --bootnodes=enode://7193289e72fa4d9a1b2314d3c4acd97a584c325764102aeebb3346e5ee8f4f7c30ea23771d99f77b5cd94570cf9da8145e172ed48e99e46971cf7c761680882e@172.25.0.11:30303,enode://24350f6267f689a7d7e3bb3964cac26fa6bbf880480e7ed901c91b5d8be77a8ca671f0c8e4a08faa1031a6799868f91ec6596906e97a61337625b78fe4fb86b3@172.25.0.12:30303,enode://d3522d1fea5e32d93cc5e35611b715244347377f0a54cedc27d69ea2b1305f279e3e09d59a86a7934ddc8483612aab52d7cabcb1b5912cf54c7538a129b2be84@172.25.0.13:30303,enode://36288596d5d423aebdadc59f34d8548554ed9fd8266e277904289d7e6209926dfd891abb37b5743d7ef06d8cc6ce3bf299ce9d3d90bc86d1b78d0d5fcda4d2d1@172.25.0.14:30303
+      --permissions-nodes-config-file-enabled
+      --permissions-nodes-config-file=/config/permissions_config.toml
+      --permissions-accounts-config-file-enabled
+      --permissions-accounts-config-file=/config/permissions_config.toml
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-api=ETH,NET,WEB3,QBFT,ADMIN,PERM,TXPOOL
+      --rpc-http-cors-origins=all
+      --host-allowlist=*
+      --min-gas-price=0
+    volumes:
+      - ./genesis.json:/config/genesis.json:ro
+      # NOT read-only: Besu verifies at startup that it can persist
+      # runtime allowlist amendments back to this file.
+      - ./permissions_config.toml:/config/permissions_config.toml
+      - ./nodes/validator2:/keys:ro
+      - validator2-data:/data
+    ports:
+      - "8546:8545"
+    networks:
+      carbon-net:
+        ipv4_address: 172.25.0.12
+    depends_on: [validator1]
+
+  validator3:
+    image: hyperledger/besu:26.7.1
+    container_name: carbon-validator3
+    environment: { BESU_OPTS: "-Xmx768m" }
+    command: >-
+      --genesis-file=/config/genesis.json
+      --node-private-key-file=/keys/key
+      --data-path=/data
+      --p2p-host=172.25.0.13
+      --bootnodes=enode://7193289e72fa4d9a1b2314d3c4acd97a584c325764102aeebb3346e5ee8f4f7c30ea23771d99f77b5cd94570cf9da8145e172ed48e99e46971cf7c761680882e@172.25.0.11:30303,enode://24350f6267f689a7d7e3bb3964cac26fa6bbf880480e7ed901c91b5d8be77a8ca671f0c8e4a08faa1031a6799868f91ec6596906e97a61337625b78fe4fb86b3@172.25.0.12:30303,enode://d3522d1fea5e32d93cc5e35611b715244347377f0a54cedc27d69ea2b1305f279e3e09d59a86a7934ddc8483612aab52d7cabcb1b5912cf54c7538a129b2be84@172.25.0.13:30303,enode://36288596d5d423aebdadc59f34d8548554ed9fd8266e277904289d7e6209926dfd891abb37b5743d7ef06d8cc6ce3bf299ce9d3d90bc86d1b78d0d5fcda4d2d1@172.25.0.14:30303
+      --permissions-nodes-config-file-enabled
+      --permissions-nodes-config-file=/config/permissions_config.toml
+      --permissions-accounts-config-file-enabled
+      --permissions-accounts-config-file=/config/permissions_config.toml
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-api=ETH,NET,WEB3,QBFT,ADMIN,PERM,TXPOOL
+      --rpc-http-cors-origins=all
+      --host-allowlist=*
+      --min-gas-price=0
+    volumes:
+      - ./genesis.json:/config/genesis.json:ro
+      # NOT read-only: Besu verifies at startup that it can persist
+      # runtime allowlist amendments back to this file.
+      - ./permissions_config.toml:/config/permissions_config.toml
+      - ./nodes/validator3:/keys:ro
+      - validator3-data:/data
+    ports:
+      - "8547:8545"
+    networks:
+      carbon-net:
+        ipv4_address: 172.25.0.13
+    depends_on: [validator1]
+
+  validator4:
+    image: hyperledger/besu:26.7.1
+    container_name: carbon-validator4
+    environment: { BESU_OPTS: "-Xmx768m" }
+    command: >-
+      --genesis-file=/config/genesis.json
+      --node-private-key-file=/keys/key
+      --data-path=/data
+      --p2p-host=172.25.0.14
+      --bootnodes=enode://7193289e72fa4d9a1b2314d3c4acd97a584c325764102aeebb3346e5ee8f4f7c30ea23771d99f77b5cd94570cf9da8145e172ed48e99e46971cf7c761680882e@172.25.0.11:30303,enode://24350f6267f689a7d7e3bb3964cac26fa6bbf880480e7ed901c91b5d8be77a8ca671f0c8e4a08faa1031a6799868f91ec6596906e97a61337625b78fe4fb86b3@172.25.0.12:30303,enode://d3522d1fea5e32d93cc5e35611b715244347377f0a54cedc27d69ea2b1305f279e3e09d59a86a7934ddc8483612aab52d7cabcb1b5912cf54c7538a129b2be84@172.25.0.13:30303,enode://36288596d5d423aebdadc59f34d8548554ed9fd8266e277904289d7e6209926dfd891abb37b5743d7ef06d8cc6ce3bf299ce9d3d90bc86d1b78d0d5fcda4d2d1@172.25.0.14:30303
+      --permissions-nodes-config-file-enabled
+      --permissions-nodes-config-file=/config/permissions_config.toml
+      --permissions-accounts-config-file-enabled
+      --permissions-accounts-config-file=/config/permissions_config.toml
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-api=ETH,NET,WEB3,QBFT,ADMIN,PERM,TXPOOL
+      --rpc-http-cors-origins=all
+      --host-allowlist=*
+      --min-gas-price=0
+    volumes:
+      - ./genesis.json:/config/genesis.json:ro
+      # NOT read-only: Besu verifies at startup that it can persist
+      # runtime allowlist amendments back to this file.
+      - ./permissions_config.toml:/config/permissions_config.toml
+      - ./nodes/validator4:/keys:ro
+      - validator4-data:/data
+    ports:
+      - "8548:8545"
+    networks:
+      carbon-net:
+        ipv4_address: 172.25.0.14
+    depends_on: [validator1]
+
+  # Non-validator observer: syncs and verifies every block but has no vote.
+  # This is the Archetype 2 -> 3/4 "regulator toggle" from the chapter plan.
+  regulator:
+    image: hyperledger/besu:26.7.1
+    container_name: carbon-regulator
+    environment: { BESU_OPTS: "-Xmx768m" }
+    command: >-
+      --genesis-file=/config/genesis.json
+      --node-private-key-file=/keys/key
+      --data-path=/data
+      --p2p-host=172.25.0.15
+      --bootnodes=enode://7193289e72fa4d9a1b2314d3c4acd97a584c325764102aeebb3346e5ee8f4f7c30ea23771d99f77b5cd94570cf9da8145e172ed48e99e46971cf7c761680882e@172.25.0.11:30303,enode://24350f6267f689a7d7e3bb3964cac26fa6bbf880480e7ed901c91b5d8be77a8ca671f0c8e4a08faa1031a6799868f91ec6596906e97a61337625b78fe4fb86b3@172.25.0.12:30303,enode://d3522d1fea5e32d93cc5e35611b715244347377f0a54cedc27d69ea2b1305f279e3e09d59a86a7934ddc8483612aab52d7cabcb1b5912cf54c7538a129b2be84@172.25.0.13:30303,enode://36288596d5d423aebdadc59f34d8548554ed9fd8266e277904289d7e6209926dfd891abb37b5743d7ef06d8cc6ce3bf299ce9d3d90bc86d1b78d0d5fcda4d2d1@172.25.0.14:30303
+      --permissions-nodes-config-file-enabled
+      --permissions-nodes-config-file=/config/permissions_config.toml
+      --permissions-accounts-config-file-enabled
+      --permissions-accounts-config-file=/config/permissions_config.toml
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-api=ETH,NET,WEB3,QBFT,ADMIN,PERM,TXPOOL
+      --rpc-http-cors-origins=all
+      --host-allowlist=*
+      --min-gas-price=0
+    volumes:
+      - ./genesis.json:/config/genesis.json:ro
+      # NOT read-only: Besu verifies at startup that it can persist
+      # runtime allowlist amendments back to this file.
+      - ./permissions_config.toml:/config/permissions_config.toml
+      - ./nodes/regulator:/keys:ro
+      - regulator-data:/data
+    ports:
+      - "8549:8545"
+    networks:
+      carbon-net:
+        ipv4_address: 172.25.0.15
+    depends_on: [validator1]
+
+networks:
+  carbon-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
+
+volumes:
+  validator1-data:
+  validator2-data:
+  validator3-data:
+  validator4-data:
+  regulator-data:

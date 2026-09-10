@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "stageId": 3,
+  "stage": "Battery (Li-ion cell production) [SYNTHETIC]",
+  "reportedBy": "CellTech Batteries",
+  "activity": "0.06 kWh cell capacity",
+  "emissionFactor": "74000 gCO2e per kWh cell capacity",
+  "efSource": "SYNTHETIC activity; factor CITED (verify): Degen et al. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications 15",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

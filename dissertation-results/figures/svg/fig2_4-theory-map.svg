@@ -1,0 +1,72 @@
+<svg viewBox="0 0 904 780" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 22 = 11 pt, 20 = 10 pt, 19 = 9.5 pt, 17 = 8.5 pt. -->
+  <rect x="0" y="0" width="904" height="780" fill="#ffffff"/>
+
+  <!-- theory + implication, 2 x 2 -->
+  <rect x="60" y="35" width="380" height="160" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="250" y="68" font-size="21" text-anchor="middle" font-weight="700">Information asymmetry</text>
+  <text x="250" y="93" font-size="21" text-anchor="middle" font-weight="700">and signalling</text>
+  <text x="250" y="118" font-size="17" text-anchor="middle" fill="#666">Akerlof, 1970; Spence, 1973; Stiglitz, 2002</text>
+  <text x="250" y="147" font-size="19" text-anchor="middle">Separating equilibrium: credible</text>
+  <text x="250" y="171" font-size="19" text-anchor="middle">assurance must be costly to mimic</text>
+
+  <rect x="464" y="35" width="380" height="160" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="654" y="68" font-size="21" text-anchor="middle" font-weight="700">Green IS</text>
+  <text x="654" y="93" font-size="17" text-anchor="middle" fill="#666">Melville, 2010; vom Brocke et al., 2013</text>
+  <text x="654" y="128" font-size="19" text-anchor="middle">Dual role: the infrastructure's own</text>
+  <text x="654" y="152" font-size="19" text-anchor="middle">footprint must be proportionate</text>
+
+  <rect x="60" y="215" width="380" height="160" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="250" y="248" font-size="21" text-anchor="middle" font-weight="700">Digital infrastructure theory</text>
+  <text x="250" y="273" font-size="17" text-anchor="middle" fill="#666">Star &amp; Ruhleder, 1996; Hanseth &amp;</text>
+  <text x="250" y="294" font-size="17" text-anchor="middle" fill="#666">Lyytinen, 2010; Tilson et al., 2010</text>
+  <text x="250" y="325" font-size="19" text-anchor="middle">Installed base, interfaces,</text>
+  <text x="250" y="349" font-size="19" text-anchor="middle">governed evolution</text>
+
+  <rect x="464" y="215" width="380" height="160" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="654" y="248" font-size="21" text-anchor="middle" font-weight="700">Modular systems theory</text>
+  <text x="654" y="273" font-size="17" text-anchor="middle" fill="#666">Baldwin &amp; Clark, 2000</text>
+  <text x="654" y="308" font-size="19" text-anchor="middle">Modular components, versioned</text>
+  <text x="654" y="332" font-size="19" text-anchor="middle">interfaces, option value</text>
+
+  <!-- collector routing -->
+  <g stroke="#888" stroke-width="2.5" fill="#888">
+    <line x1="60" y1="115" x2="26" y2="115"/>
+    <line x1="26" y1="115" x2="26" y2="410"/>
+    <line x1="844" y1="115" x2="878" y2="115"/>
+    <line x1="878" y1="115" x2="878" y2="410"/>
+    <line x1="250" y1="375" x2="250" y2="410"/>
+    <line x1="654" y1="375" x2="654" y2="410"/>
+    <line x1="26" y1="410" x2="878" y2="410"/>
+    <line x1="452" y1="410" x2="452" y2="440"/><polygon points="452,449 445,435 459,435"/>
+  </g>
+
+  <!-- design theory -->
+  <rect x="180" y="449" width="544" height="90" rx="9" fill="#e8eef9" stroke="#2f5597" stroke-width="3.5"/>
+  <text x="452" y="487" font-size="24" text-anchor="middle" font-weight="700">Design principles DP1 to DP9</text>
+  <text x="452" y="515" font-size="19" text-anchor="middle" fill="#444">Chapter 3 (morphological design theory)</text>
+
+  <!-- split routing -->
+  <g stroke="#888" stroke-width="2.5" fill="#888">
+    <line x1="452" y1="539" x2="452" y2="572"/>
+    <line x1="262" y1="572" x2="642" y2="572"/>
+    <line x1="262" y1="572" x2="262" y2="601"/><polygon points="262,610 255,596 269,596"/>
+    <line x1="642" y1="572" x2="642" y2="601"/><polygon points="642,610 635,596 649,596"/>
+  </g>
+
+  <!-- outputs -->
+  <rect x="112" y="610" width="300" height="118" rx="9" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <text x="262" y="641" font-size="21" text-anchor="middle" font-weight="700">Evaluable propositions</text>
+  <text x="262" y="666" font-size="21" text-anchor="middle" font-weight="700">EP1 to EP3</text>
+  <text x="262" y="693" font-size="17" text-anchor="middle" fill="#555">instantiated in Chapter 4;</text>
+  <text x="262" y="714" font-size="17" text-anchor="middle" fill="#555">evaluated in Section 5.1</text>
+
+  <rect x="492" y="610" width="300" height="118" rx="9" fill="#fdfaf3" stroke="#b8912f" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <text x="642" y="641" font-size="21" text-anchor="middle" font-weight="700">Multi-resource extension</text>
+  <text x="642" y="666" font-size="21" text-anchor="middle" font-weight="700">DP10 and DP11</text>
+  <text x="642" y="693" font-size="17" text-anchor="middle" fill="#555">Appendix H; stated as</text>
+  <text x="642" y="714" font-size="17" text-anchor="middle" fill="#555">theory, not evaluated</text>
+
+  <text x="60" y="762" font-size="17" fill="#7a7a7a">Dashed outline marks theory that this dissertation states but does not evaluate.</text>
+</svg>

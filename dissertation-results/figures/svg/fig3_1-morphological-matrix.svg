@@ -1,0 +1,153 @@
+<svg viewBox="0 0 904 890" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 22 = 11 pt, 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt.
+       Archetype paths are offset horizontally within each option box so the
+       four traces stay separable and clear of the option labels. -->
+  <rect x="0" y="0" width="904" height="890" fill="#ffffff"/>
+
+  <text x="25" y="32" font-size="22" font-weight="700">Morphological matrix with the four archetype configurations</text>
+
+  <!-- column headers -->
+  <text x="386" y="58" font-size="17" text-anchor="middle" font-weight="700" fill="#666">Option A</text>
+  <text x="586" y="58" font-size="17" text-anchor="middle" font-weight="700" fill="#666">Option B</text>
+  <text x="786" y="58" font-size="17" text-anchor="middle" font-weight="700" fill="#666">Option C</text>
+
+  <!-- dimension 1 -->
+  <text x="275" y="105" font-size="17" text-anchor="end" font-weight="700">1. Governance structure</text>
+  <rect x="295" y="72" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="94" font-size="16" text-anchor="middle">Public</text>
+  <text x="386" y="114" font-size="16" text-anchor="middle">permissionless</text>
+  <rect x="495" y="72" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="94" font-size="16" text-anchor="middle">Industry</text>
+  <text x="586" y="114" font-size="16" text-anchor="middle">consortium</text>
+  <rect x="695" y="72" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="94" font-size="16" text-anchor="middle">Regulatory-</text>
+  <text x="786" y="114" font-size="16" text-anchor="middle">anchored</text>
+
+  <!-- dimension 2 -->
+  <text x="275" y="181" font-size="17" text-anchor="end" font-weight="700">2. Data architecture</text>
+  <rect x="295" y="148" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="170" font-size="16" text-anchor="middle">Fully</text>
+  <text x="386" y="190" font-size="16" text-anchor="middle">on-chain</text>
+  <rect x="495" y="148" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="170" font-size="16" text-anchor="middle">Hybrid:</text>
+  <text x="586" y="190" font-size="16" text-anchor="middle">hashes on-chain</text>
+  <rect x="695" y="148" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="170" font-size="16" text-anchor="middle">Off-chain +</text>
+  <text x="786" y="190" font-size="16" text-anchor="middle">audit trail</text>
+
+  <!-- dimension 3 -->
+  <text x="275" y="257" font-size="17" text-anchor="end" font-weight="700">3. Verification mechanism</text>
+  <rect x="295" y="224" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="246" font-size="16" text-anchor="middle">Fully automated</text>
+  <text x="386" y="266" font-size="16" text-anchor="middle">(oracles)</text>
+  <rect x="495" y="224" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="246" font-size="16" text-anchor="middle">Hybrid</text>
+  <text x="586" y="266" font-size="16" text-anchor="middle">(auto + expert)</text>
+  <rect x="695" y="224" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="246" font-size="16" text-anchor="middle">Expert-</text>
+  <text x="786" y="266" font-size="16" text-anchor="middle">verified</text>
+
+  <!-- dimension 4 -->
+  <text x="275" y="333" font-size="17" text-anchor="end" font-weight="700">4. Identity model</text>
+  <rect x="295" y="300" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="333" font-size="16" text-anchor="middle">Pseudonymous</text>
+  <rect x="495" y="300" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="322" font-size="16" text-anchor="middle">Permissioned</text>
+  <text x="586" y="342" font-size="16" text-anchor="middle">org. identity</text>
+  <rect x="695" y="300" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="322" font-size="16" text-anchor="middle">Verified</text>
+  <text x="786" y="342" font-size="16" text-anchor="middle">legal entity</text>
+
+  <!-- dimension 5 -->
+  <text x="275" y="409" font-size="17" text-anchor="end" font-weight="700">5. Smart contract governance</text>
+  <rect x="295" y="376" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="409" font-size="16" text-anchor="middle">Immutable</text>
+  <rect x="495" y="376" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="398" font-size="16" text-anchor="middle">Multi-sig</text>
+  <text x="586" y="418" font-size="16" text-anchor="middle">upgradeable</text>
+  <rect x="695" y="376" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="398" font-size="16" text-anchor="middle">Modular +</text>
+  <text x="786" y="418" font-size="16" text-anchor="middle">reg. override</text>
+
+  <!-- dimension 6 -->
+  <text x="275" y="485" font-size="17" text-anchor="end" font-weight="700">6. Incentive structure</text>
+  <rect x="295" y="452" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="474" font-size="16" text-anchor="middle">Token</text>
+  <text x="386" y="494" font-size="16" text-anchor="middle">rewards</text>
+  <rect x="495" y="452" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="474" font-size="16" text-anchor="middle">Reputation</text>
+  <text x="586" y="494" font-size="16" text-anchor="middle">scoring</text>
+  <rect x="695" y="452" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="474" font-size="16" text-anchor="middle">Regulatory</text>
+  <text x="786" y="494" font-size="16" text-anchor="middle">compliance</text>
+
+  <!-- dimension 7 -->
+  <text x="275" y="561" font-size="17" text-anchor="end" font-weight="700">7. Resource interoperability</text>
+  <rect x="295" y="528" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="550" font-size="16" text-anchor="middle">Single</text>
+  <text x="386" y="570" font-size="16" text-anchor="middle">resource</text>
+  <rect x="495" y="528" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="550" font-size="16" text-anchor="middle">Multi-resource</text>
+  <text x="586" y="570" font-size="16" text-anchor="middle">shared schema</text>
+  <rect x="695" y="528" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="550" font-size="16" text-anchor="middle">Modular</text>
+  <text x="786" y="570" font-size="16" text-anchor="middle">adapters</text>
+
+  <!-- dimension 8 -->
+  <text x="275" y="637" font-size="17" text-anchor="end" font-weight="700">8. Disclosure model</text>
+  <rect x="295" y="604" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="386" y="626" font-size="16" text-anchor="middle">Full public</text>
+  <text x="386" y="646" font-size="16" text-anchor="middle">transparency</text>
+  <rect x="495" y="604" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="586" y="626" font-size="16" text-anchor="middle">Tiered</text>
+  <text x="586" y="646" font-size="16" text-anchor="middle">access</text>
+  <rect x="695" y="604" width="182" height="54" rx="6" fill="#eef3fa" stroke="#9db6d8" stroke-width="2.5"/>
+  <text x="786" y="626" font-size="16" text-anchor="middle">ZKP selective</text>
+  <text x="786" y="646" font-size="16" text-anchor="middle">audit</text>
+
+  <!-- archetype 1: all Option A -->
+  <g stroke="#c0392b" stroke-width="3.5" fill="#c0392b">
+    <polyline points="310,72 310,658" fill="none"/>
+    <circle cx="310" cy="99" r="6"/><circle cx="310" cy="175" r="6"/><circle cx="310" cy="251" r="6"/><circle cx="310" cy="327" r="6"/>
+    <circle cx="310" cy="403" r="6"/><circle cx="310" cy="479" r="6"/><circle cx="310" cy="555" r="6"/><circle cx="310" cy="631" r="6"/>
+  </g>
+
+  <!-- archetype 2: all Option B -->
+  <g stroke="#2f5597" stroke-width="3.5" fill="#2f5597">
+    <polyline points="523,72 523,658" fill="none"/>
+    <circle cx="523" cy="99" r="6"/><circle cx="523" cy="175" r="6"/><circle cx="523" cy="251" r="6"/><circle cx="523" cy="327" r="6"/>
+    <circle cx="523" cy="403" r="6"/><circle cx="523" cy="479" r="6"/><circle cx="523" cy="555" r="6"/><circle cx="523" cy="631" r="6"/>
+  </g>
+
+  <!-- archetype 3: Option C for dimensions 1 to 6, Option B for 7 and 8 -->
+  <g stroke="#2e7d32" stroke-width="3.5" fill="#2e7d32">
+    <polyline points="844,72 844,506 644,528 644,658" fill="none"/>
+    <circle cx="844" cy="99" r="6"/><circle cx="844" cy="175" r="6"/><circle cx="844" cy="251" r="6"/><circle cx="844" cy="327" r="6"/>
+    <circle cx="844" cy="403" r="6"/><circle cx="844" cy="479" r="6"/><circle cx="644" cy="555" r="6"/><circle cx="644" cy="631" r="6"/>
+  </g>
+
+  <!-- archetype 4: representative member 1C-2B-3B-4C-5C-6C-7C-8C (core-verified);
+       the archetype is the 58-configuration coherent interior, see Section 3.4 -->
+  <g stroke="#c07a1e" stroke-width="3.5" fill="#c07a1e">
+    <polyline points="862,72 862,126 662,148 662,278 862,300 862,658" fill="none" stroke-dasharray="10 6"/>
+    <circle cx="862" cy="99" r="6"/><circle cx="662" cy="175" r="6"/><circle cx="662" cy="251" r="6"/><circle cx="862" cy="327" r="6"/>
+    <circle cx="862" cy="403" r="6"/><circle cx="862" cy="479" r="6"/><circle cx="862" cy="555" r="6"/><circle cx="862" cy="631" r="6"/>
+  </g>
+
+  <!-- legend -->
+  <rect x="25" y="690" width="854" height="134" rx="8" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+  <g stroke-width="3.5">
+    <line x1="45" y1="713" x2="105" y2="713" stroke="#c0392b"/><circle cx="75" cy="713" r="6" fill="#c0392b" stroke="none"/>
+    <line x1="45" y1="739" x2="105" y2="739" stroke="#2f5597"/><circle cx="75" cy="739" r="6" fill="#2f5597" stroke="none"/>
+    <line x1="45" y1="765" x2="105" y2="765" stroke="#2e7d32"/><circle cx="75" cy="765" r="6" fill="#2e7d32" stroke="none"/>
+    <line x1="45" y1="791" x2="105" y2="791" stroke="#c07a1e" stroke-dasharray="10 6"/><circle cx="75" cy="791" r="6" fill="#c07a1e" stroke="none"/>
+  </g>
+  <text x="118" y="718" font-size="17">Archetype 1: Public Assurance (all Option A)</text>
+  <text x="118" y="744" font-size="17">Archetype 2: Consortium Assurance (all Option B)</text>
+  <text x="118" y="770" font-size="17">Archetype 3: Regulatory Assurance (Option C for dimensions 1 to 6, Option B for 7 and 8)</text>
+  <text x="118" y="796" font-size="17">Archetype 4: Hybrid Adaptive (traced member: Option B for dimensions 2 and 3, Option C elsewhere)</text>
+
+  <text x="25" y="850" font-size="16" fill="#7a7a7a">Archetype 4 is a region rather than a single configuration: its 58 members span the coherent interior between</text>
+  <text x="25" y="872" font-size="16" fill="#7a7a7a">the consortium and regulatory poles. The representative member 1C-2B-3B-4C-5C-6C-7C-8C is traced.</text>
+</svg>

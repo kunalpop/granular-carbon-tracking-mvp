@@ -1,0 +1,100 @@
+<svg viewBox="0 0 904 860" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 26 = 13 pt, 22 = 11 pt, 20 = 10 pt, 18 = 9 pt, 17 = 8.5 pt.
+       Stages run in boustrophedon order: row 1 left to right, row 2 right to
+       left, row 3 left to right, so every connector stays short. -->
+  <rect x="0" y="0" width="904" height="860" fill="#ffffff"/>
+
+  <text x="25" y="38" font-size="24" font-weight="700">Ten-stage laptop lifecycle: SYNTHETIC reference instance</text>
+
+  <!-- row 1: stages 1, 2, 3 -->
+  <rect x="25" y="60" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="158" y="92" font-size="20" text-anchor="middle" font-weight="700">1 · Aluminium casing</text>
+  <text x="158" y="117" font-size="17" text-anchor="middle" fill="#555">AluCo Primary Smelting</text>
+  <text x="158" y="139" font-size="17" text-anchor="middle" fill="#555">1.15 kg Al × IAI factor</text>
+  <text x="158" y="172" font-size="22" text-anchor="middle" font-weight="700">17.02 kg</text>
+
+  <rect x="318" y="60" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="451" y="92" font-size="20" text-anchor="middle" font-weight="700">2 · Circuit board</text>
+  <text x="451" y="117" font-size="17" text-anchor="middle" fill="#555">Shenzhen PCB Works</text>
+  <text x="451" y="139" font-size="17" text-anchor="middle" fill="#555">0.35 kg × derived factor</text>
+  <text x="451" y="172" font-size="22" text-anchor="middle" font-weight="700">65.00 kg</text>
+
+  <rect x="611" y="60" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="744" y="92" font-size="20" text-anchor="middle" font-weight="700">3 · Battery</text>
+  <text x="744" y="117" font-size="17" text-anchor="middle" fill="#555">CellTech Batteries</text>
+  <text x="744" y="139" font-size="17" text-anchor="middle" fill="#555">60 Wh × Peiseler factor</text>
+  <text x="744" y="172" font-size="22" text-anchor="middle" font-weight="700">4.44 kg</text>
+
+  <!-- row 2: stages 6, 5, 4 (flow runs right to left) -->
+  <rect x="25" y="230" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="158" y="262" font-size="20" text-anchor="middle" font-weight="700">6 · Packaging</text>
+  <text x="158" y="287" font-size="17" text-anchor="middle" fill="#555">LaptopCorp Assembly</text>
+  <text x="158" y="309" font-size="17" text-anchor="middle" fill="#555">0.9 kg × DESNZ board</text>
+  <text x="158" y="342" font-size="22" text-anchor="middle" font-weight="700">1.08 kg</text>
+
+  <rect x="318" y="230" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="451" y="262" font-size="20" text-anchor="middle" font-weight="700">5 · Assembly</text>
+  <text x="451" y="287" font-size="17" text-anchor="middle" fill="#555">LaptopCorp Assembly</text>
+  <text x="451" y="309" font-size="17" text-anchor="middle" fill="#555">25 kWh × IEA grid</text>
+  <text x="451" y="342" font-size="22" text-anchor="middle" font-weight="700">11.13 kg</text>
+
+  <rect x="611" y="230" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="744" y="262" font-size="20" text-anchor="middle" font-weight="700">4 · Screen</text>
+  <text x="744" y="287" font-size="17" text-anchor="middle" fill="#555">PanelView Displays</text>
+  <text x="744" y="309" font-size="17" text-anchor="middle" fill="#555">0.058 m² × Lövehagen</text>
+  <text x="744" y="342" font-size="22" text-anchor="middle" font-weight="700">12.88 kg</text>
+
+  <!-- row 3: stages 7, 8, 9 -->
+  <rect x="25" y="400" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="158" y="432" font-size="20" text-anchor="middle" font-weight="700">7 · Sea freight</text>
+  <text x="158" y="457" font-size="17" text-anchor="middle" fill="#555">BlueWater Freight</text>
+  <text x="158" y="479" font-size="17" text-anchor="middle" fill="#555">65 t·km × DESNZ factor</text>
+  <text x="158" y="512" font-size="22" text-anchor="middle" font-weight="700">1.05 kg</text>
+
+  <rect x="318" y="400" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="451" y="432" font-size="20" text-anchor="middle" font-weight="700">8 · Use phase</text>
+  <text x="451" y="457" font-size="17" text-anchor="middle" fill="#555">Corporate IT</text>
+  <text x="451" y="479" font-size="17" text-anchor="middle" fill="#555">175 kWh × IEA grid</text>
+  <text x="451" y="512" font-size="22" text-anchor="middle" font-weight="700">77.88 kg</text>
+
+  <rect x="611" y="400" width="267" height="130" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="744" y="432" font-size="20" text-anchor="middle" font-weight="700">9 · Repair</text>
+  <text x="744" y="457" font-size="17" text-anchor="middle" fill="#555">FixIt Refurbishment</text>
+  <text x="744" y="479" font-size="17" text-anchor="middle" fill="#555">0.06 kWh × Peiseler</text>
+  <text x="744" y="512" font-size="22" text-anchor="middle" font-weight="700">4.44 kg</text>
+
+  <!-- row 4: total and final stage -->
+  <rect x="25" y="570" width="560" height="130" rx="9" fill="#fdf6ec" stroke="#c09543" stroke-width="3"/>
+  <text x="305" y="610" font-size="26" text-anchor="middle" font-weight="700">TOTAL: 192.56 kg CO2e</text>
+  <text x="305" y="642" font-size="18" text-anchor="middle">Within the published 150 to 450 kg range, and within 4% of</text>
+  <text x="305" y="664" font-size="18" text-anchor="middle">Lövehagen et al.'s 200 kg laptop. Manufacturing (111.5 kg)</text>
+  <text x="305" y="686" font-size="18" text-anchor="middle">dominates the use phase (77.9 kg).</text>
+
+  <rect x="611" y="570" width="267" height="130" rx="9" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <text x="744" y="602" font-size="20" text-anchor="middle" font-weight="700">10 · Recycling</text>
+  <text x="744" y="627" font-size="17" text-anchor="middle" fill="#555">GreenLoop Recycling</text>
+  <text x="744" y="649" font-size="17" text-anchor="middle" fill="#555">2.0 kg × EPA WARM</text>
+  <text x="744" y="682" font-size="22" text-anchor="middle" font-weight="700" fill="#145214">−2.34 kg</text>
+
+  <!-- flow connectors -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="292" y1="125" x2="306" y2="125"/><polygon points="318,125 304,118 304,132"/>
+    <line x1="585" y1="125" x2="599" y2="125"/><polygon points="611,125 597,118 597,132"/>
+    <line x1="744" y1="190" x2="744" y2="218"/><polygon points="744,230 737,216 751,216"/>
+    <line x1="611" y1="295" x2="597" y2="295"/><polygon points="585,295 599,288 599,302"/>
+    <line x1="318" y1="295" x2="304" y2="295"/><polygon points="292,295 306,288 306,302"/>
+    <line x1="158" y1="360" x2="158" y2="388"/><polygon points="158,400 151,386 165,386"/>
+    <line x1="292" y1="465" x2="306" y2="465"/><polygon points="318,465 304,458 304,472"/>
+    <line x1="585" y1="465" x2="599" y2="465"/><polygon points="611,465 597,458 597,472"/>
+    <line x1="744" y1="530" x2="744" y2="558"/><polygon points="744,570 737,556 751,556"/>
+  </g>
+
+  <!-- synthetic-data statement -->
+  <rect x="25" y="722" width="853" height="90" rx="9" fill="#fff3cd" stroke="#b8912f" stroke-width="2.5"/>
+  <text x="45" y="750" font-size="18" font-weight="700" fill="#664d03">SYNTHETIC DATA</text>
+  <text x="45" y="774" font-size="18" fill="#664d03">Activity quantities are seeded model draws; all ten factors are verified-cited (stage 2</text>
+  <text x="45" y="796" font-size="18" fill="#664d03">composed from cited components). On-chain product 5 carries the execution-time library.</text>
+
+  <text x="25" y="842" font-size="17" fill="#7a7a7a">Each stage is one signed emission event by its permissioned actor, with evidence hash-anchored.</text>
+</svg>

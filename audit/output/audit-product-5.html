@@ -1,0 +1,127 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Audit report - product 5</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 70rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; vertical-align: top; }
+  th { background: #f0f0f0; }
+  td.num { text-align: right; }
+  small { color: #666; word-break: break-all; }
+  .badge { padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.75rem; font-weight: 600; }
+  .ok { background: #d4f7d4; color: #145214; }
+  .warn { background: #fff3cd; color: #664d03; }
+  .bad { background: #f8d7da; color: #58151c; }
+  .verdict { font-size: 1.2rem; }
+  .warnbox { background: #fff3cd; padding: 0.8rem; border-radius: 0.4rem; margin: 1rem 0; }
+</style></head><body>
+<h1>Product carbon audit report</h1>
+<p><b>Product 5</b>: Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))<br>
+Audited at block 5610; every hash and total independently recomputed off-chain.</p>
+<p class="verdict">Verdict: <span class="badge ok">PASS</span></p>
+<div class="warnbox">Data quality: emission factors are PLACEHOLDERS (tagged
+"SOURCE NEEDED" in each event's source field) pending DEFRA/BEIS, IEA,
+ecoinvent, and manufacturer PCF citations.</div>
+<h2>Totals (kg CO2e)</h2>
+<ul>
+  <li>Independently recomputed from events: <b>269.62</b></li>
+  <li>On-chain aggregator: 269.62</li>
+  <li>Carbon-token net supply: 269.62</li>
+  <li>Effective (governed corrections applied): 269.62</li>
+</ul>
+<h2>Integrity checks</h2><ul><li>hashChain: <span class="badge ok">PASS</span></li><li>onChainVerifyChainAgrees: <span class="badge ok">PASS</span></li><li>co2eRecomputation: <span class="badge ok">PASS</span></li><li>totalsAgree: <span class="badge ok">PASS</span></li><li>tokenCrossCheck: <span class="badge ok">PASS</span></li><li>evidenceFiles: <span class="badge ok">PASS</span></li><li>allTenStagesPresent: <span class="badge ok">PASS</span></li></ul>
+<h2>Provenance (10 events)</h2>
+<table><tr><th>#</th><th>Stage</th><th>Actor</th><th>Recorded (UTC)</th>
+<th>Activity & factor source</th><th>kg CO2e</th><th>Checks</th><th>Event hash</th></tr>
+    <tr>
+      <td>0</td><td>1</td>
+      <td>AluCo Primary Smelting<br><small>smelter · 0x6a021adee7D1af852E028c692bD3f81f8D93b572</small></td>
+      <td>2026-08-05T19:12:13.000Z</td>
+      <td>1.15 kg aluminium<br><small>SYNTHETIC activity; factor CITED (verify): International Aluminium Institute (2024). Primary Aluminium Greenhouse Gas Emissions Intensity</small></td>
+      <td class="num">17.02</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x51aab3fd9c462c72c8a6f4af8a499f14a6c042e2c03882cdcfcdc33f87dfb26b</small></td>
+    </tr>
+    <tr>
+      <td>1</td><td>2</td>
+      <td>Shenzhen PCB Works<br><small>pcbSupplier · 0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558</small></td>
+      <td>2026-08-05T19:12:17.000Z</td>
+      <td>0.35 kg populated board<br><small>SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED</small></td>
+      <td class="num">87.50</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x6a7b1d5009869ef42fff52f7f02870231b62402b88c5ebb1f03a6eeb5a6c639b</small></td>
+    </tr>
+    <tr>
+      <td>2</td><td>3</td>
+      <td>CellTech Batteries<br><small>batteryMaker · 0x262bF1424a18d346AC85cD127ff64DF88824cf16</small></td>
+      <td>2026-08-05T19:12:21.000Z</td>
+      <td>0.06 kWh cell capacity<br><small>SYNTHETIC activity; factor CITED (verify): Degen et al. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications 15</small></td>
+      <td class="num">4.44</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x8fb4e5f21aad968340a2034fd7c7ffeabe15543f9b24a7e6765cfa375d48ba9d</small></td>
+    </tr>
+    <tr>
+      <td>3</td><td>4</td>
+      <td>PanelView Displays<br><small>screenSupplier · 0x71d44Fde74A438C7560C49D30917A49fDB853a2D</small></td>
+      <td>2026-08-05T19:12:25.000Z</td>
+      <td>0.058 m2 panel area<br><small>SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED</small></td>
+      <td class="num">63.80</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x464b22fb2d5f62f0ec31859dbffc7be51cb5ec56e723ed4578fa0b79490d0fb8</small></td>
+    </tr>
+    <tr>
+      <td>4</td><td>5</td>
+      <td>LaptopCorp Assembly<br><small>oem · 0x90185602439bEBe05FaDAE3218178b75a900b4DA</small></td>
+      <td>2026-08-05T19:12:29.000Z</td>
+      <td>25 kWh factory electricity<br><small>SYNTHETIC activity; factor CITED (verify): IEA (2025). Electricity 2025</small></td>
+      <td class="num">11.13</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x2f2f418190cdb36e8963bac6585d3f4a326004272f68d987252d1b91f3103163</small></td>
+    </tr>
+    <tr>
+      <td>5</td><td>6</td>
+      <td>LaptopCorp Assembly<br><small>oem · 0x90185602439bEBe05FaDAE3218178b75a900b4DA</small></td>
+      <td>2026-08-05T19:12:33.000Z</td>
+      <td>0.9 kg packaging material<br><small>SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED</small></td>
+      <td class="num">0.81</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x8bbe517298c7defba111eac326626460567adcb5f074774916108ab7fdc45a02</small></td>
+    </tr>
+    <tr>
+      <td>6</td><td>7</td>
+      <td>BlueWater Freight<br><small>logistics · 0xd43896E491d84156F503AA9C53cA17FDABAC61ab</small></td>
+      <td>2026-08-05T19:12:37.000Z</td>
+      <td>65 tonne-km<br><small>SYNTHETIC activity; factor CITED (verify): UK BEIS/DEFRA (2025). Greenhouse gas reporting</small></td>
+      <td class="num">1.05</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x5c546c886eb0c8b0a32faea2ee0102e5a766d0144eaa86fb440b904aae2ebb92</small></td>
+    </tr>
+    <tr>
+      <td>7</td><td>8</td>
+      <td>Corporate IT (use phase)<br><small>usePhaseAgent · 0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4</small></td>
+      <td>2026-08-05T19:12:41.000Z</td>
+      <td>175 kWh lifetime electricity<br><small>SYNTHETIC activity; factor CITED (verify): IEA (2025). Electricity 2025</small></td>
+      <td class="num">77.88</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x3b2df3e756988d89b1f27dacad245c740ad69a439503aa161d12ca3f5702a1f1</small></td>
+    </tr>
+    <tr>
+      <td>8</td><td>9</td>
+      <td>FixIt Refurbishment<br><small>repairer · 0x3600759b13564C149BA14ccd6B8D944a9Ee6D799</small></td>
+      <td>2026-08-05T19:12:45.000Z</td>
+      <td>6 kWh-equivalent<br><small>SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED</small></td>
+      <td class="num">9.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x03fc9064329331747ddcf4adbda29a847eb03d531ecd1cd7e656d8aeb997dd0d</small></td>
+    </tr>
+    <tr>
+      <td>9</td><td>10</td>
+      <td>GreenLoop Recycling<br><small>recycler · 0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D</small></td>
+      <td>2026-08-05T19:12:49.000Z</td>
+      <td>2 kg mass processed<br><small>SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED</small></td>
+      <td class="num">-3.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x664878b71b0473b246371205ace21b406fc2c77e721515536c94135d67ba61dd</small></td>
+    </tr></table>
+<h2>Governed corrections</h2><p>None recorded.</p>
+<h2>Escalations</h2><p>None raised.</p>
+</body></html>

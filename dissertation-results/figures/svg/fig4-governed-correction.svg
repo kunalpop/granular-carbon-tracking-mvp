@@ -1,0 +1,63 @@
+<svg viewBox="0 0 904 600" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="600" fill="#ffffff"/>
+
+  <!-- left: append-only registry -->
+  <rect x="25" y="30" width="400" height="390" rx="10" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="225" y="62" font-size="18" text-anchor="middle" font-weight="700">EmissionEventRegistry (append-only)</text>
+
+  <rect x="45" y="80" width="360" height="58" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="60" y="104" font-size="17" font-weight="600">Event 0 · stage 1, smelter</text>
+  <text x="60" y="126" font-size="16" fill="#555">96.0 kg CO2e · hash 0x51aa…</text>
+
+  <rect x="45" y="150" width="360" height="80" rx="6" fill="#fff8e6" stroke="#c09543" stroke-width="2.5"/>
+  <text x="60" y="174" font-size="17" font-weight="600">Event 1 · stage 5, OEM (erroneous)</text>
+  <text x="60" y="196" font-size="16" fill="#555">2.475 kg CO2e · hash 0x6a7b…</text>
+  <text x="60" y="218" font-size="16" font-weight="600" fill="#8a6b2a">never modified</text>
+
+  <rect x="45" y="242" width="360" height="58" rx="6" fill="#ffffff" stroke="#4472c4" stroke-width="2"/>
+  <text x="60" y="266" font-size="17" font-weight="600">Event 2 · stage 7, logistics</text>
+  <text x="60" y="288" font-size="16" fill="#555">1.05 kg CO2e · hash 0x5c54…</text>
+
+  <rect x="45" y="316" width="360" height="80" rx="6" fill="#f4f4f4" stroke="#888" stroke-width="2"/>
+  <text x="60" y="340" font-size="16" font-weight="700">No write path exists</text>
+  <text x="60" y="362" font-size="16" fill="#333">state-changing functions are createProduct</text>
+  <text x="60" y="384" font-size="16" fill="#333">and recordEvent only: no update, no delete</text>
+
+  <!-- right: governance module -->
+  <rect x="465" y="30" width="414" height="390" rx="10" fill="#fdf6ec" stroke="#c09543" stroke-width="2.5"/>
+  <text x="672" y="62" font-size="18" text-anchor="middle" font-weight="700">GovernanceModule (append-only)</text>
+
+  <rect x="485" y="80" width="374" height="105" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="500" y="104" font-size="17" font-weight="700">Correction #1 → corrects Event 1</text>
+  <text x="500" y="128" font-size="16" fill="#333">cross-references Event 1 by index and hash</text>
+  <text x="500" y="150" font-size="16" fill="#333">corrected value, reason, evidence, corrector</text>
+  <text x="500" y="172" font-size="16" fill="#555">role-gated; emits CorrectionLogged</text>
+
+  <rect x="485" y="197" width="374" height="80" rx="6" fill="#ffffff" stroke="#c09543" stroke-width="2"/>
+  <text x="500" y="221" font-size="17" font-weight="700">Correction #2 → supersedes #1</text>
+  <text x="500" y="245" font-size="16" fill="#333">corrections form their own visible chain;</text>
+  <text x="500" y="267" font-size="16" fill="#555">nothing is erased, latest correction reports</text>
+
+  <rect x="485" y="289" width="374" height="58" rx="6" fill="#f6eef7" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="500" y="313" font-size="16" font-weight="600" fill="#5d3268">DP5 escalation: thresholds + auditor flags</text>
+  <text x="500" y="335" font-size="16" fill="#5d3268">breach ⇒ EscalationRaised, logged once</text>
+
+  <rect x="485" y="359" width="374" height="58" rx="6" fill="#f4f4f4" stroke="#888" stroke-width="2"/>
+  <text x="500" y="383" font-size="16" font-weight="600">Upgrade (regulator override): only via the</text>
+  <text x="500" y="405" font-size="16">2-of-3 multisig: joint, logged, never alone</text>
+
+  <!-- cross-reference arrow -->
+  <g stroke="#c09543" stroke-width="3" fill="#c09543">
+    <path d="M 483 128 C 450 128 450 190 411 190" fill="none" stroke-dasharray="8 5"/>
+    <polygon points="405,190 419,183 419,197"/>
+  </g>
+
+  <!-- bottom band -->
+  <rect x="25" y="445" width="854" height="130" rx="10" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <text x="45" y="477" font-size="18" font-weight="700" fill="#2c5530">Two totals, both auditable: the difference is the audit trail</text>
+  <text x="45" y="507" font-size="17" fill="#1e3a20">raw total = sum of original events (never changes once recorded)</text>
+  <text x="45" y="531" font-size="17" fill="#1e3a20">effective total = raw events with the latest logged correction applied per event</text>
+  <text x="45" y="555" font-size="17" fill="#555">Any auditor can recompute both and reconcile them against the CorrectionLogged history.</text>
+</svg>

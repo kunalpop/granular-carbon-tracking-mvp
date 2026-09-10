@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "stageId": 10,
+  "stage": "E-waste recycling (avoided-burden credit) [SYNTHETIC]",
+  "reportedBy": "GreenLoop Recycling",
+  "activity": "2 kg mass processed",
+  "emissionFactor": "-1500 gCO2e per kg mass processed",
+  "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

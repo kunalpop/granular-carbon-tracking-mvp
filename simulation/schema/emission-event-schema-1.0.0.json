@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Field definitions for EmissionEvent records (Chapter plan section X.4). This document's keccak256 hash is registered in the on-chain OntologyRegistry, so version 1.0.0 can never be silently redefined.",
+  "fields": {
+    "productId": "uint256 - passport NFT id of the product instance",
+    "stageId": "uint8 - lifecycle stage 1..10",
+    "actor": "address - permissioned account that recorded the event",
+    "activityData": "uint256 - physical activity quantity, fixed-point x1000",
+    "activityUnit": "string - unit of activityData (kg, kWh, tonne-km, m2)",
+    "emissionFactor": "int256 - gCO2e per activity unit, fixed-point x1000; negative = avoided-burden credit",
+    "efSource": "string - emission-factor source citation with version",
+    "co2eGrams": "int256 - computed ON-CHAIN as activityData * emissionFactor / 1e6",
+    "methodology": "string - accounting methodology label (e.g. GHG Protocol category)",
+    "evidenceHash": "bytes32 - keccak256 of the off-chain evidence document",
+    "prevEventHash": "bytes32 - hash of this product's previous event (0x0 for genesis)",
+    "timestamp": "uint64 - block timestamp at recording",
+    "schemaVersion": "string - version of this schema document",
+    "eventHash": "bytes32 - keccak256 over all fields above"
+  }
+}

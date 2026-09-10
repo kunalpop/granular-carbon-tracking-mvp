@@ -1,0 +1,132 @@
+{
+  "_DATA_STATUS": "EMISSION FACTOR TABLE - values marked status=CITED carry a published source verified against the original; the stage-2 value marked status=DERIVED_FROM_CITED is composed arithmetically from two cited component factors with documented synthetic composition assumptions. Activity data is generated separately and is entirely SYNTHETIC.",
+  "retrievedDate": "2026-08-06 (citations verified 2026-08-06; remaining factors sourced and verified 2026-08-07)",
+  "factors": [
+    {
+      "stageId": 1,
+      "stage": "Aluminium casing",
+      "unit": "kg aluminium",
+      "value_gCO2ePerUnit": 14800,
+      "status": "CITED",
+      "citation": "International Aluminium Institute (n.d.). Primary Aluminium Greenhouse Gas Emissions Intensity: 2023 global average 14.8 tCO2e/t, full life cycle (cradle-to-gate), covering mining, refining, anode production, electrolysis and casting. Retrieved August 6, 2026.",
+      "url": "https://international-aluminium.org/statistics/greenhouse-gas-emissions-primary-aluminium/",
+      "verifyNote": "VERIFIED 2026-08-06 against the IAI statistics page and the December 2024 IAI release (15.1 in 2022 to 14.8 in 2023)."
+    },
+    {
+      "stageId": 2,
+      "stage": "Circuit board (PCB, populated)",
+      "unit": "kg populated board",
+      "value_gCO2ePerUnit": 185714,
+      "status": "DERIVED_FROM_CITED",
+      "citation": "Composed from two cited component factors in Lovehagen, N., Malmodin, J., Bergmark, P., & Matinfar, S. (2023). Assessing embodied carbon emissions of communication user devices by combining approaches. Renewable and Sustainable Energy Reviews, 183, 113422: bare multilayer PCB ~44 kg CO2e/m2 per layer, i.e. ~352 kg CO2e/m2 at 8 layers and ~60 kg CO2e/kg at ~6 kg/m2 (supply-chain data incl. scope 3); IC manufacturing ~2.5 kg CO2e/cm2 of known-good die (range 2-3, up to 3.5 for high-end).",
+      "url": "https://doi.org/10.1016/j.rser.2023.113422",
+      "verifyNote": "VERIFIED 2026-08-07 against the OA full text. Composition (SYNTHETIC assumptions, documented in data-dictionary.md): a 0.35 kg populated board = 0.25 kg bare board (0.25 x 60 = 15 kg CO2e) + ~20 cm2 known-good die area (20 x 2.5 = 50 kg CO2e) = 65 kg CO2e per board = 185,714 g CO2e per kg populated board. Cross-check: Negi, Rani & Pan (2026, iScience 29(5), 115559) consolidate bare-board figures (18.6-179 kg CO2e/m2 by layer count) and show ICs dominate populated-board footprints."
+    },
+    {
+      "stageId": 3,
+      "stage": "Battery (Li-ion cell production)",
+      "unit": "kWh cell capacity",
+      "value_gCO2ePerUnit": 74000,
+      "status": "CITED",
+      "citation": "Peiseler, L., Schenker, V., Schatzmann, K., Pfister, S., Wood, V., & Schmidt, T. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications, 15, Article 10301 - NMC811 median 74 kgCO2e/kWh (5th-95th pct 59-115); LFP median 62. Methodological lineage: Argonne GREET battery LCA.",
+      "url": "https://doi.org/10.1038/s41467-024-54634-y",
+      "verifyNote": "VERIFIED 2026-08-06: author list corrected from the earlier Degen misattribution; medians confirmed (74 NMC811 / 62 LFP)."
+    },
+    {
+      "stageId": 4,
+      "stage": "Screen (LCD module)",
+      "unit": "m2 panel area",
+      "value_gCO2ePerUnit": 222000,
+      "status": "CITED",
+      "citation": "Lovehagen, N., Malmodin, J., Bergmark, P., & Matinfar, S. (2023). Assessing embodied carbon emissions of communication user devices by combining approaches. Renewable and Sustainable Energy Reviews, 183, 113422: display industry average emission factor 222 kg CO2e/m2 shipped display area (supply-chain data).",
+      "url": "https://doi.org/10.1016/j.rser.2023.113422",
+      "verifyNote": "VERIFIED 2026-08-07 against the OA full text. The paper notes the PAIA PCF tool implies ~1,400 kg CO2e/m2 (about 6x higher) and attributes the divergence mainly to PAIA's high display factors; the industry-average 222 is adopted here."
+    },
+    {
+      "stageId": 5,
+      "stage": "Assembly electricity",
+      "unit": "kWh factory electricity",
+      "value_gCO2ePerUnit": 445,
+      "status": "CITED",
+      "citation": "IEA (2025). Electricity 2025 - Emissions: global average CO2 intensity of electricity generation 445 gCO2/kWh in 2024 (forecast 415 by 2026).",
+      "url": "https://www.iea.org/reports/electricity-2025/emissions",
+      "verifyNote": "VERIFIED 2026-08-06 against IEA Electricity 2025 (445 gCO2/kWh in 2024, declining to 400 by 2027). CO2, not full CO2e; global average."
+    },
+    {
+      "stageId": 6,
+      "stage": "Packaging (cardboard)",
+      "unit": "kg packaging material",
+      "value_gCO2ePerUnit": 1199.73,
+      "status": "CITED",
+      "citation": "UK Department for Energy Security and Net Zero (2025). Greenhouse gas reporting: conversion factors 2025, flat-format workbook - Material use > Paper > Paper and board: board > Primary material production: 1,199.72542 kg CO2e/tonne (= 1.19973 kg CO2e/kg). Closed-loop (recycled-input) variant: 1,098.11 kg CO2e/tonne.",
+      "url": "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2025",
+      "verifyNote": "VERIFIED 2026-08-07 against the official 2025 flat-format workbook (row 4104, lookup id 19_506_5156_15_1). Primary-production variant adopted (conservative); plastics content of packaging is excluded and the stage is scoped to cardboard."
+    },
+    {
+      "stageId": 7,
+      "stage": "International shipping (sea, container)",
+      "unit": "tonne-km",
+      "value_gCO2ePerUnit": 16.12,
+      "status": "CITED",
+      "citation": "UK Department for Energy Security and Net Zero (2025). Greenhouse gas reporting: conversion factors 2025, full set - Freighting goods > Cargo ship > Container ship > Average, tonne.km: 0.01612 kgCO2e/tonne-km.",
+      "url": "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2025",
+      "verifyNote": "VERIFIED 2026-08-06 against the official 2025 workbook (exact cell read from the flat-format file). A 2026 edition was published 31 July 2026; the 2025 edition is the edition used in this build."
+    },
+    {
+      "stageId": 8,
+      "stage": "Use-phase electricity",
+      "unit": "kWh lifetime electricity",
+      "value_gCO2ePerUnit": 445,
+      "status": "CITED",
+      "citation": "IEA (2025). Electricity 2025 - Emissions: global average CO2 intensity 445 gCO2/kWh in 2024.",
+      "url": "https://www.iea.org/reports/electricity-2025/emissions",
+      "verifyNote": "VERIFIED 2026-08-06 against IEA Electricity 2025 (445 gCO2/kWh in 2024, declining to 400 by 2027). CO2, not full CO2e; global average."
+    },
+    {
+      "stageId": 9,
+      "stage": "Repair (replacement battery)",
+      "unit": "kWh replacement-battery capacity",
+      "value_gCO2ePerUnit": 74000,
+      "status": "CITED",
+      "citation": "Peiseler, L., Schenker, V., Schatzmann, K., Pfister, S., Wood, V., & Schmidt, T. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications, 15, Article 10301 - NMC811 median 74 kgCO2e/kWh. The repair stage is modelled as one battery replacement (the most common laptop repair): embodied carbon of the replacement cell at the cited factor.",
+      "url": "https://doi.org/10.1038/s41467-024-54634-y",
+      "verifyNote": "RE-SPECIFIED 2026-08-07 (candidate-ratified, reversible): the previous composite 'kWh-equivalent' placeholder is replaced by a decomposed, citable model. Repair-shop electricity (~1-2 kWh, under 1 kg CO2e at the IEA grid factor) is excluded and stated as such."
+    },
+    {
+      "stageId": 10,
+      "stage": "E-waste recycling (avoided-burden credit)",
+      "unit": "kg mass processed",
+      "value_gCO2ePerUnit": -1170.4,
+      "status": "CITED",
+      "citation": "US EPA (2023). Waste Reduction Model (WARM) version 16, December 2023: recycling emission factor for Portable Electronic Devices -1.0618 MTCO2E per short ton (= -1.1704 kg CO2e per kg), net of transport, processing and avoided virgin-material production. Category covers laptops, tablets and similar portable devices.",
+      "url": "https://www.epa.gov/waste-reduction-model/versions-waste-reduction-model",
+      "verifyNote": "VERIFIED 2026-08-07 by reading the factor from the WARM v16 Excel tool's internal factor sheet (Summary Data, 'Portable Electronic Devices', recycling column: -1.06176863077509 MTCO2E/short ton; Mixed Electronics alternative: -0.9039). Documentation: EPA WARM electronics chapter (December 2023)."
+    }
+  ],
+  "realismAnchor": {
+    "description": "Published cradle-to-grave laptop footprints used ONLY to sanity-check generated totals, not as inputs.",
+    "acceptableRange_kgCO2e": [
+      150,
+      450
+    ],
+    "manufacturingShareCheck": "manufacturing (stages 1-6) expected to exceed use phase for many models",
+    "sources": [
+      {
+        "citation": "Dell. Carbon Footprint of a Typical Business Laptop From Dell (whitepaper): 300-400 kgCO2e cradle-to-grave.",
+        "url": "https://i.dell.com/sites/content/corporate/corp-comm/en/Documents/dell-laptop-carbon-footprint-whitepaper.pdf"
+      },
+      {
+        "citation": "Devera LCA benchmark (10,000 simulations): median 215.1 kgCO2e, typical range 157.9-286.7.",
+        "url": "https://devera.ai/benchmarks/carbon-footprint-of-a-laptop"
+      },
+      {
+        "citation": "Circular Computing: manufacture is ~75-85% of a laptop's overall footprint, dominated by motherboard, SSD, display.",
+        "url": "https://circularcomputing.com/news/carbon-footprint-laptop/"
+      },
+      {
+        "citation": "Lovehagen et al. (2023, RSER 183, 113422): representative 2020 laptop embodied emissions 200 kg CO2e (independent corroboration of the generated reference instance).",
+        "url": "https://doi.org/10.1016/j.rser.2023.113422"
+      }
+    ]
+  }
+}

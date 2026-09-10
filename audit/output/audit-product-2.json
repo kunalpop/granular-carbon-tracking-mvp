@@ -1,0 +1,110 @@
+{
+  "productId": "2",
+  "description": "Study A test product 2",
+  "createdBy": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+  "auditedAtBlock": 6557,
+  "events": [
+    {
+      "index": 0,
+      "stageId": 1,
+      "actor": {
+        "address": "0x6a021adee7D1af852E028c692bD3f81f8D93b572",
+        "name": "AluCo Primary Smelting",
+        "role": "smelter"
+      },
+      "recordedAt": "2026-08-05T00:46:56.000Z",
+      "activity": "12 kg",
+      "emissionFactor_gPerUnit": 8000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED",
+      "methodology": "GHGP S3C1",
+      "co2e_kg": 96,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "MISSING (off-chain file not found)"
+      },
+      "eventHash": "0x5ec04a3f3fd81a335488fb2d42969a1aa087568767e3afb5574d8e6f95e6f104",
+      "prevEventHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "evidenceHash": "0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb"
+    },
+    {
+      "index": 1,
+      "stageId": 5,
+      "actor": {
+        "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+        "name": "LaptopCorp Assembly",
+        "role": "oem"
+      },
+      "recordedAt": "2026-08-05T00:46:58.000Z",
+      "activity": "5.5 kWh",
+      "emissionFactor_gPerUnit": 450,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED",
+      "methodology": "GHGP S3C1",
+      "co2e_kg": 2.475,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "MISSING (off-chain file not found)"
+      },
+      "eventHash": "0xfbab2671c91a6f5b05c6946c6e7af465fc1e9f84f3b493d1a116e1fb925d99a8",
+      "prevEventHash": "0x5ec04a3f3fd81a335488fb2d42969a1aa087568767e3afb5574d8e6f95e6f104",
+      "evidenceHash": "0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510"
+    },
+    {
+      "index": 2,
+      "stageId": 1,
+      "actor": {
+        "address": "0x6a021adee7D1af852E028c692bD3f81f8D93b572",
+        "name": "AluCo Primary Smelting",
+        "role": "smelter"
+      },
+      "recordedAt": "2026-08-05T00:47:00.000Z",
+      "activity": "6 kg",
+      "emissionFactor_gPerUnit": 8000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED",
+      "methodology": "GHGP S3C1 - RESTATEMENT",
+      "co2e_kg": 48,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "MISSING (off-chain file not found)"
+      },
+      "eventHash": "0xd094838da8e06d47ff1d458ae210c8b6496999e604c8f393c3fd2cdbbe08fba6",
+      "prevEventHash": "0xfbab2671c91a6f5b05c6946c6e7af465fc1e9f84f3b493d1a116e1fb925d99a8",
+      "evidenceHash": "0x0b42b6393c1f53060fe3ddbfcd7aadcca894465a5a438f69c87d790b2299b9b2"
+    }
+  ],
+  "checks": {
+    "hashChain": "PASS",
+    "onChainVerifyChainAgrees": "PASS",
+    "co2eRecomputation": "PASS",
+    "totalsAgree": "PASS",
+    "tokenCrossCheck": "FAIL",
+    "evidenceFiles": "WARN",
+    "allTenStagesPresent": "WARN"
+  },
+  "corrections": [
+    {
+      "correctionId": 1,
+      "correctsEventIndex": 0,
+      "originalEventHash": "0x5ec04a3f3fd81a335488fb2d42969a1aa087568767e3afb5574d8e6f95e6f104",
+      "correctedCo2e_kg": 92,
+      "reason": "Study A governed-correction exercise: smelter meter re-read; activity corrected 12.0 kg -> 11.5 kg against simulated invoice",
+      "correctedBy": "0xfcDE4E7beb74dae7874436b20D95A442D63aeC91",
+      "at": "2026-08-05T19:44:37.000Z",
+      "supersedesCorrectionId": null,
+      "isLatest": true
+    }
+  ],
+  "escalations": [],
+  "totals": {
+    "independentlyRecomputed_kg": 146.475,
+    "onChainAggregator_kg": 146.475,
+    "tokenNet_kg": 0,
+    "effectiveWithCorrections_kg": 142.475
+  },
+  "verdict": "FAIL"
+}

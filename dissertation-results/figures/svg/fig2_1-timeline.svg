@@ -1,0 +1,88 @@
+<svg viewBox="0 0 904 926" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 24 = 12 pt, 22 = 11 pt, 18 = 9 pt, 16 = 8 pt.
+       Fill and stroke encode jurisdiction; dashed stroke marks milestones
+       scheduled but not yet reached as at August 2026. -->
+  <rect x="0" y="0" width="904" height="926" fill="#ffffff"/>
+
+  <text x="25" y="36" font-size="24" font-weight="700">Mandatory disclosure and product-passport milestones, 2023 to 2028</text>
+
+  <!-- time axis -->
+  <g stroke="#666" stroke-width="3" fill="#666">
+    <line x1="140" y1="60" x2="140" y2="780"/>
+    <polygon points="140,792 133,778 147,778"/>
+  </g>
+
+  <!-- year markers -->
+  <g fill="#333">
+    <circle cx="140" cy="105" r="7"/><text x="118" y="112" font-size="22" text-anchor="end" font-weight="700">2023</text>
+    <circle cx="140" cy="189" r="7"/><text x="118" y="196" font-size="22" text-anchor="end" font-weight="700">2024</text>
+    <circle cx="140" cy="273" r="7"/><text x="118" y="280" font-size="22" text-anchor="end" font-weight="700">2025</text>
+    <circle cx="140" cy="462" r="7"/><text x="118" y="469" font-size="22" text-anchor="end" font-weight="700">2026</text>
+    <circle cx="140" cy="670" r="7"/><text x="118" y="677" font-size="22" text-anchor="end" font-weight="700">2027</text>
+    <circle cx="140" cy="754" r="7"/><text x="118" y="761" font-size="22" text-anchor="end" font-weight="700">2028</text>
+  </g>
+
+  <!-- 2023 -->
+  <rect x="165" y="70" width="714" height="32" rx="6" fill="#fdf6ec" stroke="#c09543" stroke-width="2"/>
+  <text x="182" y="91" font-size="18">IFRS S1 and S2 issued (June)</text>
+  <rect x="165" y="108" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="129" font-size="18">CBAM transitional phase begins (October)</text>
+
+  <!-- 2024 -->
+  <rect x="165" y="154" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="175" font-size="18">CSRD Wave 1 reporting begins (FY2024)</text>
+  <rect x="165" y="192" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="213" font-size="18">ESPR in force: Digital Product Passport framework (July)</text>
+
+  <!-- 2025 -->
+  <rect x="165" y="238" width="714" height="32" rx="6" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="182" y="259" font-size="18">SGX Scope 1 and 2 mandatory for listed issuers (FY2025)</text>
+  <rect x="165" y="276" width="714" height="32" rx="6" fill="#f6eef7" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="182" y="297" font-size="18">SEC ends defence of its climate-disclosure rules (March)</text>
+
+  <!-- 2026 -->
+  <rect x="165" y="322" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="343" font-size="18">CBAM definitive phase begins (1 January)</text>
+  <rect x="165" y="360" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="381" font-size="18">Omnibus I directive in force (18 March)</text>
+  <rect x="165" y="398" width="714" height="32" rx="6" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="182" y="419" font-size="18">SGX Scope 3 mandatory for STI constituents (FY2026)</text>
+  <rect x="165" y="436" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="457" font-size="18">Simplified ESRS and VSME delegated acts adopted (3 July)</text>
+  <rect x="165" y="474" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="182" y="495" font-size="18">EU Digital Product Passport registry operational (20 July)</text>
+
+  <!-- present-day marker -->
+  <text x="165" y="536" font-size="17" font-weight="700" fill="#8b1a1a">Now (August 2026)</text>
+  <line x1="140" y1="548" x2="879" y2="548" stroke="#c44" stroke-width="2.5" stroke-dasharray="9 6"/>
+
+  <rect x="165" y="570" width="714" height="32" rx="6" fill="#f6eef7" stroke="#9a6aa5" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="182" y="591" font-size="18">California SB 253: first Scope 1 and 2 report due (10 November)</text>
+
+  <!-- 2027 -->
+  <rect x="165" y="616" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="182" y="637" font-size="18">CBAM certificate sales begin (1 February)</text>
+  <rect x="165" y="654" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="182" y="675" font-size="18">Battery Passport mandatory for EV and industrial batteries (18 February)</text>
+  <rect x="165" y="692" width="714" height="32" rx="6" fill="#eef3fa" stroke="#4472c4" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="182" y="713" font-size="18">Simplified ESRS apply (FY2027)</text>
+
+  <!-- 2028 -->
+  <rect x="165" y="738" width="714" height="32" rx="6" fill="#fdf6ec" stroke="#c09543" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="182" y="759" font-size="18">SBTi Net-Zero 2.0 mandatory for new targets (1 January)</text>
+
+  <!-- legend -->
+  <rect x="25" y="811" width="854" height="48" rx="8" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+  <rect x="45" y="826" width="20" height="20" rx="4" fill="#eef3fa" stroke="#4472c4" stroke-width="2"/>
+  <text x="75" y="842" font-size="16">European Union</text>
+  <rect x="250" y="826" width="20" height="20" rx="4" fill="#f6eef7" stroke="#9a6aa5" stroke-width="2"/>
+  <text x="280" y="842" font-size="16">United States</text>
+  <rect x="450" y="826" width="20" height="20" rx="4" fill="#f2f7f2" stroke="#5b9358" stroke-width="2"/>
+  <text x="480" y="842" font-size="16">Singapore</text>
+  <rect x="640" y="826" width="20" height="20" rx="4" fill="#fdf6ec" stroke="#c09543" stroke-width="2"/>
+  <text x="670" y="842" font-size="16">Global or Voluntary</text>
+
+  <text x="25" y="886" font-size="16" fill="#7a7a7a">Dashed outline marks milestones scheduled but not yet reached as at August 2026.</text>
+  <text x="25" y="910" font-size="16" fill="#7a7a7a">California SB 261 carries no fixed date: enforcement remains enjoined pending a Ninth Circuit ruling.</text>
+</svg>

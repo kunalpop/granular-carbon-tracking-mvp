@@ -1,0 +1,6 @@
+<svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 640 146" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="640" height="146" fill="#ffffff"/>
+    <text x="8" y="20" font-size="15" font-weight="700">Throughput</text><text x="162" y="62" text-anchor="end" font-size="13">4 validators</text>
+      <rect x="170" y="40" width="380" height="34" rx="4" fill="#4472c4"/>
+      <text x="556" y="62" font-size="13" font-weight="600">40.2 TPS</text><text x="162" y="110" text-anchor="end" font-size="13">7 validators</text>
+      <rect x="170" y="88" width="206.38490136674605" height="34" rx="4" fill="#7c9ed9"/>
+      <text x="382.384901366746" y="110" font-size="13" font-weight="600">21.9 TPS</text></svg>

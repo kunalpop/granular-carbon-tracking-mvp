@@ -1,0 +1,216 @@
+{
+  "productId": "5",
+  "description": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "passportHolder": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+  "chainId": 2026,
+  "contracts": {
+    "ParticipantRegistry": "0x5B6aB81c351E289B71697954fDd81f0A6D6B831C",
+    "EmissionEventRegistry": "0x1af2489C352C9AAE88f63016C9a8e6c1ba0f4184",
+    "CarbonToken": "0xb8C5dD96290BBF534c95359DcF8499dda1EA2cc9",
+    "AggregationContract": "0xc6CA342898983E0346301b957edAa4Ab1EeaE2c0",
+    "OntologyRegistry": "0xB318Eb2325B722cd31a9AC6431750a2a27086e79",
+    "ConsortiumMultisig": "0x70187e43247F0A257617e72f1971Dd3A639134A0",
+    "GovernanceModule": "0xD3c7d480d43F001675FE176EEa8130af65d390d2",
+    "GovernanceModuleImplementation": "0x2dD3aae6310656A36460E144AF1ae67a988ACdD8"
+  },
+  "stages": [
+    {
+      "stageId": 1,
+      "stage": "Aluminium casing [SYNTHETIC]",
+      "actor": {
+        "address": "0x6a021adee7D1af852E028c692bD3f81f8D93b572",
+        "name": "AluCo Primary Smelting",
+        "role": "smelter"
+      },
+      "activity": "1.15 kg aluminium",
+      "emissionFactor_gPerUnit": 14800,
+      "efSource": "SYNTHETIC activity; factor CITED (verify): International Aluminium Institute (2024). Primary Aluminium Greenhouse Gas Emissions Intensity",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 17.02,
+      "evidenceHash": "0x93cc4a3d4932e6c0ddfa8e89049fbfd631ebecd7b48b8c444d68a3cb23afe8b2",
+      "prevEventHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "eventHash": "0x51aab3fd9c462c72c8a6f4af8a499f14a6c042e2c03882cdcfcdc33f87dfb26b",
+      "timestamp": "2026-08-05T19:12:13.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 2,
+      "stage": "Circuit board (PCB, populated) [SYNTHETIC]",
+      "actor": {
+        "address": "0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558",
+        "name": "Shenzhen PCB Works",
+        "role": "pcbSupplier"
+      },
+      "activity": "0.35 kg populated board",
+      "emissionFactor_gPerUnit": 250000,
+      "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 87.5,
+      "evidenceHash": "0xfc40fec42a004dbfaf38b57bc33960095c6269ec7b15880cb00adc4ce3117321",
+      "prevEventHash": "0x51aab3fd9c462c72c8a6f4af8a499f14a6c042e2c03882cdcfcdc33f87dfb26b",
+      "eventHash": "0x6a7b1d5009869ef42fff52f7f02870231b62402b88c5ebb1f03a6eeb5a6c639b",
+      "timestamp": "2026-08-05T19:12:17.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 3,
+      "stage": "Battery (Li-ion cell production) [SYNTHETIC]",
+      "actor": {
+        "address": "0x262bF1424a18d346AC85cD127ff64DF88824cf16",
+        "name": "CellTech Batteries",
+        "role": "batteryMaker"
+      },
+      "activity": "0.06 kWh cell capacity",
+      "emissionFactor_gPerUnit": 74000,
+      "efSource": "SYNTHETIC activity; factor CITED (verify): Degen et al. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications 15",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 4.44,
+      "evidenceHash": "0x480768708ec77d98d31cd11692839e81208295ccc4de4ce6982c9212fb93635c",
+      "prevEventHash": "0x6a7b1d5009869ef42fff52f7f02870231b62402b88c5ebb1f03a6eeb5a6c639b",
+      "eventHash": "0x8fb4e5f21aad968340a2034fd7c7ffeabe15543f9b24a7e6765cfa375d48ba9d",
+      "timestamp": "2026-08-05T19:12:21.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 4,
+      "stage": "Screen (LCD module) [SYNTHETIC]",
+      "actor": {
+        "address": "0x71d44Fde74A438C7560C49D30917A49fDB853a2D",
+        "name": "PanelView Displays",
+        "role": "screenSupplier"
+      },
+      "activity": "0.058 m2 panel area",
+      "emissionFactor_gPerUnit": 1100000,
+      "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 63.8,
+      "evidenceHash": "0x3d57bf76695f88f90c96051781a91fd425ccd5ea1899baf4ed94783e9dbaf4ca",
+      "prevEventHash": "0x8fb4e5f21aad968340a2034fd7c7ffeabe15543f9b24a7e6765cfa375d48ba9d",
+      "eventHash": "0x464b22fb2d5f62f0ec31859dbffc7be51cb5ec56e723ed4578fa0b79490d0fb8",
+      "timestamp": "2026-08-05T19:12:25.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 5,
+      "stage": "Assembly electricity [SYNTHETIC]",
+      "actor": {
+        "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+        "name": "LaptopCorp Assembly",
+        "role": "oem"
+      },
+      "activity": "25 kWh factory electricity",
+      "emissionFactor_gPerUnit": 445,
+      "efSource": "SYNTHETIC activity; factor CITED (verify): IEA (2025). Electricity 2025",
+      "methodology": "GHG Protocol Scope 1+2 at supplier / Cat 1 to buyer",
+      "co2e_kg": 11.125,
+      "evidenceHash": "0x08b699415e4ed7240f35b1a00492dcb47d04a8ad5fec49b6318a57fae056c4b1",
+      "prevEventHash": "0x464b22fb2d5f62f0ec31859dbffc7be51cb5ec56e723ed4578fa0b79490d0fb8",
+      "eventHash": "0x2f2f418190cdb36e8963bac6585d3f4a326004272f68d987252d1b91f3103163",
+      "timestamp": "2026-08-05T19:12:29.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 6,
+      "stage": "Packaging (cardboard + plastics) [SYNTHETIC]",
+      "actor": {
+        "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+        "name": "LaptopCorp Assembly",
+        "role": "oem"
+      },
+      "activity": "0.9 kg packaging material",
+      "emissionFactor_gPerUnit": 900,
+      "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 0.81,
+      "evidenceHash": "0x9c9d8c1f96f336b694986e65e35da798ff1775684bfe3518e1958a4876a497b4",
+      "prevEventHash": "0x2f2f418190cdb36e8963bac6585d3f4a326004272f68d987252d1b91f3103163",
+      "eventHash": "0x8bbe517298c7defba111eac326626460567adcb5f074774916108ab7fdc45a02",
+      "timestamp": "2026-08-05T19:12:33.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 7,
+      "stage": "International shipping (sea, container) [SYNTHETIC]",
+      "actor": {
+        "address": "0xd43896E491d84156F503AA9C53cA17FDABAC61ab",
+        "name": "BlueWater Freight",
+        "role": "logistics"
+      },
+      "activity": "65 tonne-km",
+      "emissionFactor_gPerUnit": 16.12,
+      "efSource": "SYNTHETIC activity; factor CITED (verify): UK BEIS/DEFRA (2025). Greenhouse gas reporting",
+      "methodology": "GHG Protocol Scope 3 Cat 4 (upstream transport)",
+      "co2e_kg": 1.047,
+      "evidenceHash": "0xa294c32608b466e164906be8666a3e158ab0bb0323b3b172b71222db8dc6b603",
+      "prevEventHash": "0x8bbe517298c7defba111eac326626460567adcb5f074774916108ab7fdc45a02",
+      "eventHash": "0x5c546c886eb0c8b0a32faea2ee0102e5a766d0144eaa86fb440b904aae2ebb92",
+      "timestamp": "2026-08-05T19:12:37.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 8,
+      "stage": "Use-phase electricity [SYNTHETIC]",
+      "actor": {
+        "address": "0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4",
+        "name": "Corporate IT (use phase)",
+        "role": "usePhaseAgent"
+      },
+      "activity": "175 kWh lifetime electricity",
+      "emissionFactor_gPerUnit": 445,
+      "efSource": "SYNTHETIC activity; factor CITED (verify): IEA (2025). Electricity 2025",
+      "methodology": "GHG Protocol Scope 3 Cat 11 (use of sold products)",
+      "co2e_kg": 77.875,
+      "evidenceHash": "0x29c272066f697b49bfb13e402e741105f186972befc67f60bf84aeed1ebc80ac",
+      "prevEventHash": "0x5c546c886eb0c8b0a32faea2ee0102e5a766d0144eaa86fb440b904aae2ebb92",
+      "eventHash": "0x3b2df3e756988d89b1f27dacad245c740ad69a439503aa161d12ca3f5702a1f1",
+      "timestamp": "2026-08-05T19:12:41.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 9,
+      "stage": "Repair / refurbishment (energy + spare-part allocation) [SYNTHETIC]",
+      "actor": {
+        "address": "0x3600759b13564C149BA14ccd6B8D944a9Ee6D799",
+        "name": "FixIt Refurbishment",
+        "role": "repairer"
+      },
+      "activity": "6 kWh-equivalent",
+      "emissionFactor_gPerUnit": 1500,
+      "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+      "methodology": "GHG Protocol Scope 3 Cat 11 extension (repair)",
+      "co2e_kg": 9,
+      "evidenceHash": "0x6b5a4c689c09044728dbf0d8579cf49c4591e2b4f041b929545a6aec580f0537",
+      "prevEventHash": "0x3b2df3e756988d89b1f27dacad245c740ad69a439503aa161d12ca3f5702a1f1",
+      "eventHash": "0x03fc9064329331747ddcf4adbda29a847eb03d531ecd1cd7e656d8aeb997dd0d",
+      "timestamp": "2026-08-05T19:12:45.000Z",
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "stageId": 10,
+      "stage": "E-waste recycling (avoided-burden credit) [SYNTHETIC]",
+      "actor": {
+        "address": "0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D",
+        "name": "GreenLoop Recycling",
+        "role": "recycler"
+      },
+      "activity": "2 kg mass processed",
+      "emissionFactor_gPerUnit": -1500,
+      "efSource": "SYNTHETIC activity; factor PLACEHOLDER SOURCE NEEDED",
+      "methodology": "GHG Protocol Scope 3 Cat 12 (end-of-life)",
+      "co2e_kg": -3,
+      "evidenceHash": "0x2ca1bee087fde0c66561a0195c6615441d13bf34a495b69443e723dcbe7c6516",
+      "prevEventHash": "0x03fc9064329331747ddcf4adbda29a847eb03d531ecd1cd7e656d8aeb997dd0d",
+      "eventHash": "0x664878b71b0473b246371205ace21b406fc2c77e721515536c94135d67ba61dd",
+      "timestamp": "2026-08-05T19:12:49.000Z",
+      "schemaVersion": "1.0.0"
+    }
+  ],
+  "totals": {
+    "productTotal_kgCO2e": 269.617,
+    "tokenNet_kgCO2e": 269.617,
+    "crossCheckConsistent": true,
+    "hashChainVerified": true,
+    "allTenStagesPresent": true
+  },
+  "dataQualityWarning": "SYNTHETIC DATA - activity values are model-generated, not measured. Factors: see factorStatus per stage (CITED = published source pending verification; PLACEHOLDER_SOURCE_NEEDED = unsourced stand-in). No footprint figure herein may be presented as a real product measurement."
+}

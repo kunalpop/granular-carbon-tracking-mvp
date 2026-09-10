@@ -1,0 +1,127 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Audit report - product 1</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 70rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; vertical-align: top; }
+  th { background: #f0f0f0; }
+  td.num { text-align: right; }
+  small { color: #666; word-break: break-all; }
+  .badge { padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.75rem; font-weight: 600; }
+  .ok { background: #d4f7d4; color: #145214; }
+  .warn { background: #fff3cd; color: #664d03; }
+  .bad { background: #f8d7da; color: #58151c; }
+  .verdict { font-size: 1.2rem; }
+  .warnbox { background: #fff3cd; padding: 0.8rem; border-radius: 0.4rem; margin: 1rem 0; }
+</style></head><body>
+<h1>Product carbon audit report</h1>
+<p><b>Product 1</b>: Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))<br>
+Audited at block 167; every hash and total independently recomputed off-chain.</p>
+<p class="verdict">Verdict: <span class="badge ok">PASS</span></p>
+<div class="warnbox">Data quality: emission factors are PLACEHOLDERS (tagged
+"SOURCE NEEDED" in each event's source field) pending DEFRA/BEIS, IEA,
+ecoinvent, and manufacturer PCF citations.</div>
+<h2>Totals (kg CO2e)</h2>
+<ul>
+  <li>Independently recomputed from events: <b>200.62</b></li>
+  <li>On-chain aggregator: 200.62</li>
+  <li>Carbon-token net supply: 200.62</li>
+  <li>Effective (governed corrections applied): 200.62</li>
+</ul>
+<h2>Integrity checks</h2><ul><li>hashChain: <span class="badge ok">PASS</span></li><li>onChainVerifyChainAgrees: <span class="badge ok">PASS</span></li><li>co2eRecomputation: <span class="badge ok">PASS</span></li><li>totalsAgree: <span class="badge ok">PASS</span></li><li>tokenCrossCheck: <span class="badge ok">PASS</span></li><li>evidenceFiles: <span class="badge ok">PASS</span></li><li>allTenStagesPresent: <span class="badge ok">PASS</span></li></ul>
+<h2>Provenance (10 events)</h2>
+<table><tr><th>#</th><th>Stage</th><th>Actor</th><th>Recorded (UTC)</th>
+<th>Activity & factor source</th><th>kg CO2e</th><th>Checks</th><th>Event hash</th></tr>
+    <tr>
+      <td>0</td><td>1</td>
+      <td>AluCo Primary Smelting<br><small>smelter · 0x6a021adee7D1af852E028c692bD3f81f8D93b572</small></td>
+      <td>2026-09-10T16:56:26.000Z</td>
+      <td>1.2 kg aluminium<br><small>PLACEHOLDER / SOURCE NEEDED: ecoinvent aluminium primary ingot + IAI &amp; IEA grid factor for smelter region</small></td>
+      <td class="num">18.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x17bbe7a8e240c5f1f9bbca241923d888f962b79ee29fcd3f2cac2a797fc8eb1d</small></td>
+    </tr>
+    <tr>
+      <td>1</td><td>2</td>
+      <td>Shenzhen PCB Works<br><small>pcbSupplier · 0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558</small></td>
+      <td>2026-09-10T16:56:30.000Z</td>
+      <td>0.4 kg populated PCB<br><small>PLACEHOLDER / SOURCE NEEDED: ecoinvent printed wiring board + PCF literature</small></td>
+      <td class="num">60.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x79172f0ba32a8e131108f68240b68ae2f72c2d4b96d732c0c27de0c6b9ef987b</small></td>
+    </tr>
+    <tr>
+      <td>2</td><td>3</td>
+      <td>CellTech Batteries<br><small>batteryMaker · 0x262bF1424a18d346AC85cD127ff64DF88824cf16</small></td>
+      <td>2026-09-10T16:56:34.000Z</td>
+      <td>0.06 kWh cell capacity<br><small>PLACEHOLDER / SOURCE NEEDED: GREET / battery LCA (gCO2e per kWh capacity)</small></td>
+      <td class="num">5.40</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x8076975bc2dab65cbfe72cb27d955822a490c3d6049395a2c5e892ff60310676</small></td>
+    </tr>
+    <tr>
+      <td>3</td><td>4</td>
+      <td>PanelView Displays<br><small>screenSupplier · 0x71d44Fde74A438C7560C49D30917A49fDB853a2D</small></td>
+      <td>2026-09-10T16:56:38.000Z</td>
+      <td>0.07 m2 panel area<br><small>PLACEHOLDER / SOURCE NEEDED: ecoinvent LCD module + PCF literature (process gases)</small></td>
+      <td class="num">42.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x2878fa65b86363eac7d689a1734113267b4668f6d1d6cbd8ca625fa0afad67b0</small></td>
+    </tr>
+    <tr>
+      <td>4</td><td>5</td>
+      <td>LaptopCorp Assembly<br><small>oem · 0x90185602439bEBe05FaDAE3218178b75a900b4DA</small></td>
+      <td>2026-09-10T16:56:42.000Z</td>
+      <td>25 kWh factory electricity<br><small>PLACEHOLDER / SOURCE NEEDED: site energy audit + IEA grid factor for assembly country</small></td>
+      <td class="num">13.75</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0xc93f1f8bec2ef5cd24fe6be8f09bf5db5442b3b7b9f8244f33008296c977bdca</small></td>
+    </tr>
+    <tr>
+      <td>5</td><td>6</td>
+      <td>LaptopCorp Assembly<br><small>oem · 0x90185602439bEBe05FaDAE3218178b75a900b4DA</small></td>
+      <td>2026-09-10T16:56:46.000Z</td>
+      <td>0.8 kg cardboard and plastics<br><small>PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS UK GHG conversion factors (material production)</small></td>
+      <td class="num">0.72</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x7fb3222cfb140814dbadee1ad1a728314cb95320d015e0aeca8acc680de260cb</small></td>
+    </tr>
+    <tr>
+      <td>6</td><td>7</td>
+      <td>BlueWater Freight<br><small>logistics · 0xd43896E491d84156F503AA9C53cA17FDABAC61ab</small></td>
+      <td>2026-09-10T16:56:50.000Z</td>
+      <td>50 tonne-km (sea freight)<br><small>PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS freight factors (container ship, gCO2e per tonne-km)</small></td>
+      <td class="num">0.75</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0xf6ac4cf20f7620627f652f3f5e9e3bba331ad4753e3fd6fd850d33dc5bee699c</small></td>
+    </tr>
+    <tr>
+      <td>7</td><td>8</td>
+      <td>Corporate IT (use phase)<br><small>usePhaseAgent · 0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4</small></td>
+      <td>2026-09-10T16:56:54.000Z</td>
+      <td>150 kWh lifetime electricity<br><small>PLACEHOLDER / SOURCE NEEDED: IEA or national grid factor for use country, averaged over service life</small></td>
+      <td class="num">60.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x57540884ba7715ca32774081e77a2a13d7dd72bfee13a9c5582bf47b3497d169</small></td>
+    </tr>
+    <tr>
+      <td>8</td><td>9</td>
+      <td>FixIt Refurbishment<br><small>repairer · 0x3600759b13564C149BA14ccd6B8D944a9Ee6D799</small></td>
+      <td>2026-09-10T16:56:58.000Z</td>
+      <td>5 kWh (repair energy + spare-part allocation)<br><small>PLACEHOLDER / SOURCE NEEDED: repair-shop energy + spare part embodied carbon (ecoinvent)</small></td>
+      <td class="num">3.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x886fbffa26d75f08a3e88c21635bf2c0b9d141cb91bee7b45e2bfeb1259ee47c</small></td>
+    </tr>
+    <tr>
+      <td>9</td><td>10</td>
+      <td>GreenLoop Recycling<br><small>recycler · 0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D</small></td>
+      <td>2026-09-10T16:57:02.000Z</td>
+      <td>2 kg mass processed<br><small>PLACEHOLDER / SOURCE NEEDED: recycling LCA; NEGATIVE factor = avoided-burden credit for recovered materials</small></td>
+      <td class="num">-3.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge ok">VERIFIED</span></td>
+      <td><small>0x0432398796d55e9ccd3146a17a295170a50f1f83c8bf4765a3dd8b0b738bc972</small></td>
+    </tr></table>
+<h2>Governed corrections</h2><p>None recorded.</p>
+<h2>Escalations</h2><p>None raised.</p>
+</body></html>

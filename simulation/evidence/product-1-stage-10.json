@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "stageId": 10,
+  "stage": "E-waste recycling",
+  "reportedBy": "GreenLoop Recycling",
+  "activity": "2 kg mass processed",
+  "emissionFactor": "-1500 gCO2e per kg mass processed",
+  "efSource": "PLACEHOLDER / SOURCE NEEDED: recycling LCA; NEGATIVE factor = avoided-burden credit for recovered materials",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

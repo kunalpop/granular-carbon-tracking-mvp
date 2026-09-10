@@ -1,0 +1,57 @@
+[
+  {
+    "role": "deployer",
+    "address": "0x624Bc1668CcC1Df6AA36b2BE025Dd7F48b09Af9c",
+    "privateKey": "0xa9d38a457c42229944917d257527e73b5ed4747abfd09a46ac4359f7a74e6cf3"
+  },
+  {
+    "role": "smelter",
+    "address": "0x6a021adee7D1af852E028c692bD3f81f8D93b572",
+    "privateKey": "0x358fc05e93bfff937c2b5e4a9039af67ad09e13b7640ac5d0f929481b8479051"
+  },
+  {
+    "role": "pcbSupplier",
+    "address": "0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558",
+    "privateKey": "0xa0592229e10f5e5088c76df625c716ab63bc5b0bc5816ace635de3b707c72262"
+  },
+  {
+    "role": "batteryMaker",
+    "address": "0x262bF1424a18d346AC85cD127ff64DF88824cf16",
+    "privateKey": "0x60260778a4676855f2498418a78a71e67598dc12bb892ab871ebb1ae82f3a2a9"
+  },
+  {
+    "role": "screenSupplier",
+    "address": "0x71d44Fde74A438C7560C49D30917A49fDB853a2D",
+    "privateKey": "0x9ac14148fd847620fd817a1c71dacff56f65b259b807e0349437893e5a85732b"
+  },
+  {
+    "role": "oem",
+    "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+    "privateKey": "0xc0ddda159e86fb01a874c833b9ebeaca5447279fa9c4096e69a22a8464cc54b0"
+  },
+  {
+    "role": "logistics",
+    "address": "0xd43896E491d84156F503AA9C53cA17FDABAC61ab",
+    "privateKey": "0x01e5be6f3496890d2614434eca239e4e4914b74a5d6563c5ca83dba0541d16ec"
+  },
+  {
+    "role": "usePhaseAgent",
+    "address": "0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4",
+    "privateKey": "0x51131d0982b2f723ff7d44dc5f877df9581cb48a66b3c68b29a838ee71d52eee"
+  },
+  {
+    "role": "repairer",
+    "address": "0x3600759b13564C149BA14ccd6B8D944a9Ee6D799",
+    "privateKey": "0x507aff20133c581c97701a55175a5737266085b1ab25c41928c65313cecce0a7"
+  },
+  {
+    "role": "recycler",
+    "address": "0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D",
+    "privateKey": "0x3b3270aaf0f5c3c149dd8d69851bee33a0a495e5c71a5dfb638fa36c163e1ff3"
+  },
+  {
+    "role": "auditor",
+    "address": "0xfcDE4E7beb74dae7874436b20D95A442D63aeC91",
+    "privateKey": "0xa11e2826bac221dcd6c48d301e59c68a299afb99b06106d607d15e43df941210"
+  }
+]

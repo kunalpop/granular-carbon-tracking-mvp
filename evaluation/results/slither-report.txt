@@ -1,0 +1,226 @@
+﻿# Slither static-analysis report
+# Tool: Slither 0.11.6 (official container image ghcr.io/crytic/slither:latest)
+# Run: 2026-08-07 on the compiled Hardhat artifacts (slither . --hardhat-ignore-compile --exclude-dependencies)
+# Result: 76 contracts analysed with 102 detectors; 20 results, none of high or critical severity.
+# Triage: see dissertation Section 4.3.6.
+
+Problem executing hardhat to fetch configuration, using defaults: [Errno 2] No such file or directory: 'npx'
+ 
+Detector: uninitialized-local
+EmissionEventRegistry.recordEvent(uint256,uint8,uint256,string,int256,string,string,bytes32,string).e 
+(contracts/EmissionEventRegistry.sol#99) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+INFO:Detectors:
+Detector: calls-loop
+GovernanceModule.effectiveCo2e(uint256,uint256) (contracts/GovernanceModule.sol#177-181) has external calls inside a 
+loop: eventRegistry.eventAt(productId,eventIndex).co2eGrams (contracts/GovernanceModule.sol#180)
+	Calls stack containing the loop:
+		GovernanceModule.effectiveProductTotal(uint256)
+GovernanceModule.screenProduct(uint256) (contracts/GovernanceModule.sol#205-221) has external calls inside a loop: e = 
+eventRegistry.eventAt(productId,i) (contracts/GovernanceModule.sol#208)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in CarbonToken.burnCarbon(uint256,address,uint256) (contracts/CarbonToken.sol#68-72):
+	External calls:
+	- _burn(from,carbonId(productId),grams) (contracts/CarbonToken.sol#70)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- CarbonBurned(productId,from,grams) (contracts/CarbonToken.sol#71)
+Reentrancy in CarbonToken.mintCarbon(uint256,address,uint256) (contracts/CarbonToken.sol#60-65):
+	External calls:
+	- _mint(to,carbonId(productId),grams,) (contracts/CarbonToken.sol#63)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- CarbonMinted(productId,to,grams) (contracts/CarbonToken.sol#64)
+Reentrancy in CarbonToken.mintPassport(uint256,address) (contracts/CarbonToken.sol#52-57):
+	External calls:
+	- _mint(to,id,1,) (contracts/CarbonToken.sol#55)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- PassportMinted(productId,to) (contracts/CarbonToken.sol#56)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in CarbonToken.burnCarbon(uint256,address,uint256) (contracts/CarbonToken.sol#68-72):
+	External calls:
+	- _burn(from,carbonId(productId),grams) (contracts/CarbonToken.sol#70)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- CarbonBurned(productId,from,grams) (contracts/CarbonToken.sol#71)
+Reentrancy in CarbonToken.mintCarbon(uint256,address,uint256) (contracts/CarbonToken.sol#60-65):
+	External calls:
+	- _mint(to,carbonId(productId),grams,) (contracts/CarbonToken.sol#63)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- CarbonMinted(productId,to,grams) (contracts/CarbonToken.sol#64)
+Reentrancy in CarbonToken.mintPassport(uint256,address) (contracts/CarbonToken.sol#52-57):
+	External calls:
+	- _mint(to,id,1,) (contracts/CarbonToken.sol#55)
+		- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)
+		- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)
+		- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#216)
+		- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) 
+(node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#220)
+	Event emitted after the call(s):
+	- PassportMinted(productId,to) (contracts/CarbonToken.sol#56)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in ConsortiumMultisig.execute(uint256) (contracts/ConsortiumMultisig.sol#69-78):
+	External calls:
+	- (ok,None) = t.target.call(t.data) (contracts/ConsortiumMultisig.sol#75)
+	Event emitted after the call(s):
+	- TransactionExecuted(txId,msg.sender) (contracts/ConsortiumMultisig.sol#77)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: timestamp
+EmissionEventRegistry.verifyChain(uint256) (contracts/EmissionEventRegistry.sol#179-190) uses timestamp for comparisons
+	Dangerous comparisons:
+	- e.prevEventHash != prev || _hashEvent(e) != e.eventHash (contracts/EmissionEventRegistry.sol#183-184)
+	- prev != lastEventHash[productId] (contracts/EmissionEventRegistry.sol#186-187)
+ParticipantRegistry.isRegistered(address) (contracts/ParticipantRegistry.sol#77-79) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _known[account] && _participants[account].active (contracts/ParticipantRegistry.sol#78)
+ParticipantRegistry.canWriteStage(address,uint8) (contracts/ParticipantRegistry.sol#82-84) uses timestamp for 
+comparisons
+	Dangerous comparisons:
+	- isRegistered(account) && _stageAuth[account][stageId] (contracts/ParticipantRegistry.sol#83)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: timestamp
+EmissionEventRegistry.verifyChain(uint256) (contracts/EmissionEventRegistry.sol#181-193) uses timestamp for comparisons
+	Dangerous comparisons:
+	- e.prevEventHash != prev || _hashEvent(e) != e.eventHash (contracts/EmissionEventRegistry.sol#186)
+	- prev != lastEventHash[productId] (contracts/EmissionEventRegistry.sol#191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: timestamp
+GovernanceModule.correctionAt(uint256) (contracts/GovernanceModule.sol#166-169) uses timestamp for comparisons
+	Dangerous comparisons:
+	- correctionId == 0 || correctionId > _corrections.length (contracts/GovernanceModule.sol#167)
+OntologyRegistry.isActiveVersion(string) (contracts/OntologyRegistry.sol#72-74) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _known[version] && ! _byVersion[version].deprecated (contracts/OntologyRegistry.sol#73)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: pragma
+5 different versions of Solidity are used:
+	- Version constraint ^0.8.20 is used by:
+		-^0.8.20 (node_modules/@openzeppelin/contracts/access/AccessControl.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Comparators.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Context.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Panic.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/SlotDerivation.sol#5)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#5)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/math/Math.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol#5)
+	- Version constraint >=0.8.4 is used by:
+		->=0.8.4 (node_modules/@openzeppelin/contracts/access/IAccessControl.sol#4)
+		->=0.8.4 (node_modules/@openzeppelin/contracts/interfaces/draft-IERC6093.sol#4)
+	- Version constraint ^0.8.24 is used by:
+		-^0.8.24 (node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol#4)
+		-^0.8.24 (node_modules/@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol#4)
+		-^0.8.24 (node_modules/@openzeppelin/contracts/utils/Arrays.sol#5)
+		-^0.8.24 (contracts/AggregationContract.sol#2)
+		-^0.8.24 (contracts/CarbonToken.sol#2)
+		-^0.8.24 (contracts/EmissionEventRegistry.sol#2)
+		-^0.8.24 (contracts/ParticipantRegistry.sol#2)
+	- Version constraint >=0.6.2 is used by:
+		->=0.6.2 (node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol#4)
+		->=0.6.2 (node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol#4)
+		->=0.6.2 (node_modules/@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol#4)
+	- Version constraint >=0.4.16 is used by:
+		->=0.4.16 (node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol#4)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#different-pragma-directives-are-used
+INFO:Detectors:
+Detector: pragma
+7 different versions of Solidity are used:
+	- Version constraint ^0.8.20 is used by:
+		-^0.8.20 (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol#3)
+		-^0.8.20 (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/access/AccessControl.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/proxy/Proxy.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/proxy/utils/Initializable.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Address.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Context.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/Errors.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/LowLevelCall.sol#4)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#5)
+		-^0.8.20 (node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol#4)
+	- Version constraint ^0.8.22 is used by:
+		-^0.8.22 (node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol#3)
+		-^0.8.22 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol#4)
+		-^0.8.22 (node_modules/@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol#4)
+	- Version constraint >=0.8.4 is used by:
+		->=0.8.4 (node_modules/@openzeppelin/contracts/access/IAccessControl.sol#4)
+	- Version constraint >=0.4.11 is used by:
+		->=0.4.11 (node_modules/@openzeppelin/contracts/interfaces/IERC1967.sol#4)
+	- Version constraint >=0.4.16 is used by:
+		->=0.4.16 (node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol#4)
+		->=0.4.16 (node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol#4)
+		->=0.4.16 (node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol#4)
+	- Version constraint ^0.8.21 is used by:
+		-^0.8.21 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol#4)
+	- Version constraint ^0.8.24 is used by:
+		-^0.8.24 (contracts/ConsortiumMultisig.sol#2)
+		-^0.8.24 (contracts/EmissionEventRegistry.sol#2)
+		-^0.8.24 (contracts/GovernanceModule.sol#2)
+		-^0.8.24 (contracts/OntologyRegistry.sol#2)
+		-^0.8.24 (contracts/ParticipantRegistry.sol#2)
+		-^0.8.24 (contracts/mocks/GovernanceModuleV2.sol#2)
+		-^0.8.24 (contracts/mocks/Imports.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#different-pragma-directives-are-used
+INFO:Detectors:
+Detector: low-level-calls
+Low level call in ConsortiumMultisig.execute(uint256) (contracts/ConsortiumMultisig.sol#69-78):
+	- (ok,None) = t.target.call(t.data) (contracts/ConsortiumMultisig.sol#75)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Detectors:
+Detector: naming-convention
+Parameter GovernanceModule.initialize(address,EmissionEventRegistry,address)._eventRegistry 
+(contracts/GovernanceModule.sol#96) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+INFO:Slither:. analyzed (76 contracts with 102 detectors), 20 result(s) found

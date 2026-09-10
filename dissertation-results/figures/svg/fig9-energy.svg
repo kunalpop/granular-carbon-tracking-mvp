@@ -1,0 +1,13 @@
+<svg font-family="Segoe UI, Arial, sans-serif" viewBox="0 0 680 314" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="680" height="314" fill="#ffffff"/>
+    <text x="8" y="22" font-size="16" font-weight="700">Energy per transaction: PoA prototype vs published PoW/PoS anchors</text>
+    <text x="8" y="302" font-size="13" fill="#666">Log-scale comparison. Red bars are published anchors from Sedlmeir et al. (2020).</text><text x="192" y="66" text-anchor="end" font-size="13">This prototype, 4 validators</text>
+      <rect x="200" y="44" width="42.498379548711874" height="34" rx="4" fill="#2e9e4f"/>
+      <text x="248.49837954871188" y="66" font-size="13" font-weight="600">0.6 J/tx</text><text x="192" y="114" text-anchor="end" font-size="13">This prototype, 7 validators</text>
+      <rect x="200" y="92" width="72.5118772059929" height="34" rx="4" fill="#2e9e4f"/>
+      <text x="278.5118772059929" y="114" font-size="13" font-weight="600">3.8 J/tx</text><text x="192" y="162" text-anchor="end" font-size="13">Permissioned, ~10 nodes</text>
+      <rect x="200" y="140" width="51.15384615384615" height="34" rx="4" fill="#c44"/>
+      <text x="257.1538461538462" y="162" font-size="13" font-weight="600">1.0 J/tx</text><text x="192" y="210" text-anchor="end" font-size="13">Non-PoW permissionless</text>
+      <rect x="200" y="188" width="160.76923076923077" height="34" rx="4" fill="#c44"/>
+      <text x="366.7692307692308" y="210" font-size="13" font-weight="600">1000.0 J/tx</text><text x="192" y="258" text-anchor="end" font-size="13">Bitcoin proof-of-work</text>
+      <rect x="200" y="236" width="380" height="34" rx="4" fill="#c44"/>
+      <text x="586" y="258" font-size="13" font-weight="600">1.0e+9 J/tx</text></svg>

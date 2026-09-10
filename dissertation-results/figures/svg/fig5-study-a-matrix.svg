@@ -1,0 +1,84 @@
+<svg viewBox="0 0 904 570" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 20 = 10 pt, 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt. -->
+  <rect x="0" y="0" width="904" height="570" fill="#ffffff"/>
+
+  <!-- column headers -->
+  <text x="287" y="45" font-size="18" text-anchor="middle" font-weight="700">T-a: lower a past value</text>
+  <text x="527" y="45" font-size="18" text-anchor="middle" font-weight="700">T-b: delete an event</text>
+  <text x="767" y="45" font-size="18" text-anchor="middle" font-weight="700">T-c: back-date an event</text>
+
+  <!-- row headers -->
+  <text x="25" y="115" font-size="20" font-weight="700">Spreadsheet</text>
+  <text x="25" y="138" font-size="17" fill="#555">(CSV)</text>
+  <text x="25" y="253" font-size="20" font-weight="700">Centralised DB</text>
+  <text x="25" y="276" font-size="17" fill="#555">(SQLite)</text>
+  <text x="25" y="391" font-size="20" font-weight="700">Blockchain</text>
+  <text x="25" y="414" font-size="17" fill="#555">(Besu QBFT)</text>
+
+  <!-- row 1: spreadsheet -->
+  <rect x="175" y="62" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="287" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, silent</text>
+  <text x="287" y="120" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="287" y="142" font-size="16" text-anchor="middle" fill="#58151c">goes undetected;</text>
+  <text x="287" y="164" font-size="16" text-anchor="middle" fill="#58151c">culprit unidentifiable</text>
+
+  <rect x="415" y="62" width="224" height="120" rx="8" fill="#fff3cd" stroke="#b8912f" stroke-width="2.5"/>
+  <text x="527" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#664d03">Possible, silent</text>
+  <text x="527" y="120" font-size="16" text-anchor="middle" fill="#664d03">whole-stage gap caught</text>
+  <text x="527" y="142" font-size="16" text-anchor="middle" fill="#664d03">by the 10-stage rule;</text>
+  <text x="527" y="164" font-size="16" text-anchor="middle" fill="#664d03">culprit unknown</text>
+
+  <rect x="655" y="62" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="767" y="94" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, silent</text>
+  <text x="767" y="120" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="767" y="142" font-size="16" text-anchor="middle" fill="#58151c">goes undetected;</text>
+  <text x="767" y="164" font-size="16" text-anchor="middle" fill="#58151c">culprit unidentifiable</text>
+
+  <!-- row 2: centralised database -->
+  <rect x="175" y="200" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="287" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, routine SQL</text>
+  <text x="287" y="258" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="287" y="280" font-size="16" text-anchor="middle" fill="#58151c">undetected; logs owned</text>
+  <text x="287" y="302" font-size="16" text-anchor="middle" fill="#58151c">by the same admin</text>
+
+  <rect x="415" y="200" width="224" height="120" rx="8" fill="#fff3cd" stroke="#b8912f" stroke-width="2.5"/>
+  <text x="527" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#664d03">Possible, routine SQL</text>
+  <text x="527" y="258" font-size="16" text-anchor="middle" fill="#664d03">whole-stage gap caught</text>
+  <text x="527" y="280" font-size="16" text-anchor="middle" fill="#664d03">by the 10-stage rule;</text>
+  <text x="527" y="302" font-size="16" text-anchor="middle" fill="#664d03">culprit unknown</text>
+
+  <rect x="655" y="200" width="224" height="120" rx="8" fill="#f8d7da" stroke="#c44" stroke-width="2.5"/>
+  <text x="767" y="232" font-size="18" text-anchor="middle" font-weight="700" fill="#58151c">Possible, routine SQL</text>
+  <text x="767" y="258" font-size="16" text-anchor="middle" fill="#58151c">competent insider</text>
+  <text x="767" y="280" font-size="16" text-anchor="middle" fill="#58151c">undetected; logs owned</text>
+  <text x="767" y="302" font-size="16" text-anchor="middle" fill="#58151c">by the same admin</text>
+
+  <!-- row 3: ledger -->
+  <rect x="175" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="287" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">No silent path</text>
+  <text x="287" y="396" font-size="16" text-anchor="middle" fill="#145214">rejected in ~15 ms,</text>
+  <text x="287" y="418" font-size="16" text-anchor="middle" fill="#145214">sender identified;</text>
+  <text x="287" y="440" font-size="16" text-anchor="middle" fill="#145214">restatement is visible</text>
+
+  <rect x="415" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="527" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">Not expressible</text>
+  <text x="527" y="396" font-size="16" text-anchor="middle" fill="#145214">no delete interface;</text>
+  <text x="527" y="418" font-size="16" text-anchor="middle" fill="#145214">node tampering caught</text>
+  <text x="527" y="440" font-size="16" text-anchor="middle" fill="#145214">by 4-of-5 quorum &lt;1 s</text>
+
+  <rect x="655" y="338" width="224" height="120" rx="8" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2.5"/>
+  <text x="767" y="370" font-size="18" text-anchor="middle" font-weight="700" fill="#145214">Not expressible</text>
+  <text x="767" y="396" font-size="16" text-anchor="middle" fill="#145214">no timestamp parameter;</text>
+  <text x="767" y="418" font-size="16" text-anchor="middle" fill="#145214">block clock assigns</text>
+  <text x="767" y="440" font-size="16" text-anchor="middle" fill="#145214">event time</text>
+
+  <!-- legend -->
+  <rect x="25" y="485" width="854" height="54" rx="8" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+  <rect x="45" y="501" width="22" height="22" rx="4" fill="#f8d7da" stroke="#c44" stroke-width="2"/>
+  <text x="78" y="518" font-size="16">silent and unattributable</text>
+  <rect x="316" y="501" width="22" height="22" rx="4" fill="#fff3cd" stroke="#b8912f" stroke-width="2"/>
+  <text x="349" y="518" font-size="16">heuristic only, if audited</text>
+  <rect x="587" y="501" width="22" height="22" rx="4" fill="#d4f7d4" stroke="#2e7d32" stroke-width="2"/>
+  <text x="620" y="518" font-size="16">prevented and attributed</text>
+</svg>

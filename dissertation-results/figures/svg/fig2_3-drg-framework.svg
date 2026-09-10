@@ -1,0 +1,57 @@
+<svg viewBox="0 0 904 650" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 24 = 12 pt, 20 = 10 pt, 18 = 9 pt, 17 = 8.5 pt. -->
+  <rect x="0" y="0" width="904" height="650" fill="#ffffff"/>
+
+  <!-- crosscutting resource band -->
+  <rect x="25" y="40" width="210" height="545" rx="9" fill="#f6f3fb" stroke="#7b5ea7" stroke-width="2.5"/>
+  <text x="130" y="175" font-size="21" text-anchor="middle" font-weight="700">Resource layer</text>
+  <text x="130" y="203" font-size="17" text-anchor="middle" fill="#666">(crosscutting)</text>
+
+  <rect x="45" y="245" width="170" height="90" rx="7" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="130" y="282" font-size="17" text-anchor="middle" font-weight="700">In the prototype</text>
+  <text x="130" y="308" font-size="17" text-anchor="middle" fill="#555">carbon</text>
+
+  <rect x="45" y="365" width="170" height="115" rx="7" fill="#fdfaf3" stroke="#b8912f" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <text x="130" y="400" font-size="17" text-anchor="middle" font-weight="700">Via Appendix H</text>
+  <text x="130" y="426" font-size="17" text-anchor="middle" fill="#555">water, materials</text>
+  <text x="130" y="450" font-size="17" text-anchor="middle" fill="#555">and land use</text>
+
+  <!-- governance layer -->
+  <rect x="270" y="40" width="470" height="145" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="505" y="80" font-size="24" text-anchor="middle" font-weight="700">Governance layer</text>
+  <text x="505" y="110" font-size="20" text-anchor="middle">Rules, incentives, accountability</text>
+  <text x="505" y="139" font-size="18" text-anchor="middle" fill="#555">consortium and regulator governance;</text>
+  <text x="505" y="163" font-size="18" text-anchor="middle" fill="#555">correction and override</text>
+
+  <!-- reporting layer -->
+  <rect x="270" y="230" width="470" height="145" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="505" y="270" font-size="24" text-anchor="middle" font-weight="700">Reporting layer</text>
+  <text x="505" y="300" font-size="20" text-anchor="middle">Auditable disclosures</text>
+  <text x="505" y="329" font-size="18" text-anchor="middle" fill="#555">GHG Protocol, ESRS, IFRS S2 and CBAM</text>
+  <text x="505" y="353" font-size="18" text-anchor="middle" fill="#555">alignment; audit interface</text>
+
+  <!-- data layer -->
+  <rect x="270" y="420" width="470" height="145" rx="9" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="505" y="468" font-size="24" text-anchor="middle" font-weight="700">Data layer</text>
+  <text x="505" y="500" font-size="20" text-anchor="middle">Provenance, integrity, traceability</text>
+  <text x="505" y="529" font-size="18" text-anchor="middle" fill="#555">hash-linked events, evidence anchors, tokens</text>
+
+  <!-- upward recursion -->
+  <g stroke="#888" stroke-width="2.5" fill="#888">
+    <line x1="350" y1="420" x2="350" y2="390"/><polygon points="350,379 343,393 357,393"/>
+    <line x1="350" y1="230" x2="350" y2="200"/><polygon points="350,189 343,203 357,203"/>
+  </g>
+  <text x="375" y="406" font-size="18" fill="#444">data enables reporting</text>
+  <text x="375" y="216" font-size="18" fill="#444">reporting supports governance</text>
+
+  <!-- governance feedback -->
+  <g stroke="#888" stroke-width="2.5" fill="none" stroke-dasharray="8 5">
+    <path d="M 740 112 L 790 112 L 790 492 L 752 492"/>
+  </g>
+  <polygon points="741,492 755,485 755,499" fill="#888"/>
+  <text transform="rotate(-90, 815, 300)" x="815" y="300" font-size="17" text-anchor="middle" fill="#444">governance shapes what data</text>
+  <text transform="rotate(-90, 838, 300)" x="838" y="300" font-size="17" text-anchor="middle" fill="#444">must be captured and validated</text>
+
+  <text x="25" y="625" font-size="17" fill="#7a7a7a">Dashed outline marks resource scope stated as theory in Appendix H, not evaluated here.</text>
+</svg>

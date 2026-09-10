@@ -1,0 +1,4 @@
+| Configuration | TPS | Block time (s) | TTF | Latency avg / p95 (s, burst) | Network power under load (W) | Energy per tx (J) |
+|---|---|---|---|---|---|---|
+| 4 validators + observer | 40.2 | 2.00 | Immediate (deterministic at inclusion) | 4.2 / 5.6 | 23.3 | 0.58 |
+| 7 validators | 21.9 | 3.00 | Immediate (deterministic at inclusion) | 8.2 / 10.6 | 84.0 | 3.84 |

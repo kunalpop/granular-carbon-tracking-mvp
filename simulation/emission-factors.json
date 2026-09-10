@@ -1,0 +1,118 @@
+{
+  "_WARNING": "EVERY NUMBER IN THIS FILE IS A PLACEHOLDER. None of these values is sourced and none may be cited or used for evaluation results. Each entry is tagged 'SOURCE NEEDED' naming the intended source family (DEFRA/BEIS, IEA, ecoinvent, GREET, manufacturer PCF). Replace values and complete citations before Studies A-C are reported. The 'SOURCE NEEDED' tag is deliberately written into the on-chain efSource field so even ledger data self-declares as unsourced.",
+  "libraryVersion": "0.0.1-placeholder",
+  "schemaVersion": "1.0.0",
+  "referenceProduct": "Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3)",
+  "stages": [
+    {
+      "stageId": 1,
+      "name": "Aluminium casing",
+      "actorRole": "smelter",
+      "activityValue": 1.2,
+      "activityUnit": "kg aluminium",
+      "emissionFactor_gCO2ePerUnit": 15000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent aluminium primary ingot + IAI & IEA grid factor for smelter region",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "notes": "Smelter electricity mix dominates. Placeholder magnitude only."
+    },
+    {
+      "stageId": 2,
+      "name": "Circuit board (PCB)",
+      "actorRole": "pcbSupplier",
+      "activityValue": 0.4,
+      "activityUnit": "kg populated PCB",
+      "emissionFactor_gCO2ePerUnit": 150000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent printed wiring board + PCF literature",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "notes": "High embodied intensity per gram. Placeholder magnitude only."
+    },
+    {
+      "stageId": 3,
+      "name": "Battery",
+      "actorRole": "batteryMaker",
+      "activityValue": 0.06,
+      "activityUnit": "kWh cell capacity",
+      "emissionFactor_gCO2ePerUnit": 90000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: GREET / battery LCA (gCO2e per kWh capacity)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "notes": "60 Wh pack. Placeholder magnitude only."
+    },
+    {
+      "stageId": 4,
+      "name": "Screen",
+      "actorRole": "screenSupplier",
+      "activityValue": 0.07,
+      "activityUnit": "m2 panel area",
+      "emissionFactor_gCO2ePerUnit": 600000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent LCD module + PCF literature (process gases)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "notes": "14-inch panel is roughly 0.07 m2. Placeholder magnitude only."
+    },
+    {
+      "stageId": 5,
+      "name": "Assembly",
+      "actorRole": "oem",
+      "activityValue": 25,
+      "activityUnit": "kWh factory electricity",
+      "emissionFactor_gCO2ePerUnit": 550,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: site energy audit + IEA grid factor for assembly country",
+      "methodology": "GHG Protocol Scope 1+2 at supplier, Scope 3 Cat 1 to buyer",
+      "notes": "Placeholder magnitude only."
+    },
+    {
+      "stageId": 6,
+      "name": "Packaging",
+      "actorRole": "oem",
+      "activityValue": 0.8,
+      "activityUnit": "kg cardboard and plastics",
+      "emissionFactor_gCO2ePerUnit": 900,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS UK GHG conversion factors (material production)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "notes": "Placeholder magnitude only."
+    },
+    {
+      "stageId": 7,
+      "name": "International shipping",
+      "actorRole": "logistics",
+      "activityValue": 50,
+      "activityUnit": "tonne-km (sea freight)",
+      "emissionFactor_gCO2ePerUnit": 15,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS freight factors (container ship, gCO2e per tonne-km)",
+      "methodology": "GHG Protocol Scope 3 Cat 4 (upstream transport)",
+      "notes": "2.5 kg shipped ~20,000 km by sea. Air freight sensitivity is a Study C variant. Placeholder magnitude only."
+    },
+    {
+      "stageId": 8,
+      "name": "Use-phase electricity",
+      "actorRole": "usePhaseAgent",
+      "activityValue": 150,
+      "activityUnit": "kWh lifetime electricity",
+      "emissionFactor_gCO2ePerUnit": 400,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: IEA or national grid factor for use country, averaged over service life",
+      "methodology": "GHG Protocol Scope 3 Cat 11 (use of sold products)",
+      "notes": "4-year service life assumption. Placeholder magnitude only."
+    },
+    {
+      "stageId": 9,
+      "name": "Repair / refurbishment",
+      "actorRole": "repairer",
+      "activityValue": 5,
+      "activityUnit": "kWh (repair energy + spare-part allocation)",
+      "emissionFactor_gCO2ePerUnit": 600,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: repair-shop energy + spare part embodied carbon (ecoinvent)",
+      "methodology": "GHG Protocol Scope 3 Cat 11 extension",
+      "notes": "Life-extension stage. Placeholder magnitude only."
+    },
+    {
+      "stageId": 10,
+      "name": "E-waste recycling",
+      "actorRole": "recycler",
+      "activityValue": 2.0,
+      "activityUnit": "kg mass processed",
+      "emissionFactor_gCO2ePerUnit": -1500,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: recycling LCA; NEGATIVE factor = avoided-burden credit for recovered materials",
+      "methodology": "GHG Protocol Scope 3 Cat 12 (end-of-life)",
+      "notes": "Net credit tests signed aggregation. Placeholder magnitude only."
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "_DATA_STATUS": "SYNTHETIC DATA - activity values are model-generated, not measured. Factors: see factorStatus per stage (CITED = published source, verified; DERIVED_FROM_CITED = composed from cited components with documented synthetic composition assumptions). No footprint figure herein may be presented as a real product measurement.",
+  "generator": {
+    "script": "simulation/synthetic/generate.js",
+    "seed": 20260806,
+    "mode": "reference = deterministic central parameters"
+  },
+  "referenceProduct": "SYNTHETIC generic 14-inch laptop (reference instance)",
+  "schemaVersion": "1.0.0",
+  "realismCheck": {
+    "totalKg": 192.56,
+    "anchorRange": [
+      150,
+      450
+    ],
+    "withinPublishedRange": true,
+    "manufacturingKg": 111.54,
+    "usePhaseKg": 77.88,
+    "manufacturingDominates": true
+  },
+  "stages": [
+    {
+      "stageId": 1,
+      "name": "Aluminium casing [SYNTHETIC]",
+      "actorRole": "smelter",
+      "activityValue": 1.15,
+      "activityUnit": "kg aluminium",
+      "emissionFactor_gCO2ePerUnit": 14800,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: International Aluminium Institute (n.d.). Primary Aluminium Greenhouse Gas Emissions Intensity",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 17.02,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 2,
+      "name": "Circuit board (PCB, populated) [SYNTHETIC]",
+      "actorRole": "pcbSupplier",
+      "activityValue": 0.35,
+      "activityUnit": "kg populated board",
+      "emissionFactor_gCO2ePerUnit": 185714,
+      "factorStatus": "DERIVED_FROM_CITED",
+      "efSource": "SYNTHETIC activity; factor DERIVED from cited components (see factors-table.json)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 65,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 3,
+      "name": "Battery (Li-ion cell production) [SYNTHETIC]",
+      "actorRole": "batteryMaker",
+      "activityValue": 0.06,
+      "activityUnit": "kWh cell capacity",
+      "emissionFactor_gCO2ePerUnit": 74000,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: Peiseler, L., Schenker, V., Schatzmann, K., Pfister, S., Wood, V., & Schmidt, T. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications, 15, Article 10301",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 4.44,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 4,
+      "name": "Screen (LCD module) [SYNTHETIC]",
+      "actorRole": "screenSupplier",
+      "activityValue": 0.058,
+      "activityUnit": "m2 panel area",
+      "emissionFactor_gCO2ePerUnit": 222000,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: Lovehagen, N., Malmodin, J., Bergmark, P., & Matinfar, S. (2023). Assessing embodied carbon emissions of communication user devices by combining approaches. Renewable and Sustainable Energy Reviews, 183, 113422",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 12.876,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 5,
+      "name": "Assembly electricity [SYNTHETIC]",
+      "actorRole": "oem",
+      "activityValue": 25,
+      "activityUnit": "kWh factory electricity",
+      "emissionFactor_gCO2ePerUnit": 445,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: IEA (2025). Electricity 2025",
+      "methodology": "GHG Protocol Scope 1+2 at supplier / Cat 1 to buyer",
+      "co2e_kg": 11.125,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 6,
+      "name": "Packaging (cardboard) [SYNTHETIC]",
+      "actorRole": "oem",
+      "activityValue": 0.9,
+      "activityUnit": "kg packaging material",
+      "emissionFactor_gCO2ePerUnit": 1199.73,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: UK Department for Energy Security and Net Zero (2025). Greenhouse gas reporting",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 1.08,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 7,
+      "name": "International shipping (sea, container) [SYNTHETIC]",
+      "actorRole": "logistics",
+      "activityValue": 65,
+      "activityUnit": "tonne-km",
+      "emissionFactor_gCO2ePerUnit": 16.12,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: UK Department for Energy Security and Net Zero (2025). Greenhouse gas reporting",
+      "methodology": "GHG Protocol Scope 3 Cat 4 (upstream transport)",
+      "co2e_kg": 1.048,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 8,
+      "name": "Use-phase electricity [SYNTHETIC]",
+      "actorRole": "usePhaseAgent",
+      "activityValue": 175,
+      "activityUnit": "kWh lifetime electricity",
+      "emissionFactor_gCO2ePerUnit": 445,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: IEA (2025). Electricity 2025",
+      "methodology": "GHG Protocol Scope 3 Cat 11 (use of sold products)",
+      "co2e_kg": 77.875,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 9,
+      "name": "Repair (replacement battery) [SYNTHETIC]",
+      "actorRole": "repairer",
+      "activityValue": 0.06,
+      "activityUnit": "kWh replacement-battery capacity",
+      "emissionFactor_gCO2ePerUnit": 74000,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: Peiseler, L., Schenker, V., Schatzmann, K., Pfister, S., Wood, V., & Schmidt, T. (2024). Carbon footprint distributions of lithium-ion batteries and their materials. Nature Communications, 15, Article 10301",
+      "methodology": "GHG Protocol Scope 3 Cat 11 extension (repair)",
+      "co2e_kg": 4.44,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    },
+    {
+      "stageId": 10,
+      "name": "E-waste recycling (avoided-burden credit) [SYNTHETIC]",
+      "actorRole": "recycler",
+      "activityValue": 2,
+      "activityUnit": "kg mass processed",
+      "emissionFactor_gCO2ePerUnit": -1170.4,
+      "factorStatus": "CITED",
+      "efSource": "SYNTHETIC activity; factor CITED: US EPA (2023). Waste Reduction Model (WARM) version 16, December 2023",
+      "methodology": "GHG Protocol Scope 3 Cat 12 (end-of-life)",
+      "co2e_kg": -2.341,
+      "notes": "SYNTHETIC activity data (seeded model, see data-dictionary.md)"
+    }
+  ]
+}

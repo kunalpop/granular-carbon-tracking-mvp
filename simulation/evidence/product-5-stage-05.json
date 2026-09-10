@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "stageId": 5,
+  "stage": "Assembly electricity [SYNTHETIC]",
+  "reportedBy": "LaptopCorp Assembly",
+  "activity": "25 kWh factory electricity",
+  "emissionFactor": "445 gCO2e per kWh factory electricity",
+  "efSource": "SYNTHETIC activity; factor CITED (verify): IEA (2025). Electricity 2025",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

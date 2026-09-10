@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "stageId": 1,
+  "stage": "Aluminium casing [SYNTHETIC]",
+  "reportedBy": "AluCo Primary Smelting",
+  "activity": "1.15 kg aluminium",
+  "emissionFactor": "14800 gCO2e per kg aluminium",
+  "efSource": "SYNTHETIC activity; factor CITED (verify): International Aluminium Institute (2024). Primary Aluminium Greenhouse Gas Emissions Intensity",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

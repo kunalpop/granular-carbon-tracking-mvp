@@ -1,0 +1,14 @@
+{
+  "chainId": 2026,
+  "deployedAtBlock": 78,
+  "addresses": {
+    "ParticipantRegistry": "0xE5ec30F0717c34726Af7cBa6fdb1F28ceb98d711",
+    "EmissionEventRegistry": "0xF622Bdf1F5A01e5a6cB77edAe02ccFf9Ba1b1E71",
+    "CarbonToken": "0x5B6aB81c351E289B71697954fDd81f0A6D6B831C",
+    "AggregationContract": "0x1af2489C352C9AAE88f63016C9a8e6c1ba0f4184",
+    "OntologyRegistry": "0xb8C5dD96290BBF534c95359DcF8499dda1EA2cc9",
+    "ConsortiumMultisig": "0xc6CA342898983E0346301b957edAa4Ab1EeaE2c0",
+    "GovernanceModule": "0x70187e43247F0A257617e72f1971Dd3A639134A0",
+    "GovernanceModuleImplementation": "0xB318Eb2325B722cd31a9AC6431750a2a27086e79"
+  }
+}

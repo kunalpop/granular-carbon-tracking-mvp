@@ -1,0 +1,52 @@
+# Dependencies (re-created by `npm install`; never committed)
+node_modules/
+
+# Hardhat build output (re-created by `npx hardhat compile`)
+/artifacts/
+/cache/
+/typechain-types/
+
+# Besu node runtime data (re-created when the network starts)
+network/nodes/*/data/
+
+# Lock file for npm dependencies
+package-lock.json
+
+# Secrets and local machine settings — never commit these
+.env
+.env.*
+
+# Editor and OS clutter
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Dissertation drafts stay local - never pushed to GitHub.
+# Anchored to the repo root and to the draft file names only, so this does
+# NOT also match the dissertation-results/ folder (Git is case-insensitive
+# on Windows, and a bare "Dissertation*" would swallow that folder's files).
+/Dissertation_v*.md
+/Dissertation_v*.docx
+/Dissertation.md
+/Dissertation.docx
+
+# Local placeholder images for the dissertation Word build (draft stays local)
+figs/
+
+# Dissertation figure sources and local working documents - never pushed.
+# The public repo carries only what examiners need to reproduce the results
+# (contracts, network, scripts, evaluation outputs); manuscript materials
+# stay local. Anchored to the repo root, same reasoning as the draft rules.
+/diss_figs/
+/Project_Memory_Master.md
+/Consolidated_SCOPUS_Blockchain_Coded_V4_with_NewCoding.xlsx
+/Dissertation_Corpus_Workbook_Coded_V5.xlsx
+
+# Reference documents downloaded for factor sourcing (root-level PDFs only;
+# nothing in the repo's own folders ships PDFs)
+/*.pdf
+/DSR_ShortPaper_ICIS2026_SimReady_v3.docx

@@ -1,0 +1,66 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Audit report - product 2</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 70rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; vertical-align: top; }
+  th { background: #f0f0f0; }
+  td.num { text-align: right; }
+  small { color: #666; word-break: break-all; }
+  .badge { padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.75rem; font-weight: 600; }
+  .ok { background: #d4f7d4; color: #145214; }
+  .warn { background: #fff3cd; color: #664d03; }
+  .bad { background: #f8d7da; color: #58151c; }
+  .verdict { font-size: 1.2rem; }
+  .warnbox { background: #fff3cd; padding: 0.8rem; border-radius: 0.4rem; margin: 1rem 0; }
+</style></head><body>
+<h1>Product carbon audit report</h1>
+<p><b>Product 2</b>: Study A test product 2<br>
+Audited at block 6557; every hash and total independently recomputed off-chain.</p>
+<p class="verdict">Verdict: <span class="badge bad">FAIL</span></p>
+<div class="warnbox">Data quality: emission factors are PLACEHOLDERS (tagged
+"SOURCE NEEDED" in each event's source field) pending DEFRA/BEIS, IEA,
+ecoinvent, and manufacturer PCF citations.</div>
+<h2>Totals (kg CO2e)</h2>
+<ul>
+  <li>Independently recomputed from events: <b>146.47</b></li>
+  <li>On-chain aggregator: 146.47</li>
+  <li>Carbon-token net supply: 0.00</li>
+  <li>Effective (governed corrections applied): 142.47</li>
+</ul>
+<h2>Integrity checks</h2><ul><li>hashChain: <span class="badge ok">PASS</span></li><li>onChainVerifyChainAgrees: <span class="badge ok">PASS</span></li><li>co2eRecomputation: <span class="badge ok">PASS</span></li><li>totalsAgree: <span class="badge ok">PASS</span></li><li>tokenCrossCheck: <span class="badge bad">FAIL</span></li><li>evidenceFiles: <span class="badge warn">WARN</span></li><li>allTenStagesPresent: <span class="badge warn">WARN</span></li></ul>
+<h2>Provenance (3 events)</h2>
+<table><tr><th>#</th><th>Stage</th><th>Actor</th><th>Recorded (UTC)</th>
+<th>Activity & factor source</th><th>kg CO2e</th><th>Checks</th><th>Event hash</th></tr>
+    <tr>
+      <td>0</td><td>1</td>
+      <td>AluCo Primary Smelting<br><small>smelter · 0x6a021adee7D1af852E028c692bD3f81f8D93b572</small></td>
+      <td>2026-08-05T00:46:56.000Z</td>
+      <td>12 kg<br><small>PLACEHOLDER / SOURCE NEEDED</small></td>
+      <td class="num">96.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge warn">MISSING (off-chain file not found)</span></td>
+      <td><small>0x5ec04a3f3fd81a335488fb2d42969a1aa087568767e3afb5574d8e6f95e6f104</small></td>
+    </tr>
+    <tr>
+      <td>1</td><td>5</td>
+      <td>LaptopCorp Assembly<br><small>oem · 0x90185602439bEBe05FaDAE3218178b75a900b4DA</small></td>
+      <td>2026-08-05T00:46:58.000Z</td>
+      <td>5.5 kWh<br><small>PLACEHOLDER / SOURCE NEEDED</small></td>
+      <td class="num">2.48</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge warn">MISSING (off-chain file not found)</span></td>
+      <td><small>0xfbab2671c91a6f5b05c6946c6e7af465fc1e9f84f3b493d1a116e1fb925d99a8</small></td>
+    </tr>
+    <tr>
+      <td>2</td><td>1</td>
+      <td>AluCo Primary Smelting<br><small>smelter · 0x6a021adee7D1af852E028c692bD3f81f8D93b572</small></td>
+      <td>2026-08-05T00:47:00.000Z</td>
+      <td>6 kg<br><small>PLACEHOLDER / SOURCE NEEDED</small></td>
+      <td class="num">48.00</td>
+      <td><span class="badge ok">PASS</span> <span class="badge ok">PASS</span><br><span class="badge warn">MISSING (off-chain file not found)</span></td>
+      <td><small>0xd094838da8e06d47ff1d458ae210c8b6496999e604c8f393c3fd2cdbbe08fba6</small></td>
+    </tr></table>
+<h2>Governed corrections (1)</h2><ul><li>#1 corrects event 0 to 92 kg
+         - "Study A governed-correction exercise: smelter meter re-read; activity corrected 12.0 kg -&gt; 11.5 kg against simulated invoice" by 0xfcDE4E7beb74dae7874436b20D95A442D63aeC91 at 2026-08-05T19:44:37.000Z
+         <b>[latest]</b></li></ul>
+<h2>Escalations</h2><p>None raised.</p>
+</body></html>

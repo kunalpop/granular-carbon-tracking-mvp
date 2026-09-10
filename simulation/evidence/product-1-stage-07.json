@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "stageId": 7,
+  "stage": "International shipping",
+  "reportedBy": "BlueWater Freight",
+  "activity": "50 tonne-km (sea freight)",
+  "emissionFactor": "15 gCO2e per tonne-km (sea freight)",
+  "efSource": "PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS freight factors (container ship, gCO2e per tonne-km)",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

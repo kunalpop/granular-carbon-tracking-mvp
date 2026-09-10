@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "stageId": 4,
+  "stage": "Screen",
+  "reportedBy": "PanelView Displays",
+  "activity": "0.07 m2 panel area",
+  "emissionFactor": "600000 gCO2e per m2 panel area",
+  "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent LCD module + PCF literature (process gases)",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

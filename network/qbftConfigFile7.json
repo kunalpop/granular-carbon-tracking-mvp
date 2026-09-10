@@ -1,0 +1,63 @@
+﻿{
+    "genesis":  {
+                    "config":  {
+                                   "chainId":  2026,
+                                   "berlinBlock":  0,
+                                   "londonBlock":  0,
+                                   "shanghaiTime":  0,
+                                   "cancunTime":  0,
+                                   "zeroBaseFee":  true,
+                                   "qbft":  {
+                                                "blockperiodseconds":  2,
+                                                "epochlength":  30000,
+                                                "requesttimeoutseconds":  4
+                                            }
+                               },
+                    "nonce":  "0x0",
+                    "timestamp":  "0x0",
+                    "gasLimit":  "0x1C9C380",
+                    "difficulty":  "0x1",
+                    "coinbase":  "0x0000000000000000000000000000000000000000",
+                    "alloc":  {
+                                  "0x624Bc1668CcC1Df6AA36b2BE025Dd7F48b09Af9c":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x6a021adee7D1af852E028c692bD3f81f8D93b572":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x262bF1424a18d346AC85cD127ff64DF88824cf16":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x71d44Fde74A438C7560C49D30917A49fDB853a2D":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x90185602439bEBe05FaDAE3218178b75a900b4DA":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0xd43896E491d84156F503AA9C53cA17FDABAC61ab":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x3600759b13564C149BA14ccd6B8D944a9Ee6D799":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 },
+                                  "0xfcDE4E7beb74dae7874436b20D95A442D63aeC91":  {
+                                                                                     "balance":  "0xD3C21BCECCEDA1000000"
+                                                                                 }
+                              }
+                },
+    "blockchain":  {
+                       "nodes":  {
+                                     "generate":  true,
+                                     "count":  7
+                                 }
+                   }
+}

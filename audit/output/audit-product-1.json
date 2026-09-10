@@ -1,0 +1,266 @@
+{
+  "productId": "1",
+  "description": "Laptop unit CMVP-001 (Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3))",
+  "createdBy": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+  "auditedAtBlock": 167,
+  "events": [
+    {
+      "index": 0,
+      "stageId": 1,
+      "actor": {
+        "address": "0x6a021adee7D1af852E028c692bD3f81f8D93b572",
+        "name": "AluCo Primary Smelting",
+        "role": "smelter"
+      },
+      "recordedAt": "2026-09-10T16:56:26.000Z",
+      "activity": "1.2 kg aluminium",
+      "emissionFactor_gPerUnit": 15000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent aluminium primary ingot + IAI & IEA grid factor for smelter region",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 18,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x17bbe7a8e240c5f1f9bbca241923d888f962b79ee29fcd3f2cac2a797fc8eb1d",
+      "prevEventHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "evidenceHash": "0xa5de1f836477df97c1df3f6afa5a49a72750703ef92ef58aa70c4499c2cce040"
+    },
+    {
+      "index": 1,
+      "stageId": 2,
+      "actor": {
+        "address": "0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558",
+        "name": "Shenzhen PCB Works",
+        "role": "pcbSupplier"
+      },
+      "recordedAt": "2026-09-10T16:56:30.000Z",
+      "activity": "0.4 kg populated PCB",
+      "emissionFactor_gPerUnit": 150000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent printed wiring board + PCF literature",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 60,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x79172f0ba32a8e131108f68240b68ae2f72c2d4b96d732c0c27de0c6b9ef987b",
+      "prevEventHash": "0x17bbe7a8e240c5f1f9bbca241923d888f962b79ee29fcd3f2cac2a797fc8eb1d",
+      "evidenceHash": "0x854b5dd124eb969abc74d04540e96c1a5f66d87ea5011d637151d81627e19955"
+    },
+    {
+      "index": 2,
+      "stageId": 3,
+      "actor": {
+        "address": "0x262bF1424a18d346AC85cD127ff64DF88824cf16",
+        "name": "CellTech Batteries",
+        "role": "batteryMaker"
+      },
+      "recordedAt": "2026-09-10T16:56:34.000Z",
+      "activity": "0.06 kWh cell capacity",
+      "emissionFactor_gPerUnit": 90000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: GREET / battery LCA (gCO2e per kWh capacity)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 5.4,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x8076975bc2dab65cbfe72cb27d955822a490c3d6049395a2c5e892ff60310676",
+      "prevEventHash": "0x79172f0ba32a8e131108f68240b68ae2f72c2d4b96d732c0c27de0c6b9ef987b",
+      "evidenceHash": "0x0eee0d0e86d12a7f7cdf4208aa1e3761b0d12384fe7eec690824043d2d8747e8"
+    },
+    {
+      "index": 3,
+      "stageId": 4,
+      "actor": {
+        "address": "0x71d44Fde74A438C7560C49D30917A49fDB853a2D",
+        "name": "PanelView Displays",
+        "role": "screenSupplier"
+      },
+      "recordedAt": "2026-09-10T16:56:38.000Z",
+      "activity": "0.07 m2 panel area",
+      "emissionFactor_gPerUnit": 600000,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: ecoinvent LCD module + PCF literature (process gases)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 42,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x2878fa65b86363eac7d689a1734113267b4668f6d1d6cbd8ca625fa0afad67b0",
+      "prevEventHash": "0x8076975bc2dab65cbfe72cb27d955822a490c3d6049395a2c5e892ff60310676",
+      "evidenceHash": "0xe05ba8197b6c2c5e5d061176d11c50eaf57ef2c0b209959709eb4cbca66f7763"
+    },
+    {
+      "index": 4,
+      "stageId": 5,
+      "actor": {
+        "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+        "name": "LaptopCorp Assembly",
+        "role": "oem"
+      },
+      "recordedAt": "2026-09-10T16:56:42.000Z",
+      "activity": "25 kWh factory electricity",
+      "emissionFactor_gPerUnit": 550,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: site energy audit + IEA grid factor for assembly country",
+      "methodology": "GHG Protocol Scope 1+2 at supplier, Scope 3 Cat 1 to buyer",
+      "co2e_kg": 13.75,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0xc93f1f8bec2ef5cd24fe6be8f09bf5db5442b3b7b9f8244f33008296c977bdca",
+      "prevEventHash": "0x2878fa65b86363eac7d689a1734113267b4668f6d1d6cbd8ca625fa0afad67b0",
+      "evidenceHash": "0xc12551ac3abec84480d5604171cf186b2de7be39d911b25d11f33fe8e6e3370d"
+    },
+    {
+      "index": 5,
+      "stageId": 6,
+      "actor": {
+        "address": "0x90185602439bEBe05FaDAE3218178b75a900b4DA",
+        "name": "LaptopCorp Assembly",
+        "role": "oem"
+      },
+      "recordedAt": "2026-09-10T16:56:46.000Z",
+      "activity": "0.8 kg cardboard and plastics",
+      "emissionFactor_gPerUnit": 900,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS UK GHG conversion factors (material production)",
+      "methodology": "GHG Protocol Scope 3 Cat 1 (purchased goods)",
+      "co2e_kg": 0.72,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x7fb3222cfb140814dbadee1ad1a728314cb95320d015e0aeca8acc680de260cb",
+      "prevEventHash": "0xc93f1f8bec2ef5cd24fe6be8f09bf5db5442b3b7b9f8244f33008296c977bdca",
+      "evidenceHash": "0xd683cc9a35472940b2f8dc880091934eb67f0fad30f326c2cee38ebebd84a879"
+    },
+    {
+      "index": 6,
+      "stageId": 7,
+      "actor": {
+        "address": "0xd43896E491d84156F503AA9C53cA17FDABAC61ab",
+        "name": "BlueWater Freight",
+        "role": "logistics"
+      },
+      "recordedAt": "2026-09-10T16:56:50.000Z",
+      "activity": "50 tonne-km (sea freight)",
+      "emissionFactor_gPerUnit": 15,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: DEFRA/BEIS freight factors (container ship, gCO2e per tonne-km)",
+      "methodology": "GHG Protocol Scope 3 Cat 4 (upstream transport)",
+      "co2e_kg": 0.75,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0xf6ac4cf20f7620627f652f3f5e9e3bba331ad4753e3fd6fd850d33dc5bee699c",
+      "prevEventHash": "0x7fb3222cfb140814dbadee1ad1a728314cb95320d015e0aeca8acc680de260cb",
+      "evidenceHash": "0x1c4db9318e458b6565aa4b78f8df28a0b95f73f0b5a89615b98945f1980b6f81"
+    },
+    {
+      "index": 7,
+      "stageId": 8,
+      "actor": {
+        "address": "0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4",
+        "name": "Corporate IT (use phase)",
+        "role": "usePhaseAgent"
+      },
+      "recordedAt": "2026-09-10T16:56:54.000Z",
+      "activity": "150 kWh lifetime electricity",
+      "emissionFactor_gPerUnit": 400,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: IEA or national grid factor for use country, averaged over service life",
+      "methodology": "GHG Protocol Scope 3 Cat 11 (use of sold products)",
+      "co2e_kg": 60,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x57540884ba7715ca32774081e77a2a13d7dd72bfee13a9c5582bf47b3497d169",
+      "prevEventHash": "0xf6ac4cf20f7620627f652f3f5e9e3bba331ad4753e3fd6fd850d33dc5bee699c",
+      "evidenceHash": "0xd026559d8954ebf8d0f733c6945d42bc86722e3d77d7e2318e0fc1d9f0c153e8"
+    },
+    {
+      "index": 8,
+      "stageId": 9,
+      "actor": {
+        "address": "0x3600759b13564C149BA14ccd6B8D944a9Ee6D799",
+        "name": "FixIt Refurbishment",
+        "role": "repairer"
+      },
+      "recordedAt": "2026-09-10T16:56:58.000Z",
+      "activity": "5 kWh (repair energy + spare-part allocation)",
+      "emissionFactor_gPerUnit": 600,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: repair-shop energy + spare part embodied carbon (ecoinvent)",
+      "methodology": "GHG Protocol Scope 3 Cat 11 extension",
+      "co2e_kg": 3,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x886fbffa26d75f08a3e88c21635bf2c0b9d141cb91bee7b45e2bfeb1259ee47c",
+      "prevEventHash": "0x57540884ba7715ca32774081e77a2a13d7dd72bfee13a9c5582bf47b3497d169",
+      "evidenceHash": "0x52c6518fc17a11aa0d35acaf419a9dbe4576323cc2a4dbb98cec1ccd906aaa93"
+    },
+    {
+      "index": 9,
+      "stageId": 10,
+      "actor": {
+        "address": "0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D",
+        "name": "GreenLoop Recycling",
+        "role": "recycler"
+      },
+      "recordedAt": "2026-09-10T16:57:02.000Z",
+      "activity": "2 kg mass processed",
+      "emissionFactor_gPerUnit": -1500,
+      "efSource": "PLACEHOLDER / SOURCE NEEDED: recycling LCA; NEGATIVE factor = avoided-burden credit for recovered materials",
+      "methodology": "GHG Protocol Scope 3 Cat 12 (end-of-life)",
+      "co2e_kg": -3,
+      "checks": {
+        "hashRecomputed": "PASS",
+        "chainLink": "PASS",
+        "co2eRecomputed": "PASS",
+        "evidence": "VERIFIED"
+      },
+      "eventHash": "0x0432398796d55e9ccd3146a17a295170a50f1f83c8bf4765a3dd8b0b738bc972",
+      "prevEventHash": "0x886fbffa26d75f08a3e88c21635bf2c0b9d141cb91bee7b45e2bfeb1259ee47c",
+      "evidenceHash": "0xeeb8ebffa550080e1f4ac733873db4b9dfa05a687eeebcf5ac1d79a87eca6d84"
+    }
+  ],
+  "checks": {
+    "hashChain": "PASS",
+    "onChainVerifyChainAgrees": "PASS",
+    "co2eRecomputation": "PASS",
+    "totalsAgree": "PASS",
+    "tokenCrossCheck": "PASS",
+    "evidenceFiles": "PASS",
+    "allTenStagesPresent": "PASS"
+  },
+  "corrections": [],
+  "escalations": [],
+  "totals": {
+    "independentlyRecomputed_kg": 200.62,
+    "onChainAggregator_kg": 200.62,
+    "tokenNet_kg": 200.62,
+    "effectiveWithCorrections_kg": 200.62
+  },
+  "verdict": "PASS"
+}

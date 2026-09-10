@@ -1,0 +1,163 @@
+{
+  "controlOk": true,
+  "outcomes": [
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-a lower value",
+      "level": "naive",
+      "possible": "YES - silent file edit",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "28 ms audit run; unbounded otherwise (nothing triggers an audit)",
+      "notes": "Value edited; internal hashes left stale"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-a lower value",
+      "level": "naive",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "13 ms audit run; unbounded otherwise",
+      "notes": "Value edited; internal hashes left stale"
+    },
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-a lower value",
+      "level": "competent",
+      "possible": "YES - silent file edit",
+      "detected": "NO - audit passes clean",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "never (internally self-consistent)",
+      "notes": "Activity+co2e edited consistently; all hashes recomputed"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-a lower value",
+      "level": "competent",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "NO - audit passes clean",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "never (internally self-consistent)",
+      "notes": "Activity+co2e edited consistently; all hashes recomputed"
+    },
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-b delete event",
+      "level": "naive",
+      "possible": "YES - silent file edit",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "13 ms audit run; unbounded otherwise (nothing triggers an audit)",
+      "notes": "Row removed; chain left broken"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-b delete event",
+      "level": "naive",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "36 ms audit run; unbounded otherwise",
+      "notes": "Row removed; chain left broken"
+    },
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-b delete event",
+      "level": "competent",
+      "possible": "YES - silent file edit",
+      "detected": "YES (1 finding)",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "22 ms audit run; unbounded otherwise (nothing triggers an audit)",
+      "notes": "Row removed; chain relinked. Only the 10-stage business rule flags it"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-b delete event",
+      "level": "competent",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "YES (1 finding)",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "12 ms audit run; unbounded otherwise",
+      "notes": "Row removed; chain relinked. Only the 10-stage business rule flags it"
+    },
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-c back-date",
+      "level": "naive",
+      "possible": "YES - silent file edit",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "13 ms audit run; unbounded otherwise (nothing triggers an audit)",
+      "notes": "Timestamp edited; hashes left stale"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-c back-date",
+      "level": "naive",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "YES (2 findings)",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "23 ms audit run; unbounded otherwise",
+      "notes": "Timestamp edited; hashes left stale"
+    },
+    {
+      "system": "Spreadsheet (CSV)",
+      "threat": "T-c back-date",
+      "level": "competent",
+      "possible": "YES - silent file edit",
+      "detected": "NO - audit passes clean",
+      "attributed": "NO - no identity binding; file metadata shows neither who nor what",
+      "timeToDetect": "never (internally self-consistent)",
+      "notes": "Timestamp edited, history reordered, hashes recomputed"
+    },
+    {
+      "system": "SQLite DB",
+      "threat": "T-c back-date",
+      "level": "competent",
+      "possible": "YES - ordinary UPDATE/DELETE by any admin",
+      "detected": "NO - audit passes clean",
+      "attributed": "NO - unless privileged server logs exist, which the same admin controls",
+      "timeToDetect": "never (internally self-consistent)",
+      "notes": "Timestamp edited, history reordered, hashes recomputed"
+    },
+    {
+      "system": "Blockchain (Besu QBFT)",
+      "attributed": "YES - every write is key-signed; failed attempts identify their sender; a deviating node is identified by 4-of-5 quorum",
+      "threat": "T-a lower value",
+      "level": "insider w/ valid keys",
+      "possible": "NO silent path - no update function; role-gated correction rejected; restatement only APPENDS, signed and visible",
+      "detected": "YES - unauthorised attempt rejected at submission; visible restatement changes event count and totals openly (chain intact: true)",
+      "timeToDetect": "45 ms (rejected before entering the ledger)",
+      "notes": "Governed correction by an authorised role IS possible - but logged, attributed, append-only (DP4)"
+    },
+    {
+      "system": "Blockchain (Besu QBFT)",
+      "attributed": "YES - every write is key-signed; failed attempts identify their sender; a deviating node is identified by 4-of-5 quorum",
+      "threat": "T-b delete event",
+      "level": "insider w/ valid keys",
+      "possible": "NO - no delete interface exists (mutators: createProduct, recordEvent only)",
+      "detected": "n/a - not expressible; local node-storage tampering exposed by 4-of-5 quorum divergence",
+      "timeToDetect": "1058 ms (cross-node comparison, 5 nodes)",
+      "notes": "Deletion would require rewriting QBFT-finalised blocks on 3+ of 4 validators simultaneously"
+    },
+    {
+      "system": "Blockchain (Besu QBFT)",
+      "attributed": "YES - every write is key-signed; failed attempts identify their sender; a deviating node is identified by 4-of-5 quorum",
+      "threat": "T-c back-date",
+      "level": "insider w/ valid keys",
+      "possible": "NO - recordEvent accepts no timestamp; the finalised block clock assigns it",
+      "detected": "n/a - not expressible at entry; altering a past timestamp = altering a finalised block (see T-b)",
+      "timeToDetect": "immediate (the field cannot be supplied)",
+      "notes": "Evidence anchored by hash cannot be re-dated either without a MISMATCH in the audit"
+    }
+  ],
+  "ledgerLog": [
+    "Created sacrificial product 2 with 2 events.",
+    "Registry mutator functions: [createProduct, recordEvent] - no update/delete path exists.",
+    "Unauthorised correctEvent by 0x6a021adee7D1af852E028c692bD3f81f8D93b572 rejected in 45 ms (role gate; attempt attributable to sender).",
+    "Attempted \"overwrite\" via recordEvent: event count 2 -> 3; original untouched; new record signed by 0x6a021adee7D1af852E028c692bD3f81f8D93b572.",
+    "recordEvent has 9 inputs, none a timestamp (checked: confirmed none); stored timestamp 1789059580 is block-assigned (latest block 1789059580).",
+    "Cross-node check: lastEventHash(product 2) identical on all 5 nodes (true) in 1058 ms. A locally-tampered node would disagree with the 4-node quorum and be identified immediately."
+  ]
+}

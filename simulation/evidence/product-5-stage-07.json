@@ -1,0 +1,10 @@
+{
+  "product": "Laptop unit CMVP-005 (SYNTHETIC generic 14-inch laptop (reference instance))",
+  "stageId": 7,
+  "stage": "International shipping (sea, container) [SYNTHETIC]",
+  "reportedBy": "BlueWater Freight",
+  "activity": "65 tonne-km",
+  "emissionFactor": "16.12 gCO2e per tonne-km",
+  "efSource": "SYNTHETIC activity; factor CITED (verify): UK BEIS/DEFRA (2025). Greenhouse gas reporting",
+  "note": "Simulated evidence document standing in for a meter reading / invoice / weighbridge ticket."
+}

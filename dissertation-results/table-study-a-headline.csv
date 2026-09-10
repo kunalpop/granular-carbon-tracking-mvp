@@ -1,0 +1,4 @@
+System,T-a lower value,T-b delete event,T-c back-date
+Spreadsheet (CSV),"Possible; UNDETECTED, not attributable","Possible; detected (heuristic), not attributable","Possible; UNDETECTED, not attributable"
+SQLite DB,"Possible; UNDETECTED, not attributable","Possible; detected (heuristic), not attributable","Possible; UNDETECTED, not attributable"
+Blockchain (Besu QBFT),Not possible; attempts rejected + attributed,Not possible; attempts rejected + attributed,Not possible; attempts rejected + attributed

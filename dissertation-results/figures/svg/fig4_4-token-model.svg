@@ -1,0 +1,81 @@
+<svg viewBox="0 0 904 752" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 20 = 10 pt, 17 = 8.5 pt, 16 = 8 pt.
+       EmissionEvent is emphasised because it, not the token balances, is the
+       authoritative record. -->
+  <rect x="0" y="0" width="904" height="752" fill="#ffffff"/>
+
+  <!-- ProductPassportToken -->
+  <rect x="45" y="55" width="420" height="155" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <path d="M 45 93 L 465 93" stroke="#4472c4" stroke-width="2.5" fill="none"/>
+  <rect x="47" y="57" width="416" height="34" rx="6" fill="#dce8f8"/>
+  <text x="255" y="82" font-size="20" text-anchor="middle" font-weight="700">ProductPassportToken</text>
+  <text x="65" y="122" font-size="17">non-fungible, ERC-1155 id</text>
+  <text x="65" y="145" font-size="17">productId</text>
+  <text x="65" y="168" font-size="17">genesis mint at product creation</text>
+  <text x="65" y="191" font-size="17">accumulates provenance links</text>
+
+  <!-- AggregationView -->
+  <rect x="590" y="55" width="270" height="155" rx="8" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <path d="M 590 93 L 860 93" stroke="#5b9358" stroke-width="2.5" fill="none"/>
+  <rect x="592" y="57" width="266" height="34" rx="6" fill="#dcecdc"/>
+  <text x="725" y="82" font-size="20" text-anchor="middle" font-weight="700">AggregationView</text>
+  <text x="610" y="122" font-size="17">deterministic sum of</text>
+  <text x="610" y="145" font-size="17">per-stage co2e</text>
+  <text x="610" y="168" font-size="17">cross-check against</text>
+  <text x="610" y="191" font-size="17">token balances</text>
+
+  <!-- EmissionEvent (authoritative record) -->
+  <rect x="45" y="270" width="420" height="210" rx="8" fill="#e8eef9" stroke="#2f5597" stroke-width="3.5"/>
+  <path d="M 45 320 L 465 320" stroke="#2f5597" stroke-width="3" fill="none"/>
+  <rect x="48" y="273" width="414" height="44" rx="6" fill="#cddcf2"/>
+  <text x="255" y="296" font-size="20" text-anchor="middle" font-weight="700">EmissionEvent</text>
+  <text x="255" y="313" font-size="16" text-anchor="middle" font-style="italic" fill="#2f5597">authoritative record</text>
+  <text x="65" y="348" font-size="17">productId, stageId, actorId</text>
+  <text x="65" y="371" font-size="17">activityData, activityUnit</text>
+  <text x="65" y="394" font-size="17">emissionFactor + source + version</text>
+  <text x="65" y="417" font-size="17">co2e, methodology</text>
+  <text x="65" y="440" font-size="17">evidenceHash, prevEventHash</text>
+  <text x="65" y="463" font-size="17">timestamp, schemaVersion</text>
+
+  <!-- CarbonQuantityToken -->
+  <rect x="45" y="545" width="420" height="140" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <path d="M 45 583 L 465 583" stroke="#4472c4" stroke-width="2.5" fill="none"/>
+  <rect x="47" y="547" width="416" height="34" rx="6" fill="#dce8f8"/>
+  <text x="255" y="572" font-size="20" text-anchor="middle" font-weight="700">CarbonQuantityToken</text>
+  <text x="65" y="612" font-size="17">fungible, kg CO2e</text>
+  <text x="65" y="635" font-size="17">minted per stage</text>
+  <text x="65" y="658" font-size="17">associated to passport</text>
+
+  <!-- passport to events -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="255" y1="210" x2="255" y2="258"/><polygon points="255,268 248,254 262,254"/>
+  </g>
+  <text x="248" y="228" font-size="16" text-anchor="end" fill="#444">1</text>
+  <text x="248" y="256" font-size="16" text-anchor="end" fill="#444">1..*</text>
+  <text x="272" y="244" font-size="17" fill="#444">provenance chain</text>
+
+  <!-- events to carbon tokens -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="255" y1="480" x2="255" y2="533"/><polygon points="255,543 248,529 262,529"/>
+  </g>
+  <text x="248" y="500" font-size="16" text-anchor="end" fill="#444">1</text>
+  <text x="248" y="531" font-size="16" text-anchor="end" fill="#444">1</text>
+  <text x="272" y="517" font-size="17" fill="#444">mints or burns</text>
+
+  <!-- passport to aggregation view -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="465" y1="150" x2="578" y2="150"/><polygon points="588,150 574,143 574,157"/>
+  </g>
+  <text x="521" y="140" font-size="17" text-anchor="middle" fill="#444">total footprint</text>
+
+  <!-- hash-link self reference -->
+  <g stroke="#666" stroke-width="2.5" fill="none">
+    <path d="M 465 335 L 515 335 L 515 420 L 477 420"/>
+  </g>
+  <polygon points="465,420 479,413 479,427" fill="#666"/>
+  <text x="527" y="382" font-size="17" fill="#444">prevEventHash link</text>
+
+  <text x="45" y="712" font-size="16" fill="#7a7a7a">Token balances are derived; the hash-linked event chain is the record of authority. Ten events in the laptop</text>
+  <text x="45" y="732" font-size="16" fill="#7a7a7a">case; the registry constrains no count, so incomplete products are detected rather than prevented.</text>
+</svg>

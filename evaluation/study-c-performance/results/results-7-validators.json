@@ -1,0 +1,45 @@
+{
+  "label": "7-validators",
+  "network": "besu7",
+  "validators": 7,
+  "config": {
+    "products": 30,
+    "eventsPerProduct": 10,
+    "writers": 5
+  },
+  "totalTx": 300,
+  "wallClockSec": 13.723880600000001,
+  "tps": 21.859706357398647,
+  "latencyMs": {
+    "avg": 8170.258404333329,
+    "median": 8490.638399999996,
+    "p95": 10568.074399999998,
+    "min": 3377.9066999999995,
+    "max": 10766.381000000001
+  },
+  "ttf": {
+    "definition": "QBFT finality is immediate at block inclusion; TTF equals inclusion latency and zero further confirmations are required",
+    "measuredMs": {
+      "avg": 8170.258404333329,
+      "median": 8490.638399999996,
+      "p95": 10568.074399999998,
+      "min": 3377.9066999999995,
+      "max": 10766.381000000001
+    }
+  },
+  "blocks": {
+    "range": [
+      23,
+      27
+    ],
+    "count": 5,
+    "avgBlockTimeSec": 3,
+    "txsInRange": 300
+  },
+  "cpu": {
+    "containers": 7,
+    "idleTotalCpuPct": 103.88500000000002,
+    "loadTotalCpuPct": 1492.9916666666668,
+    "note": "docker stats CPUPerc summed over carbon* containers; 100% = one logical core"
+  }
+}

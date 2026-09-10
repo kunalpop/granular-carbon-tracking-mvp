@@ -1,0 +1,56 @@
+{
+  "config": {
+    "chainId": 2026,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "shanghaiTime": 0,
+    "cancunTime": 0,
+    "zeroBaseFee": true,
+    "qbft": {
+      "blockperiodseconds": 2,
+      "epochlength": 30000,
+      "requesttimeoutseconds": 4
+    }
+  },
+  "nonce": "0x0",
+  "timestamp": "0x0",
+  "gasLimit": "0x1C9C380",
+  "difficulty": "0x1",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+    "0x624Bc1668CcC1Df6AA36b2BE025Dd7F48b09Af9c": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x6a021adee7D1af852E028c692bD3f81f8D93b572": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x5F0b6f6CCF48A79CCd957362aFaC3AC212F5f558": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x262bF1424a18d346AC85cD127ff64DF88824cf16": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x71d44Fde74A438C7560C49D30917A49fDB853a2D": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x90185602439bEBe05FaDAE3218178b75a900b4DA": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0xd43896E491d84156F503AA9C53cA17FDABAC61ab": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x2508257944EAdBe6d5278019F6ABDa1578eBF4D4": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x3600759b13564C149BA14ccd6B8D944a9Ee6D799": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0x529FeE1F1fC608FAA5d4DE582740441Fc800DF7D": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    },
+    "0xfcDE4E7beb74dae7874436b20D95A442D63aeC91": {
+      "balance": "0xD3C21BCECCEDA1000000"
+    }
+  },
+  "extraData": "0xf8b9a00000000000000000000000000000000000000000000000000000000000000000f8939434cb502da5e95e18a10b3489a95cc58bec5077c094c93ed6642f4b808ffac4dff8fc3ff0c29ff2d3c49434e2c0557b5f68c96cac7bae8b668d70e5a48cb394eb586aeaa0763a029b5e611ec8204fbe9c8baa8694a11bc8d47700834c73d3dd851ca42cfb391ed57b943d8ade4145d63cfab89994ca145fbef2811bc5bb94e630db2424d4e38e57d7d4c59c6d4253865d3d62c080c0"
+}

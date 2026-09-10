@@ -1,0 +1,87 @@
+<svg viewBox="0 0 904 700" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Coordinate convention: 2 user units = 1 pt at 15.92 cm text width.
+       font-size 18 = 9 pt, 17 = 8.5 pt, 16 = 8 pt.
+       Dashed outlines mark the non-voting observer node and the comparison
+       baselines, matching the convention used in Figures 4.1 and 4.2. -->
+  <rect x="0" y="0" width="904" height="700" fill="#ffffff"/>
+
+  <!-- Docker Compose network -->
+  <rect x="25" y="70" width="854" height="165" rx="10" fill="#fdf9f0" stroke="#d8bc8a" stroke-width="2.5"/>
+  <text x="45" y="97" font-size="18" font-weight="700" fill="#7a5c1e">Docker Compose network (single laptop)</text>
+
+  <rect x="45" y="110" width="185" height="100" rx="8" fill="#fdf6ec" stroke="#c09543" stroke-width="2.5" stroke-dasharray="8 5"/>
+  <text x="137" y="140" font-size="17" text-anchor="middle" font-weight="700">Regulator /</text>
+  <text x="137" y="160" font-size="17" text-anchor="middle" font-weight="700">observer</text>
+  <text x="137" y="182" font-size="16" text-anchor="middle" fill="#555">no consensus vote</text>
+  <text x="137" y="200" font-size="16" text-anchor="middle" fill="#555">Arch. 3/4 toggle</text>
+
+  <rect x="244" y="110" width="143" height="100" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="315" y="152" font-size="17" text-anchor="middle" font-weight="700">Validator 1</text>
+  <text x="315" y="174" font-size="16" text-anchor="middle" fill="#555">Besu QBFT</text>
+
+  <rect x="401" y="110" width="143" height="100" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="472" y="152" font-size="17" text-anchor="middle" font-weight="700">Validator 2</text>
+  <text x="472" y="174" font-size="16" text-anchor="middle" fill="#555">Besu QBFT</text>
+
+  <rect x="558" y="110" width="143" height="100" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="629" y="152" font-size="17" text-anchor="middle" font-weight="700">Validator 3</text>
+  <text x="629" y="174" font-size="16" text-anchor="middle" fill="#555">Besu QBFT</text>
+
+  <rect x="715" y="110" width="143" height="100" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="786" y="152" font-size="17" text-anchor="middle" font-weight="700">Validator 4</text>
+  <text x="786" y="174" font-size="16" text-anchor="middle" fill="#555">Besu QBFT</text>
+
+  <!-- host tooling -->
+  <rect x="25" y="320" width="201" height="125" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="125" y="350" font-size="17" text-anchor="middle" font-weight="700">Contract toolkit</text>
+  <text x="125" y="374" font-size="16" text-anchor="middle" fill="#555">Hardhat, OpenZeppelin</text>
+  <text x="125" y="396" font-size="16" text-anchor="middle" fill="#555">seven-contract suite</text>
+  <text x="125" y="418" font-size="16" text-anchor="middle" fill="#555">incl. multisig</text>
+
+  <rect x="242" y="320" width="201" height="125" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="342" y="350" font-size="17" text-anchor="middle" font-weight="700">Simulation driver</text>
+  <text x="342" y="374" font-size="16" text-anchor="middle" fill="#555">and oracle adapter</text>
+  <text x="342" y="396" font-size="16" text-anchor="middle" fill="#555">TypeScript, ethers v6</text>
+  <text x="342" y="418" font-size="16" text-anchor="middle" fill="#555">ten-stage lifecycle</text>
+
+  <rect x="459" y="320" width="201" height="125" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="559" y="368" font-size="17" text-anchor="middle" font-weight="700">Open-loop load driver</text>
+  <text x="559" y="394" font-size="16" text-anchor="middle" fill="#555">Study C benchmarks</text>
+
+  <rect x="676" y="320" width="201" height="125" rx="8" fill="#eef3fa" stroke="#4472c4" stroke-width="2.5"/>
+  <text x="776" y="368" font-size="17" text-anchor="middle" font-weight="700">Audit CLI, web view</text>
+  <text x="776" y="394" font-size="16" text-anchor="middle" fill="#555">Study A instrument</text>
+
+  <!-- off-chain inputs and baselines -->
+  <rect x="242" y="535" width="201" height="115" rx="8" fill="#f2f7f2" stroke="#5b9358" stroke-width="2.5"/>
+  <text x="342" y="565" font-size="17" text-anchor="middle" font-weight="700">Evidence store</text>
+  <text x="342" y="589" font-size="16" text-anchor="middle" fill="#555">and factor library</text>
+  <text x="342" y="611" font-size="16" text-anchor="middle" fill="#555">all factors cited</text>
+
+  <rect x="676" y="535" width="201" height="115" rx="8" fill="#f7f7f7" stroke="#888" stroke-width="2.5" stroke-dasharray="8 5"/>
+  <text x="776" y="565" font-size="17" text-anchor="middle" font-weight="700">Baselines</text>
+  <text x="776" y="589" font-size="16" text-anchor="middle" fill="#555">spreadsheet + SQLite</text>
+  <text x="776" y="611" font-size="16" text-anchor="middle" fill="#555">identical records</text>
+
+  <!-- tooling to network -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="125" y1="320" x2="125" y2="247"/><polygon points="125,235 118,249 132,249"/>
+    <line x1="342" y1="320" x2="342" y2="247"/><polygon points="342,235 335,249 349,249"/>
+    <line x1="559" y1="320" x2="559" y2="247"/><polygon points="559,235 552,249 566,249"/>
+    <line x1="776" y1="320" x2="776" y2="247"/><polygon points="776,235 769,249 783,249"/>
+  </g>
+  <text x="138" y="286" font-size="16" fill="#444">deploy</text>
+  <text x="355" y="286" font-size="16" fill="#444">JSON-RPC</text>
+  <text x="572" y="286" font-size="16" fill="#444">load</text>
+  <text x="789" y="286" font-size="16" fill="#444">query</text>
+
+  <!-- inputs to tooling -->
+  <g stroke="#666" stroke-width="2.5" fill="#666">
+    <line x1="342" y1="535" x2="342" y2="457"/><polygon points="342,445 335,459 349,459"/>
+    <line x1="776" y1="535" x2="776" y2="457"/><polygon points="776,445 769,459 783,459"/>
+  </g>
+  <text x="355" y="498" font-size="16" fill="#444">factors, evidence</text>
+  <text x="789" y="498" font-size="16" fill="#444">compare</text>
+
+  <text x="25" y="682" font-size="16" fill="#7a7a7a">All components run on one laptop. Baselines hold records loaded from the ledger and serve only as Study A comparators.</text>
+</svg>
