@@ -2,7 +2,9 @@
   "_WARNING": "EVERY NUMBER IN THIS FILE IS A PLACEHOLDER. None of these values is sourced and none may be cited or used for evaluation results. Each entry is tagged 'SOURCE NEEDED' naming the intended source family (DEFRA/BEIS, IEA, ecoinvent, GREET, manufacturer PCF). Replace values and complete citations before Studies A-C are reported. The 'SOURCE NEEDED' tag is deliberately written into the on-chain efSource field so even ledger data self-declares as unsourced.",
   "libraryVersion": "0.0.1-placeholder",
   "schemaVersion": "1.0.0",
+  "productId": 1,
   "referenceProduct": "Generic 14-inch laptop (reference model: SOURCE NEEDED - to be fixed per council decision X.12.3)",
+  "passportHolder": "OEM wallet",
   "stages": [
     {
       "stageId": 1,

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" role="img" aria-labelledby="carbon-tracking-title carbon-tracking-desc">
+  <title id="carbon-tracking-title">Carbon tracking</title>
+  <desc id="carbon-tracking-desc">A leaf inside a circular lifecycle tracking mark with a CO2 label.</desc>
+  <path d="M79 91c-5-26 7-49 38-61 3 29-10 51-38 61Z" fill="#7bdc65"/>
+  <path d="M79 91c-16-15-31-20-48-17 7 23 23 33 48 17Z" fill="#00a878"/>
+  <path d="M79 91c8-23 20-42 38-61" stroke="#0b3d3a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M79 91c-17-15-31-20-48-17" stroke="#0b3d3a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M78 97c-3 13-2 22 3 30" stroke="#ff7a45" stroke-width="6" stroke-linecap="round"/>
+  <text x="80" y="145" fill="#0b3d3a" font-family="monospace" font-size="22" font-weight="700" text-anchor="middle">CO₂</text>
+</svg>

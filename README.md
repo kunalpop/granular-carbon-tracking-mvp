@@ -201,3 +201,124 @@ nothing outside this project.
 - Note: Besu itself rewrites `permissions_config.toml` into compact form
   at startup (it persists allowlist state back to the file) — do not be
   surprised when comments added to that file disappear.
+
+## Frontend
+
+The frontend is an evidence-oriented React application that guides an operator
+through the complete lifecycle of a product carbon passport. It registers and
+authorises supply-chain participants, creates a product passport, records ten
+lifecycle events, and runs Tampering, Aggregation, and Performance studies.
+
+### User flow
+
+```mermaid
+flowchart TD
+    A[Participants] -->|Register participants| B[Product]
+    B -->|Create product and mint passport| C[Simulation]
+    C --> D{Current stage recorded?}
+    D -->|No| E[Record event and mirror CO2e]
+    E --> D
+    D -->|Yes| F{All 10 stages recorded?}
+    F -->|No| C
+    F -->|Yes| G[Results]
+    G --> H[Tampering Study]
+    G --> I[Aggregation Study]
+    G --> J[Performance Study]
+    H --> K{All studies complete?}
+    I --> K
+    J --> K
+    K -->|Yes| L[Start New Simulation]
+    L --> A
+```
+
+1. Register participants and authorise their lifecycle stages.
+2. Register the product and mint its passport.
+3. Record each lifecycle event with activity, factor, methodology, schema, and
+   evidence hash.
+4. Complete all ten stages to activate Results.
+5. Run the three evaluation studies.
+6. Clear browser state after all studies complete to start again.
+
+### Pages
+
+The application has four routes: `/actors`, `/product`, `/simulation`, and
+`/results`. The actors page registers participants; Product creates and mints
+the passport; Simulation records sequential events; and Results runs the three
+evaluation studies. Product, Simulation, and Results are enabled progressively
+from the stored workflow state.
+
+### Components
+
+Workflow components are grouped under `frontend/src/components`:
+
+- `participants/Participants.tsx` and `registerParticipants.ts` register and
+  authorise participants.
+- `product/Product.tsx` and `registerProduct.ts` register the product and mint
+  its passport.
+- `simulation/Simulation.tsx` and `registerEmissionEvent.ts` record events.
+- `result/Results.tsx` and the three `study*.ts` files run evaluations.
+
+Shared components are under `frontend/src/shared`: `Button.tsx` provides the
+reusable button, `Stage.tsx` renders the detailed event card, and `StageCard.tsx`
+renders a compact lifecycle marker.
+
+### Hooks, Services, and Shared Components
+
+`hooks/useContracts.ts` creates ethers contract instances using the configured
+Besu provider, deployed addresses, ABIs, and optional signers. Services provide
+network configuration, contract addresses, emission-factor data, actor names,
+signer wallets, and shared lifecycle types.
+
+### Data
+
+Lifecycle data supplies participant permissions, product configuration, event
+activity, emission factors, reporting sources, and methodologies. Event
+registration uses x1000 fixed-point values and signed CO2e grams. Study C loads
+the committed four-validator and seven-validator benchmark JSON files.
+
+### Studies
+
+- Tampering checks value lowering, event deletion, and back-dating scenarios.
+- Aggregation checks totals, stage subtotals, hashes, completeness, and fault
+  cases.
+- Performance compares validator benchmark results for throughput and latency.
+
+Study states and results persist in localStorage. After all three studies are
+complete, the sidebar exposes a reset control that clears localStorage and
+starts a new simulation.
+
+### Structure
+
+```text
+frontend/
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    ├── components/
+    │   ├── participants/
+    │   ├── product/
+    │   ├── result/
+    │   └── simulation/
+    ├── hooks/
+    ├── services/
+    └── shared/
+```
+
+### Implementation
+
+`App.tsx` owns routes, navigation gates, network status, completion status, and
+the reset action. `main.tsx` mounts the application inside `BrowserRouter` and
+`React.StrictMode`. The lifecycle proceeds through participant registration,
+product registration, ten sequential event registrations, Results activation,
+the three evaluations, and the optional reset to a new simulation.
+
+### LocalStorage
+
+- `registered-actors-cache` — registered participant details.
+- `registered-product-cache` — product ID, description, and OEM address.
+- `registered-emission-events-cache` — recorded stage IDs, CO2e values, and
+  event hashes.
+- `tampering-study-result` — Tampering Study result object.
+- `aggregation-study-result` — Aggregation Study result object.
+- `performance-study-result` — Performance Study result object.
+- `evaluation-studies-complete` — flag indicating all three studies completed.
