@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
-import { ACTOR_NAMES } from "../../services/getActors";
-import { getSigner } from "../../services/getSigner";
+import { ACTOR_NAMES } from "../../services/getParticipants";
+import { getSelectedRole, getSigner } from "../../services/getSigner";
 import { areActorsRegistered, registerActors } from "./registerParticipants";
 
 type ActorField = {
@@ -32,14 +32,32 @@ function loadCachedActors(): ActorField[] {
   }
 }
 
-export default function Actors() {
+function getDefaultActors(): ActorField[] {
+  return Object.entries(ACTOR_NAMES).map(([role, name], i) => ({
+    id: i + 1,
+    name,
+    role,
+    address: getSigner(role as Parameters<typeof getSigner>[0]).address,
+    stages: String(i + 1),
+  }));
+}
+
+export default function Participants() {
   const [actorFields, setActorFields] = useState<ActorField[]>(() =>
-    loadCachedActors(),
+    loadCachedActors().length > 0 ? loadCachedActors() : getDefaultActors(),
   );
   const [actorsAdded, setActorsAdded] = useState(
     () => loadCachedActors().length > 0,
   );
   const [registering, setRegistering] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(() => getSelectedRole());
+  const isDeployer = selectedRole === "deployer";
+
+  useEffect(() => {
+    const updateRole = () => setSelectedRole(getSelectedRole());
+    window.addEventListener("control-account-change", updateRole);
+    return () => window.removeEventListener("control-account-change", updateRole);
+  }, []);
 
   useEffect(() => {
     const verifyActors = async () => {
@@ -57,42 +75,43 @@ export default function Actors() {
   }, []);
 
   const handleRegisterParticipants = async () => {
-    if (actorsAdded || registering) return;
+    if (!isDeployer || actorsAdded || registering) return;
 
     setRegistering(true);
 
-    const populated = Object.entries(ACTOR_NAMES).map(([role, name], i) => ({
-      id: i + 1,
-      name,
-      role,
-      address: getSigner(role as Parameters<typeof getSigner>[0]).address,
-      stages: `${i + 1}`,
-    }));
-
     try {
-      await registerActors();
+      await registerActors(actorFields);
       if (!(await areActorsRegistered())) return;
 
-      inMemoryActorCache = populated;
+      inMemoryActorCache = actorFields;
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(ACTOR_CACHE_KEY, JSON.stringify(populated));
+        window.localStorage.setItem(
+          ACTOR_CACHE_KEY,
+          JSON.stringify(actorFields),
+        );
         window.dispatchEvent(new CustomEvent("actors-registration-change"));
       }
-      setActorFields(populated);
       setActorsAdded(true);
     } finally {
       setRegistering(false);
     }
   };
 
+  const updateActor = (id: number, field: keyof ActorField, value: string) => {
+    setActorFields((current) => current.map((actor) =>
+      actor.id === id ? { ...actor, [field]: value } : actor,
+    ));
+  };
+
   const visibleActors = actorFields;
+  const canViewParticipants = isDeployer || actorsAdded;
 
   return (
     <>
       <div className="page-heading">
         <div>
           <div className="kicker">Participants</div>
-          <h1>Register Participants On Chain</h1>
+          <h1>Register Participant On Chain</h1>
         </div>
         <p>
           Give every organisation a verifiable identity and explicit permission
@@ -101,25 +120,35 @@ export default function Actors() {
       </div>
       <div className="section-grid">
         <section className="panel wide">
-          <h2>Supply-chain actors</h2>
-          <p>Configured participants in the laptop lifecycle simulation.</p>
-          <div className="stage-list">
-            {visibleActors.length === 0 ? (
-              <p>
-                No actors loaded yet. Press “Register Participants” to register.
-              </p>
-            ) : (
-              visibleActors.map(({ id, name, role, stages }) => (
-                <article className="card" key={role}>
-                  <span className="card-id">{id}</span>
-                  <strong>{name}</strong>
-                  <small>
-                    {role} · {stages}
-                  </small>
-                </article>
-              ))
-            )}
-          </div>
+          {canViewParticipants ? (
+            <>
+              <h2>Supply-chain Participants</h2>
+              <p>Configured participants in the laptop lifecycle simulation.</p>
+              <div className="stage-list">
+                {visibleActors.map(({ id, name, role, stages }) => (
+                  <article className="card participant-card" key={id}>
+                    <span className="card-id">{id}</span>
+                    {([['Name', 'name', name], ['Role', 'role', role], ['Stages', 'stages', stages]] as const).map(([label, field, value]) => (
+                      <div className="participant-field" key={field}>
+                        <span>{label}</span>
+                        {actorsAdded ? (
+                          <span className="participant-value">{value}</span>
+                        ) : (
+                          <input
+                            value={value}
+                            onChange={(event) => updateActor(id, field, event.target.value)}
+                            disabled={!isDeployer || registering}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </article>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p>Participant details will be available after registration.</p>
+          )}
         </section>
         <section className="panel narrow">
           <div
@@ -138,19 +167,24 @@ export default function Actors() {
                 : "REGISTER PARTICIPANTS"}
             </strong>
           </div>
-          <div className="metric">
-            {String(visibleActors.length).padStart(2, "0")}
-          </div>
-          <p>
-            {actorsAdded
-              ? "participants registered"
-              : "input participants for the current lifecycle"}
-          </p>
+          {canViewParticipants && (
+            <>
+              <div className="metric">
+                {String(visibleActors.length).padStart(2, "0")}
+              </div>
+              <p>
+                {actorsAdded
+                  ? "participants registered"
+                  : "input participants for the current lifecycle"}
+              </p>
+            </>
+          )}
 
+          {isDeployer && (
           <div className="action-row">
             <Button
               onClick={handleRegisterParticipants}
-              disabled={actorsAdded || registering}
+              disabled={!isDeployer || actorsAdded || registering}
             >
               {registering
                 ? "Registering..."
@@ -159,6 +193,7 @@ export default function Actors() {
                 : "Register Participants"}
             </Button>
           </div>
+          )}
         </section>
       </div>
     </>

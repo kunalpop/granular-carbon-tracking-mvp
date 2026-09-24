@@ -16,8 +16,6 @@
   state, local event cache, totals, and threshold reporting.
 - `Stage.tsx` renders one event card with activity, emission factor, schema,
   owner, CO2e, reporting standard, previous event, status dot, and record button.
-- `StageCard.tsx` is a smaller lifecycle marker component; the simulation page
-  currently uses `Stage.tsx` instead.
 
 - `Results.tsx` provides Tampering, Aggregation, and Performance tabs, study
   buttons, status dots, persistence, and right-card summaries.

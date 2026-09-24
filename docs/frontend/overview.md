@@ -28,7 +28,7 @@ clear the stored state and start a new simulation.
 flowchart TD
     subgraph Workflow[Frontend user flow]
         A[Participants page] -->|Register and authorise participants| B[Product page]
-        B -->|Create product and mint passport| C[Simulation page]
+        B -->|Create product and mint passport| C[Events page]
         C --> D{Current stage recorded on-chain?}
         D -->|No| E[Record event and mirror CO2e tokens]
         E --> D
@@ -54,13 +54,13 @@ available after participant registration is confirmed.
 
 ### Step 2 — Register the product
 
-The operator creates the product and mints its passport. Simulation navigation
+The operator creates the product and mints its passport. Events navigation
 becomes available only after both participant and product registration are
 ready.
 
 ### Step 3 — Record lifecycle events
 
-The Simulation page presents one Stage card at a time. The responsible actor
+The Events page presents one Stage card at a time. The responsible actor
 records the event on-chain, including activity, emission factor, methodology,
 schema, and evidence hash. Positive emissions are minted as carbon tokens and
 negative emissions burn carbon tokens.

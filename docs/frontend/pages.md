@@ -1,6 +1,6 @@
 # Pages
 
-The frontend has four primary routes: `/actors`, `/product`, `/simulation`,
+The frontend has four primary routes: `/actors`, `/product`, `/events`,
 and `/results`. Navigation is gated by localStorage state.
 
 ## `/actors`
@@ -19,7 +19,7 @@ The product is created and its passport is minted on-chain. A serialized
 product record is stored in `registered-product-cache` and restored on reload.
 The tab is enabled after participants are cached.
 
-## `/simulation`
+## `/events`
 
 Displays one `Stage` card at a time in a horizontal slider. Each card shows
 activity, emission factor, schema, owner, CO2e, methodology, and the previous

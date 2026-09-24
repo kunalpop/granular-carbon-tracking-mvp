@@ -38,5 +38,4 @@ frontend/
     └── shared/
         ├── Button.tsx
         ├── Stage.tsx
-        └── StageCard.tsx
 ```

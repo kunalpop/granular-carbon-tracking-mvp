@@ -241,10 +241,10 @@ flowchart TD
 
 ### Pages
 
-The application has four routes: `/actors`, `/product`, `/simulation`, and
+The application has four routes: `/actors`, `/product`, `/events`, and
 `/results`. The actors page registers participants; Product creates and mints
-the passport; Simulation records sequential events; and Results runs the three
-evaluation studies. Product, Simulation, and Results are enabled progressively
+the passport; Events records sequential events; and Results runs the three
+evaluation studies. Product, Events, and Results are enabled progressively
 from the stored workflow state.
 
 ### Components
@@ -259,7 +259,6 @@ Workflow components are grouped under `frontend/src/components`:
 - `result/Results.tsx` and the three `study*.ts` files run evaluations.
 
 Shared components are under `frontend/src/shared`: `Button.tsx` provides the
-reusable button, `Stage.tsx` renders the detailed event card, and `StageCard.tsx`
 renders a compact lifecycle marker.
 
 ### Hooks, Services, and Shared Components

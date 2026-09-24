@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
+import { getSelectedRole, getSigner } from "../../services/getSigner";
 import {
   isProductRegistered,
   registerProduct,
@@ -37,6 +38,18 @@ export default function Product() {
   );
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState<string>();
+  const [selectedRole, setSelectedRole] = useState(() => getSelectedRole());
+  const isDeployer = selectedRole === "deployer";
+  const [description, setDescription] = useState(() =>
+    `Laptop unit CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")} (${EMISSION_FACTORS.referenceProduct})`,
+  );
+  const [oemAddress] = useState(() => getSigner("oem").address);
+
+  useEffect(() => {
+    const updateRole = () => setSelectedRole(getSelectedRole());
+    window.addEventListener("control-account-change", updateRole);
+    return () => window.removeEventListener("control-account-change", updateRole);
+  }, []);
 
   useEffect(() => {
     const restoreRegisteredProduct = async () => {
@@ -71,10 +84,11 @@ export default function Product() {
   }, []);
 
   const handleRegisterProduct = async () => {
+    if (!isDeployer || isRegistering || product) return;
     setIsRegistering(true);
     setError(undefined);
     try {
-      const registeredProduct = await registerProduct();
+      const registeredProduct = await registerProduct(description, oemAddress);
       setProduct(registeredProduct);
       window.localStorage.setItem(
         PRODUCT_CACHE_KEY,
@@ -94,6 +108,8 @@ export default function Product() {
     }
   };
 
+  const canViewProduct = isDeployer || Boolean(product);
+
   const productLabel = product
     ? `CMVP-${String(product.productId).padStart(3, "0")}`
     : `CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")}`;
@@ -112,22 +128,33 @@ export default function Product() {
       </div>
       <div className="section-grid">
         <section className="panel wide">
-          <div className="data-row">
-            <span>Passport Holder</span>
-            <span>{EMISSION_FACTORS.passportHolder}</span>
-          </div>
-          <div className="data-row">
-            <span>Product ID</span>
-            <span className="mono">{productLabel}</span>
-          </div>
-          <div className="data-row">
-            <span>Laptop Reference</span>
-            <span>{EMISSION_FACTORS.referenceProduct}</span>
-          </div>
-          <div className="data-row">
-            <span>Configuration</span>
-            <span className="mono">v{EMISSION_FACTORS.libraryVersion}</span>
-          </div>
+          {canViewProduct ? (
+            <>
+              <div className="data-row">
+                <span>Product Description</span>
+                {product ? (
+                  <span>{product.description}</span>
+                ) : (
+                  <input
+                    className="product-description-input"
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    disabled={!isDeployer || isRegistering}
+                  />
+                )}
+              </div>
+              <div className="data-row">
+                <span>Product ID</span>
+                <span className="mono">{productLabel}</span>
+              </div>
+              <div className="data-row">
+                <span>Configuration</span>
+                <span className="mono">v{EMISSION_FACTORS.libraryVersion}</span>
+              </div>
+            </>
+          ) : (
+            <p>Product details will be available after registration.</p>
+          )}
         </section>
         <section className="panel narrow">
           <div
@@ -146,10 +173,11 @@ export default function Product() {
               ? "Product created for the current lifecycle input."
               : "Product configured for the current lifecycle input."}
           </p>
+          {isDeployer && (
           <div className="action-row">
             <Button
               onClick={handleRegisterProduct}
-              disabled={isRegistering || Boolean(product)}
+              disabled={!isDeployer || isRegistering || Boolean(product)}
             >
               {isRegistering
                 ? "Registering…"
@@ -158,6 +186,7 @@ export default function Product() {
                 : "Create Product"}
             </Button>
           </div>
+          )}
           {error && <p role="alert">{error}</p>}
         </section>
       </div>

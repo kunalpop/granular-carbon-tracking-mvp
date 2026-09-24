@@ -1,5 +1,5 @@
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
-import { ACTOR_NAMES } from "../../services/getActors";
+import { ACTOR_NAMES } from "../../services/getParticipants";
 import { getSigner } from "../../services/getSigner";
 import { getParticipantRegistryContract } from "../../hooks/useContracts";
 
@@ -11,6 +11,13 @@ const PARTICIPANT_REGISTRY_ABI = [
 ];
 
 const ADMIN = "deployer";
+
+type ParticipantRegistration = {
+  name: string;
+  role: string;
+  address: string;
+  stages: string;
+};
 
 function getStageRoles() {
   const rolesNeedingStages = new Map<string, number[]>();
@@ -40,7 +47,7 @@ export async function areActorsRegistered(): Promise<boolean> {
   return true;
 }
 
-export async function registerActors() {
+export async function registerActors(actors: ParticipantRegistration[]) {
   // Admin signer for write transactions
   const adminSigner = getSigner(ADMIN);
 
@@ -50,17 +57,15 @@ export async function registerActors() {
     adminSigner,
   );
 
-  // Map each actor role to the stage IDs it is responsible for
-  const rolesNeedingStages = getStageRoles();
-
   // Register each actor and authorise their stages if not already done
-  for (const [role, name] of Object.entries(ACTOR_NAMES)) {
-    const addr = getSigner(role).address;
+  for (const actor of actors) {
+    const { name, role, address: addr } = actor;
     if (!(await participants.isRegistered(addr))) {
       await (await participants.registerParticipant(addr, name, role)).wait();
       console.log(`  registered ${role.padEnd(14)} ${name}`);
     }
-    for (const stageId of rolesNeedingStages.get(role) ?? []) {
+    const stageIds = actor.stages.split(",").map((value) => Number(value.trim())).filter((stageId) => Number.isInteger(stageId) && stageId > 0);
+    for (const stageId of stageIds) {
       if (!(await participants.canWriteStage(addr, stageId))) {
         await (await participants.authoriseStage(addr, stageId)).wait();
         console.log(`  authorised ${role.padEnd(14)} for stage ${stageId}`);

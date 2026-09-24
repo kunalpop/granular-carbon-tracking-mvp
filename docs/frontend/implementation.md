@@ -5,8 +5,8 @@
 `App.tsx` is the application shell and route coordinator. It:
 
 - Renders the top bar, network status, sidebar navigation, and main content area.
-- Defines the `/actors`, `/product`, `/simulation`, and `/results` routes.
-- Gates Product, Simulation, and Results based on localStorage workflow state.
+- Defines the `/actors`, `/product`, `/events`, and `/results` routes.
+- Gates Product, Events, and Results based on localStorage workflow state.
 - Listens for participant, product, event, and study completion events.
 - Updates the sidebar status from `Simulation Ready` to `Simulation Completed`.
 - Displays the `Start New Simulation` button after all three studies complete.
@@ -61,7 +61,7 @@ The implemented lifecycle proceeds through these stages:
    authorises their lifecycle stages, and caches their confirmed details.
 2. **Product registration** — `/product` creates the product, mints its
    passport, and caches the confirmed product record.
-3. **Event registration** — `/simulation` displays one Stage card at a time.
+3. **Event registration** — `/events` displays one Stage card at a time.
    The authorised participant records the current event on-chain, and positive
    or negative CO2e is mirrored in the carbon-token contract.
 4. **Stage progression** — the next stage is unavailable until the current

@@ -17,6 +17,11 @@ type StageProps = StageEvent & {
   recording?: boolean;
   thresholdBreached?: boolean;
   onRecord: () => void;
+  canRecord?: boolean;
+  locked?: boolean;
+  editable?: boolean;
+  onActivityChange?: (value: string) => void;
+  onEmissionFactorChange?: (value: string) => void;
 };
 
 export default function Stage({
@@ -33,6 +38,11 @@ export default function Stage({
   recording = false,
   thresholdBreached = false,
   onRecord,
+  canRecord = true,
+  locked = false,
+  editable = false,
+  onActivityChange,
+  onEmissionFactorChange,
 }: StageProps) {
   const statusLabel = thresholdBreached
     ? "THRESHOLD BREACHED"
@@ -53,14 +63,19 @@ export default function Stage({
         </span>
       </div>
       <h3>{title}</h3>
+      {locked && <p className="stage-lock-message">Upstream event is not yet recorded.</p>}
       <div className="stage-event-details">
         <div className="data-row">
           <span>Activity</span>
-          <span>{activity}</span>
+          {editable && !locked ? (
+            <input value={activity.split(" ")[0]} onChange={(event) => onActivityChange?.(event.target.value)} />
+          ) : <span>{activity}</span>}
         </div>
         <div className="data-row">
           <span>Emission factor</span>
-          <span>{emissionFactor}</span>
+          {editable && !locked ? (
+            <input value={emissionFactor.split(" ")[0]} onChange={(event) => onEmissionFactorChange?.(event.target.value)} />
+          ) : <span>{emissionFactor}</span>}
         </div>
         <div className="data-row">
           <span>Emission schema</span>
@@ -89,11 +104,13 @@ export default function Stage({
           </span>
         </div>
       </div>
-      <div className="action-row">
-        <Button onClick={onRecord} disabled={recorded || recording}>
-          {recording ? "Recording..." : recorded ? "Event Recorded" : "Record Event"}
-        </Button>
-      </div>
+      {canRecord && (
+        <div className="action-row">
+          <Button onClick={onRecord} disabled={recorded || recording || locked}>
+            {recording ? "Recording..." : recorded ? "Event Recorded" : "Record Event"}
+          </Button>
+        </div>
+      )}
     </article>
   );
 }

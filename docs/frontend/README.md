@@ -50,7 +50,7 @@ flowchart TD
 
 ## Pages
 
-The frontend has four routes: `/actors`, `/product`, `/simulation`, and
+The frontend has four routes: `/actors`, `/product`, `/events`, and
 `/results`. Navigation is gated by localStorage state.
 
 ### `/actors`
@@ -64,7 +64,7 @@ is the only enabled workflow tab at the start of a simulation.
 `Product.tsx` displays the configured product. `registerProduct.ts` creates the
 product and mints its passport on-chain.
 
-### `/simulation`
+### `/events`
 
 `Simulation.tsx` displays one `Stage` card at a time. Events are recorded
 through `EmissionEventRegistry`, and positive or negative CO2e is mirrored in
@@ -94,7 +94,6 @@ shown in the right-hand summary card.
 - `Results.tsx` provides the three evaluation tabs and summaries.
 - `studyTampering.ts`, `studyAggregation.ts`, and `studyPerformance.ts` run or
   load the browser-compatible evaluation studies.
-- `StageCard.tsx` is a compact lifecycle marker; simulation recording uses
   `Stage.tsx`.
 
 ## Hooks, Services, and Shared Components
@@ -119,7 +118,6 @@ contract addresses.
 
 - `Button.tsx` provides the reusable button element.
 - `Stage.tsx` renders a simulation event card.
-- `StageCard.tsx` renders a compact lifecycle stage marker.
 
 ## Data
 

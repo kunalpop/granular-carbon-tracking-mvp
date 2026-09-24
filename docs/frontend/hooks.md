@@ -75,7 +75,6 @@ The frontend keeps reusable UI components in `frontend/src/shared`:
 frontend/src/shared/
   Button.tsx
   Stage.tsx
-  StageCard.tsx
 ```
 
 - `Button.tsx` provides the shared button element with primary and secondary
@@ -83,6 +82,4 @@ frontend/src/shared/
 - `Stage.tsx` renders one simulation event card, including activity, emission
   factor, schema, owner, CO2e, reporting standard, previous event, recording
   state, threshold status, and its Record Event button.
-- `StageCard.tsx` renders a compact lifecycle stage marker with its stage ID,
-  name, actor role, and pending or complete state. The current simulation page
   uses `Stage.tsx` for event recording.

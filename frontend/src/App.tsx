@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
-import Actors from "./components/participants/Participants";
+import Participants from "./components/participants/Participants";
 import Product from "./components/product/Product";
 import Simulation from "./components/simulation/Simulation";
 import Results from "./components/result/Results";
+import Governance from "./components/control/Governance";
+import Audit from "./components/control/Audit";
+import AccountControl from "./components/control/AccountControl";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import "./App.css";
 
@@ -169,7 +172,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <NavLink to="/actors" className="brand">
+        <NavLink to="/participants" className="brand">
           <span className="brand-mark">GC</span>
           <span>
             <strong>Granular Carbon</strong>
@@ -180,13 +183,24 @@ export default function App() {
           <span className={networkOnline ? "online" : ""} />
           {networkLabel} · CHAIN {NETWORK_CONFIG.chainId}
         </div>
+        <AccountControl />
       </header>
       <div className="app-body">
         <aside className="sidebar">
-          <p className="eyebrow">Lifecycle control</p>
+          <p className="eyebrow">Lifecycle Control</p>
+          <nav aria-label="Lifecycle control navigation">
+            <WorkflowTab
+              to="/governance"
+              number="01"
+              label="Governance"
+              enabled
+            />
+            <WorkflowTab to="/audit" number="02" label="Audit" enabled />
+          </nav>
+          <p className="eyebrow control-eyebrow">Events</p>
           <nav aria-label="Primary navigation">
             <WorkflowTab
-              to="/actors"
+              to="/participants"
               number="01"
               label="Participants"
               enabled
@@ -198,9 +212,9 @@ export default function App() {
               enabled={participantsReady}
             />
             <WorkflowTab
-              to="/simulation"
+              to="/events"
               number="03"
-              label="Simulation"
+              label="Events"
               enabled={simulationReady}
             />
             <WorkflowTab
@@ -231,7 +245,7 @@ export default function App() {
               className="button secondary sidebar-reset"
               onClick={() => {
                 window.localStorage.clear();
-                window.location.assign("/actors");
+                window.location.assign("/participants");
               }}
             >
               Start New Simulation
@@ -240,24 +254,24 @@ export default function App() {
         </aside>
         <main className="main-content">
           <Routes>
-            <Route path="/actors" element={<Actors />} />
+            <Route path="/participants" element={<Participants />} />
             <Route
               path="/product"
               element={
                 participantsReady ? (
                   <Product />
                 ) : (
-                  <Navigate to="/actors" replace />
+                  <Navigate to="/participants" replace />
                 )
               }
             />
             <Route
-              path="/simulation"
+              path="/events"
               element={
                 simulationReady ? (
                   <Simulation />
                 ) : (
-                  <Navigate to="/actors" replace />
+                  <Navigate to="/participants" replace />
                 )
               }
             />
@@ -267,11 +281,13 @@ export default function App() {
                 simulationComplete ? (
                   <Results />
                 ) : (
-                  <Navigate to="/simulation" replace />
+                  <Navigate to="/events" replace />
                 )
               }
             />
-            <Route path="*" element={<Navigate to="/actors" replace />} />
+            <Route path="/governance" element={<Governance />} />
+            <Route path="/audit" element={<Audit />} />
+            <Route path="*" element={<Navigate to="/participants" replace />} />
           </Routes>
         </main>
       </div>

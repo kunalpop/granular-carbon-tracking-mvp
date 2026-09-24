@@ -9,6 +9,20 @@ const provider = new JsonRpcProvider(
 
 export type AccountRole = (typeof accounts)[number]["role"];
 
+export const ACCOUNT_OPTIONS = accounts.map((account) => ({
+  role: account.role as AccountRole,
+  address: account.address,
+}));
+
+export const ACCOUNT_CHANGE_EVENT = "control-account-change";
+export const SELECTED_ACCOUNT_KEY = "selected-control-account";
+
+export function getSelectedRole(): AccountRole {
+  if (typeof window === "undefined") return "deployer" as AccountRole;
+  const saved = window.localStorage.getItem(SELECTED_ACCOUNT_KEY);
+  return (saved ?? "deployer") as AccountRole;
+}
+
 export function getSigner(role: AccountRole): Wallet {
   const account = accounts.find((candidate) => candidate.role === role);
   if (!account) throw new Error(`No account configured for role ${role}`);

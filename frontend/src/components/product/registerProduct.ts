@@ -1,5 +1,4 @@
 import { getSigner } from "../../services/getSigner";
-import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import {
   getCarbonTokenContract,
   getEmissionEventRegistryContract,
@@ -37,7 +36,7 @@ export async function isProductRegistered(productId: bigint): Promise<boolean> {
   );
 }
 
-export async function registerProduct(): Promise<RegisteredProduct> {
+export async function registerProduct(description: string, oemAddress: string): Promise<RegisteredProduct> {
   const adminSigner = getSigner(ADMIN);
   const events = getEmissionEventRegistryContract(
     EMISSION_EVENT_REGISTRY_ABI,
@@ -48,10 +47,6 @@ export async function registerProduct(): Promise<RegisteredProduct> {
   let productId = 1n;
   while (await events.productExists(productId)) productId++;
 
-  const description = `Laptop unit CMVP-${String(productId).padStart(
-    3,
-    "0",
-  )} (${EMISSION_FACTORS.referenceProduct})`;
   const oem = getSigner("oem");
 
   const oemEvents = events.connect(oem) as typeof events & {
@@ -61,10 +56,10 @@ export async function registerProduct(): Promise<RegisteredProduct> {
     ): Promise<{ wait(): Promise<unknown> }>;
   };
   await (await oemEvents.createProduct(productId, description)).wait();
-  await (await token.mintPassport(productId, oem.address)).wait();
+  await (await token.mintPassport(productId, oemAddress)).wait();
 
   console.log(
-    `Passport NFT minted for product ${productId} to OEM (${oem.address})`,
+    `Passport NFT minted for product ${productId} to OEM (${oemAddress})`,
   );
   return { productId, description, oemAddress: oem.address };
 }
