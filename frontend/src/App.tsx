@@ -8,6 +8,7 @@ import Governance from "./components/control/Governance";
 import Audit from "./components/control/Audit";
 import AccountControl from "./components/control/AccountControl";
 import { NETWORK_CONFIG } from "./services/networkConfig";
+import { getSelectedRole, type AccountRole } from "./services/getSigner";
 import "./App.css";
 
 const ACTOR_CACHE_KEY = "registered-actors-cache";
@@ -67,7 +68,15 @@ export default function App() {
   });
   const simulationReady = participantsReady && productReady;
   const [networkOnline, setNetworkOnline] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<AccountRole>(() => getSelectedRole());
+  const canUseLifecycleControl = selectedRole === "deployer" || selectedRole === "auditor";
   const networkLabel = NETWORK_CONFIG.url.includes("8545") ? "BESU" : "CHAIN";
+
+  useEffect(() => {
+    const updateRole = () => setSelectedRole(getSelectedRole());
+    window.addEventListener("control-account-change", updateRole);
+    return () => window.removeEventListener("control-account-change", updateRole);
+  }, []);
 
   useEffect(() => {
     async function checkNetwork() {
@@ -187,16 +196,20 @@ export default function App() {
       </header>
       <div className="app-body">
         <aside className="sidebar">
+          {canUseLifecycleControl && (
+            <>
           <p className="eyebrow">Lifecycle Control</p>
           <nav aria-label="Lifecycle control navigation">
+            <WorkflowTab to="/audit" number="01" label="Audit" enabled />
             <WorkflowTab
               to="/governance"
-              number="01"
+              number="02"
               label="Governance"
               enabled
             />
-            <WorkflowTab to="/audit" number="02" label="Audit" enabled />
           </nav>
+          </>
+          )}
           <p className="eyebrow control-eyebrow">Product Foorprints</p>
           <nav aria-label="Primary navigation">
             <WorkflowTab
@@ -237,7 +250,7 @@ export default function App() {
               }
             />
             <strong>
-              {simulationComplete ? "Simulation Completed" : "Simulation Ready"}
+              {simulationComplete ? "Simulation Completed" : "Carbon Capture"}
             </strong>
           </div>
           {studiesComplete && (
