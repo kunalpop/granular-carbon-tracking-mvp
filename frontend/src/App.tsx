@@ -197,7 +197,7 @@ export default function App() {
             />
             <WorkflowTab to="/audit" number="02" label="Audit" enabled />
           </nav>
-          <p className="eyebrow control-eyebrow">Product Lifecycle</p>
+          <p className="eyebrow control-eyebrow">Product Foorprints</p>
           <nav aria-label="Primary navigation">
             <WorkflowTab
               to="/participants"
