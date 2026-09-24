@@ -11,7 +11,9 @@ const PRODUCT_CACHE_KEY = "registered-product-cache";
 
 function loadRegisteredProductDescription(): string {
   try {
-    const saved = JSON.parse(window.localStorage.getItem(PRODUCT_CACHE_KEY) ?? "null") as { description?: string } | null;
+    const saved = JSON.parse(
+      window.localStorage.getItem(PRODUCT_CACHE_KEY) ?? "null",
+    ) as { description?: string } | null;
     return saved?.description ?? EMISSION_FACTORS.referenceProduct;
   } catch {
     return EMISSION_FACTORS.referenceProduct;
@@ -24,11 +26,17 @@ type RecordedEvent = {
   eventHash: string;
 };
 
-export default function Simulation() {
+export default function Events() {
   const [currentStage, setCurrentStage] = useState(0);
-  const [selectedRole, setSelectedRole] = useState<AccountRole>(() => getSelectedRole());
-  const [drafts, setDrafts] = useState<Record<number, { activityValue: number; emissionFactor: number }>>({});
-  const [productDescription, setProductDescription] = useState(loadRegisteredProductDescription);
+  const [selectedRole, setSelectedRole] = useState<AccountRole>(() =>
+    getSelectedRole(),
+  );
+  const [drafts, setDrafts] = useState<
+    Record<number, { activityValue: number; emissionFactor: number }>
+  >({});
+  const [productDescription, setProductDescription] = useState(
+    loadRegisteredProductDescription,
+  );
   const [recordedEvents, setRecordedEvents] = useState<RecordedEvent[]>(() => {
     try {
       return JSON.parse(
@@ -43,21 +51,31 @@ export default function Simulation() {
   );
   const [recordingError, setRecordingError] = useState<string>();
   const stages = EMISSION_FACTORS.stages;
-  const canSeeAllStages = selectedRole === "deployer" || selectedRole === "auditor";
+  const canSeeAllStages =
+    selectedRole === "deployer" || selectedRole === "auditor";
   const recordedStages = new Set(recordedEvents.map((item) => item.stageId));
   const visibleStages = canSeeAllStages
     ? stages.filter((item) => recordedStages.has(item.stageId))
     : stages.filter((item) => item.actorRole === selectedRole);
   const stage = visibleStages[currentStage] ?? visibleStages[0];
   const activeStage = stage ?? stages[0];
-  const draft = drafts[activeStage.stageId] ?? { activityValue: activeStage.activityValue, emissionFactor: activeStage.emissionFactor_gCO2ePerUnit };
+  const draft = drafts[activeStage.stageId] ?? {
+    activityValue: activeStage.activityValue,
+    emissionFactor: activeStage.emissionFactor_gCO2ePerUnit,
+  };
   const previousStagesRecorded = stages
     .filter((item) => item.stageId < activeStage.stageId)
     .every((item) => recordedStages.has(item.stageId));
-  const eventLocked = !canSeeAllStages && !recordedStages.has(activeStage.stageId) && !previousStagesRecorded;
+  const eventLocked =
+    !canSeeAllStages &&
+    !recordedStages.has(activeStage.stageId) &&
+    !previousStagesRecorded;
 
   useEffect(() => {
-    window.localStorage.setItem(EVENTS_CACHE_KEY, JSON.stringify(recordedEvents));
+    window.localStorage.setItem(
+      EVENTS_CACHE_KEY,
+      JSON.stringify(recordedEvents),
+    );
   }, [recordedEvents]);
 
   useEffect(() => {
@@ -66,27 +84,30 @@ export default function Simulation() {
       setCurrentStage(0);
     };
     window.addEventListener("control-account-change", updateRole);
-    return () => window.removeEventListener("control-account-change", updateRole);
+    return () =>
+      window.removeEventListener("control-account-change", updateRole);
   }, []);
 
   useEffect(() => {
-    const updateProduct = () => setProductDescription(loadRegisteredProductDescription());
+    const updateProduct = () =>
+      setProductDescription(loadRegisteredProductDescription());
     window.addEventListener("product-registration-change", updateProduct);
-    return () => window.removeEventListener("product-registration-change", updateProduct);
+    return () =>
+      window.removeEventListener("product-registration-change", updateProduct);
   }, []);
   const event = {
     stageId: activeStage.stageId,
     title: activeStage.name,
     owner: activeStage.actorRole,
     activity: `${draft.activityValue} ${activeStage.activityUnit}`,
-    emissionFactor: `${draft.emissionFactor / Number(SCALE)} gCO2e per ${activeStage.activityUnit}`,
+    emissionFactor: `${draft.emissionFactor / Number(SCALE)} gCO2e per ${
+      activeStage.activityUnit
+    }`,
     emissionSchema: EMISSION_FACTORS.schemaVersion,
     co2eKg: (draft.activityValue * draft.emissionFactor) / 1000,
     reportingStandard: activeStage.methodology,
     previousEvent:
-      currentStage > 0
-        ? `event-${stages[currentStage - 1].stageId}`
-        : null,
+      currentStage > 0 ? `event-${stages[currentStage - 1].stageId}` : null,
   };
 
   const co2eForStage = (lifecycleStage: (typeof stages)[number]) =>
@@ -109,14 +130,22 @@ export default function Simulation() {
   const recordCurrentStage = async () => {
     if (eventLocked || canSeeAllStages) return;
     setRecordingError(undefined);
-    setRecordingStages((previous) => new Set(previous).add(activeStage.stageId));
+    setRecordingStages((previous) =>
+      new Set(previous).add(activeStage.stageId),
+    );
     try {
       const result = await registerEmissionEvent(
-        { ...activeStage, activityValue: draft.activityValue, emissionFactor_gCO2ePerUnit: draft.emissionFactor },
+        {
+          ...activeStage,
+          activityValue: draft.activityValue,
+          emissionFactor_gCO2ePerUnit: draft.emissionFactor,
+        },
         EMISSION_FACTORS.schemaVersion,
       );
       const nextRecordedEvents = [
-        ...recordedEvents.filter((item) => item.stageId !== activeStage.stageId),
+        ...recordedEvents.filter(
+          (item) => item.stageId !== activeStage.stageId,
+        ),
         {
           stageId: activeStage.stageId,
           co2eKg: result.co2eKg,
@@ -151,13 +180,15 @@ export default function Simulation() {
       <>
         <div className="page-heading">
           <div>
-            <div className="kicker">Lifecycle simulation</div>
-            <h1>Walk the lifecycle</h1>
+            <div className="kicker">Lifecycle Event Capture</div>
+            <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s) On Chain"}</h1>
           </div>
           <p>No events have been recorded by participants yet.</p>
         </div>
         <section className="panel">
-          <p>Recorded events will appear here after participants submit them.</p>
+          <p>
+            Recorded events will appear here after participants submit them.
+          </p>
         </section>
       </>
     );
@@ -167,8 +198,8 @@ export default function Simulation() {
     <>
       <div className="page-heading">
         <div>
-          <div className="kicker">Lifecycle simulation</div>
-          <h1>Walk the lifecycle</h1>
+          <div className="kicker">Lifecycle Event Capture</div>
+          <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s) On Chain"}</h1>
         </div>
         <p>
           Run the configured lifecycle stages and record one emission event for
@@ -184,7 +215,9 @@ export default function Simulation() {
               <Button
                 variant="secondary"
                 className="slider-arrow"
-                onClick={() => setCurrentStage((index) => Math.max(0, index - 1))}
+                onClick={() =>
+                  setCurrentStage((index) => Math.max(0, index - 1))
+                }
                 aria-label="Previous event"
               >
                 ←
@@ -194,11 +227,29 @@ export default function Simulation() {
             )}
             <Stage
               {...event}
-              editable={!canSeeAllStages && !recordedStages.has(activeStage.stageId)}
+              editable={
+                !canSeeAllStages && !recordedStages.has(activeStage.stageId)
+              }
               canRecord={!canSeeAllStages}
               locked={eventLocked}
-              onActivityChange={(value) => setDrafts((current) => ({ ...current, [activeStage.stageId]: { ...draft, activityValue: Number(value) || 0 } }))}
-              onEmissionFactorChange={(value) => setDrafts((current) => ({ ...current, [activeStage.stageId]: { ...draft, emissionFactor: (Number(value) || 0) * Number(SCALE) } }))}
+              onActivityChange={(value) =>
+                setDrafts((current) => ({
+                  ...current,
+                  [activeStage.stageId]: {
+                    ...draft,
+                    activityValue: Number(value) || 0,
+                  },
+                }))
+              }
+              onEmissionFactorChange={(value) =>
+                setDrafts((current) => ({
+                  ...current,
+                  [activeStage.stageId]: {
+                    ...draft,
+                    emissionFactor: (Number(value) || 0) * Number(SCALE),
+                  },
+                }))
+              }
               recorded={recordedStages.has(activeStage.stageId)}
               recording={recordingStages.has(activeStage.stageId)}
               thresholdBreached={
@@ -246,7 +297,9 @@ export default function Simulation() {
             <span>Stages over CO2e limit</span>
             <span>
               {stagesOverLimit.length > 0
-                ? stagesOverLimit.map((lifecycleStage) => lifecycleStage.name).join(", ")
+                ? stagesOverLimit
+                    .map((lifecycleStage) => lifecycleStage.name)
+                    .join(", ")
                 : "None"}
             </span>
           </div>

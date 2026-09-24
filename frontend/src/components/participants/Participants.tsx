@@ -104,7 +104,6 @@ export default function Participants() {
   };
 
   const visibleActors = actorFields;
-  const canViewParticipants = isDeployer || actorsAdded;
 
   return (
     <>
@@ -120,35 +119,36 @@ export default function Participants() {
       </div>
       <div className="section-grid">
         <section className="panel wide">
-          {canViewParticipants ? (
-            <>
-              <h2>Supply-chain Participants</h2>
-              <p>Configured participants in the laptop lifecycle simulation.</p>
-              <div className="stage-list">
-                {visibleActors.map(({ id, name, role, stages }) => (
-                  <article className="card participant-card" key={id}>
-                    <span className="card-id">{id}</span>
-                    {([['Name', 'name', name], ['Role', 'role', role], ['Stages', 'stages', stages]] as const).map(([label, field, value]) => (
-                      <div className="participant-field" key={field}>
-                        <span>{label}</span>
-                        {actorsAdded ? (
-                          <span className="participant-value">{value}</span>
-                        ) : (
-                          <input
-                            value={value}
-                            onChange={(event) => updateActor(id, field, event.target.value)}
-                            disabled={!isDeployer || registering}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </article>
-                ))}
-              </div>
-            </>
-          ) : (
-            <p>Participant details will be available after registration.</p>
-          )}
+          <h2>Supply-chain Participants</h2>
+          <p>Configured participants in the laptop lifecycle simulation.</p>
+          <div className="stage-list">
+            {visibleActors.length === 0 ? (
+              <p>
+                No participants loaded yet. Press “Register Participants” to
+                register.
+              </p>
+            ) : (
+              visibleActors.map(({ id, name, role, stages }) => (
+                <article className="card participant-card" key={id}>
+                  <span className="card-id">{id}</span>
+                  {([['Name', 'name', name], ['Role', 'role', role], ['Stages', 'stages', stages]] as const).map(([label, field, value]) => (
+                    <div className="participant-field" key={field}>
+                      <span>{label}</span>
+                      {actorsAdded ? (
+                        <span className="participant-value">{value}</span>
+                      ) : (
+                        <input
+                          value={value}
+                          onChange={(event) => updateActor(id, field, event.target.value)}
+                          disabled={!isDeployer || registering}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </article>
+              ))
+            )}
+          </div>
         </section>
         <section className="panel narrow">
           <div
@@ -167,18 +167,14 @@ export default function Participants() {
                 : "REGISTER PARTICIPANTS"}
             </strong>
           </div>
-          {canViewParticipants && (
-            <>
-              <div className="metric">
-                {String(visibleActors.length).padStart(2, "0")}
-              </div>
-              <p>
-                {actorsAdded
-                  ? "participants registered"
-                  : "input participants for the current lifecycle"}
-              </p>
-            </>
-          )}
+          <div className="metric">
+            {String(visibleActors.length).padStart(2, "0")}
+          </div>
+          <p>
+            {actorsAdded
+              ? "participants registered"
+              : "input participants for the current lifecycle"}
+          </p>
 
           {isDeployer && (
           <div className="action-row">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import Participants from "./components/participants/Participants";
 import Product from "./components/product/Product";
-import Simulation from "./components/simulation/Simulation";
+import Simulation from "./components/events/Events";
 import Results from "./components/result/Results";
 import Governance from "./components/control/Governance";
 import Audit from "./components/control/Audit";
@@ -197,7 +197,7 @@ export default function App() {
             />
             <WorkflowTab to="/audit" number="02" label="Audit" enabled />
           </nav>
-          <p className="eyebrow control-eyebrow">Events</p>
+          <p className="eyebrow control-eyebrow">Product Lifecycle</p>
           <nav aria-label="Primary navigation">
             <WorkflowTab
               to="/participants"
