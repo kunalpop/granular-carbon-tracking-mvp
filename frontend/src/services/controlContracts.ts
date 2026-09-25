@@ -31,10 +31,11 @@ export const MULTISIG_ABI = [
   "function ownerCount() view returns (uint256)",
   "function isOwner(address) view returns (bool)",
   "function submit(address target, bytes data) returns (uint256)",
+  "function submit(address target, bytes data, address eventOwner) returns (uint256)",
   "function confirm(uint256 txId)",
   "function execute(uint256 txId)",
   "function transactionCount() view returns (uint256)",
-  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, uint256 confirmations))",
+  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, uint256 confirmations, address eventOwner))",
   "function confirmedBy(uint256 txId, address owner) view returns (bool)",
 ];
 
@@ -59,7 +60,8 @@ export async function hashEvidence(file?: File) {
   return keccak256(new Uint8Array(await file.arrayBuffer()));
 }
 
-export function formatAddress(address: string) {
+export function formatAddress(address?: string) {
+  if (!address || typeof address !== "string") return "Unknown address";
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 

@@ -38,9 +38,17 @@ async function main() {
   await ontology.waitForDeployment();
   console.log(`OntologyRegistry       ${ontology.target}`);
 
-  // 2-of-3 consortium multisig: deployer + auditor + OEM jointly control upgrades.
+  // Every participant can be an owner; correction proposals require deployer,
+  // auditor, and the participant who originally recorded the event.
+  const consortiumOwners = [
+    deployer.address,
+    addrOf("auditor"),
+    ...accounts
+      .filter((account) => account.role !== "deployer" && account.role !== "auditor")
+      .map((account) => account.address),
+  ];
   const multisig = await ethers.deployContract("ConsortiumMultisig", [
-    [deployer.address, addrOf("auditor"), addrOf("oem")],
+    consortiumOwners,
     2n,
   ]);
   await multisig.waitForDeployment();
@@ -60,7 +68,9 @@ async function main() {
 
   await (await governance.grantRole(await governance.CORRECTOR_ROLE(), addrOf("auditor"))).wait();
   await (await governance.grantRole(await governance.AUDITOR_ROLE(), addrOf("auditor"))).wait();
-  console.log(`Corrector/auditor roles granted to ${addrOf("auditor")}`);
+  await (await governance.grantRole(await governance.CORRECTOR_ROLE(), multisig.target)).wait();
+  await (await governance.grantRole(await governance.AUDITOR_ROLE(), multisig.target)).wait();
+  console.log(`Corrector/auditor roles granted to auditor and multisig`);
 
   // Pin schema 1.0.0 in the ontology: hash of the actual schema document.
   const schemaPath = path.join(__dirname, "schema", "emission-event-schema-1.0.0.json");

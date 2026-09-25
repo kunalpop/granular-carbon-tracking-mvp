@@ -596,6 +596,11 @@ a {
   color: #a34532;
 }
 .queue-item,
+.audit-corrections {
+  display: grid;
+  gap: 18px;
+}
+
 .audit-row {
   padding: 16px 0;
   border-top: 1px solid var(--line);
@@ -728,4 +733,34 @@ a {
     display: block;
     margin-top: 8px;
   }
+}
+
+.correction-card {
+  display: grid;
+  gap: 12px;
+}
+.correction-auditor-fields {
+  padding: 0 22px;
+  border: 1px solid var(--line);
+  background: rgba(243, 241, 233, 0.45);
+}
+.correction-auditor-fields input {
+  width: min(65%, 360px);
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.55);
+  text-align: right;
+}
+
+.reason-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+.reason-row textarea {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  text-align: left;
 }

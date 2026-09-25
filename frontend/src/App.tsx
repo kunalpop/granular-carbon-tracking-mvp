@@ -4,9 +4,10 @@ import Participants from "./components/participants/Participants";
 import Product from "./components/product/Product";
 import Simulation from "./components/events/Events";
 import Results from "./components/result/Results";
-import Governance from "./components/control/Governance";
-import Audit from "./components/control/Audit";
-import AccountControl from "./components/control/AccountControl";
+import Governance from "./components/governance/Governance";
+import Voting from "./components/governance/Voting";
+import Audit from "./components/audit/Audit";
+import AccountControl from "./components/audit/AccountControl";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import { getSelectedRole, type AccountRole } from "./services/getSigner";
 import "./App.css";
@@ -69,7 +70,9 @@ export default function App() {
   const simulationReady = participantsReady && productReady;
   const [networkOnline, setNetworkOnline] = useState(false);
   const [selectedRole, setSelectedRole] = useState<AccountRole>(() => getSelectedRole());
-  const canUseLifecycleControl = selectedRole === "deployer" || selectedRole === "auditor";
+  const canUseAudit = selectedRole === "auditor";
+  const canUseGovernance = selectedRole === "deployer";
+  const canUseVoting = true;
   const networkLabel = NETWORK_CONFIG.url.includes("8545") ? "BESU" : "CHAIN";
 
   useEffect(() => {
@@ -196,17 +199,15 @@ export default function App() {
       </header>
       <div className="app-body">
         <aside className="sidebar">
-          {canUseLifecycleControl && (
+          {(canUseAudit || canUseGovernance || canUseVoting) && (
             <>
           <p className="eyebrow">Lifecycle Control</p>
           <nav aria-label="Lifecycle control navigation">
-            <WorkflowTab to="/audit" number="01" label="Audit" enabled />
-            <WorkflowTab
-              to="/governance"
-              number="02"
-              label="Governance"
-              enabled
-            />
+            {canUseAudit && <WorkflowTab to="/audit" number="01" label="Audit" enabled />}
+            {canUseGovernance && (
+              <WorkflowTab to="/governance" number="02" label="Governance" enabled />
+            )}
+            {canUseVoting && <WorkflowTab to="/voting" number="03" label="Voting" enabled />}
           </nav>
           </>
           )}
@@ -298,8 +299,15 @@ export default function App() {
                 )
               }
             />
-            <Route path="/governance" element={<Governance />} />
-            <Route path="/audit" element={<Audit />} />
+            <Route
+              path="/governance"
+              element={canUseGovernance ? <Governance /> : <Navigate to="/voting" replace />}
+            />
+            <Route path="/voting" element={<Voting />} />
+            <Route
+              path="/audit"
+              element={canUseAudit ? <Audit /> : <Navigate to="/participants" replace />}
+            />
             <Route path="*" element={<Navigate to="/participants" replace />} />
           </Routes>
         </main>
