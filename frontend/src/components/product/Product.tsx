@@ -3,7 +3,8 @@ import Button from "../../shared/Button";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
 import { registerProduct, type RegisteredProduct } from "./registerProduct";
-import { loadChainProducts } from "../../services/productDiscovery";
+import { eventRegistryForControl } from "../../services/useContracts";
+import { loadRegisteredProducts } from "../../services/getRegisteredProducts";
 
 const PRODUCT_CACHE_KEY = "registered-product-cache";
 const PRODUCT_REVIEW_KEY = "product-review-status-v2";
@@ -16,8 +17,8 @@ type ReviewData = {
   oemDescription: string;
 };
 
-const defaultDescription = () =>
-  `Laptop unit CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")} (${EMISSION_FACTORS.referenceProduct})`;
+const defaultDescription = (productNumber = EMISSION_FACTORS.productId) =>
+  `Laptop unit CMVP-${String(productNumber).padStart(3, "0")} (${EMISSION_FACTORS.referenceProduct})`;
 
 function loadReviewData(): ReviewData {
   const fallback = defaultDescription();
@@ -50,6 +51,7 @@ function saveReviewData(data: ReviewData) {
 
 export default function Product() {
   const [product, setProduct] = useState<RegisteredProduct | undefined>();
+  const [nextProductNumber, setNextProductNumber] = useState(EMISSION_FACTORS.productId);
   const [isWorking, setIsWorking] = useState(false);
   const [review, setReview] = useState<ReviewData>(loadReviewData);
   const [error, setError] = useState<string>();
@@ -65,21 +67,69 @@ export default function Product() {
   }, []);
 
   useEffect(() => {
+    const refreshNextProductNumber = async () => {
+      if ((window.localStorage.getItem("selected-product-id") ?? "new") !== "new") return;
+      try {
+        const registeredProducts = await loadRegisteredProducts();
+        const nextNumber = registeredProducts.length + 1;
+        setNextProductNumber(nextNumber);
+        setReview((current) => {
+          if (current.status !== "draft") return current;
+          const next = {
+            ...current,
+            deployerDescription: defaultDescription(nextNumber),
+            oemDescription: defaultDescription(nextNumber),
+          };
+          saveReviewData(next);
+          return next;
+        });
+      } catch {
+        // Keep the configured default while the chain is unavailable.
+      }
+    };
+    const refreshForSelection = () => void refreshNextProductNumber();
+    void refreshNextProductNumber();
+    window.addEventListener("product-selection-change", refreshForSelection);
+    window.addEventListener("product-registration-change", refreshForSelection);
+    return () => {
+      window.removeEventListener("product-selection-change", refreshForSelection);
+      window.removeEventListener("product-registration-change", refreshForSelection);
+    };
+  }, []);
+
+  useEffect(() => {
     const restoreRegisteredProduct = async () => {
       try {
-        const chainProduct = (await loadChainProducts())[0];
-        if (chainProduct) {
-          setProduct({
-            productId: BigInt(chainProduct.productId),
-            description: chainProduct.description,
-            oemAddress,
-          });
+        const selectedId = window.localStorage.getItem("selected-product-id") ?? "new";
+        if (selectedId === "new") {
+          setProduct(undefined);
+          return;
         }
+
+        const registry = eventRegistryForControl() as typeof eventRegistryForControl extends () => infer T ? T & {
+          getProduct(productId: bigint): Promise<{
+            description: string;
+            exists: boolean;
+          }>;
+        } : never;
+        const chainProduct = await registry.getProduct(BigInt(selectedId));
+        setProduct(chainProduct.exists ? {
+          productId: BigInt(selectedId),
+          description: String(chainProduct.description),
+          oemAddress,
+        } : undefined);
       } catch {
         // The review form remains usable while the chain is unavailable.
       }
     };
+    const refreshProduct = () => void restoreRegisteredProduct();
     void restoreRegisteredProduct();
+    window.addEventListener("product-selection-change", refreshProduct);
+    window.addEventListener("product-registration-change", refreshProduct);
+    return () => {
+      window.removeEventListener("product-selection-change", refreshProduct);
+      window.removeEventListener("product-registration-change", refreshProduct);
+    };
   }, [oemAddress]);
 
   const updateReview = (changes: Partial<ReviewData>) => {
@@ -124,7 +174,12 @@ export default function Product() {
         );
         window.localStorage.removeItem(PRODUCT_REVIEW_KEY);
         window.localStorage.removeItem(PRODUCT_REVIEW_DATA_KEY);
+        window.localStorage.setItem(
+          "selected-product-id",
+          registeredProduct.productId.toString(),
+        );
         window.dispatchEvent(new Event("product-registration-change"));
+        window.dispatchEvent(new Event("product-selection-change"));
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Product action failed.");
@@ -134,9 +189,12 @@ export default function Product() {
   };
 
   const canViewProduct = isDeployer || Boolean(product) || (isOem && review.status !== "draft");
+  const selectedProductId = window.localStorage.getItem("selected-product-id") ?? "new";
   const productLabel = product
     ? `CMVP-${String(product.productId).padStart(3, "0")}`
-    : `CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")}`;
+    : selectedProductId === "new"
+      ? `CMVP-${String(nextProductNumber).padStart(3, "0")}`
+      : `CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")}`;
   const description = product?.description ??
     (review.status === "confirmed" || (isOem && review.status === "sent")
       ? review.oemDescription
@@ -151,7 +209,7 @@ export default function Product() {
       <div className="page-heading">
         <div>
           <div className="kicker">Product Genesis</div>
-          <h1>Verify and Mint Product</h1>
+          <h1>Register Product</h1>
         </div>
       </div>
       <div className="section-grid">

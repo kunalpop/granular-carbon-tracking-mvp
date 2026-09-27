@@ -66,6 +66,28 @@ a {
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
+.product-selector {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.product-selector label {
+  color: var(--muted);
+  font: 10px "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.product-selector select {
+  max-width: 280px;
+  border: 1px solid var(--line);
+  padding: 7px 28px 7px 9px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--ink);
+  font: 11px "DM Mono", monospace;
+}
 .network-status {
   flex-shrink: 0;
   margin-left: 40px;

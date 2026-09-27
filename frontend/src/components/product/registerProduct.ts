@@ -32,16 +32,9 @@ export async function isConfiguredProductRegistered(): Promise<boolean> {
 
 export async function isProductRegistered(productId: bigint): Promise<boolean> {
   const signer = getSigner(ADMIN);
-  const events = getEmissionEventRegistryContract(
-    EMISSION_EVENT_REGISTRY_ABI,
-    signer,
-  );
   const token = getCarbonTokenContract(CARBON_TOKEN_ABI, signer);
 
-  return Boolean(
-    (await events.productExists(productId)) &&
-      (await token.passportExists(productId)),
-  );
+  return Boolean(await token.passportExists(productId));
 }
 
 export async function registerProduct(description: string, oemAddress: string): Promise<RegisteredProduct> {

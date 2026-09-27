@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Participants from "./components/participants/Participants";
 import Product from "./components/product/Product";
 import Simulation from "./components/events/Events";
@@ -9,9 +9,10 @@ import Voting from "./components/governance/Voting";
 import Audit from "./components/audit/Audit";
 import AccountControl from "./components/audit/AccountControl";
 import { areActorsRegistered } from "./components/participants/registerParticipants";
-import { isConfiguredProductRegistered } from "./components/product/registerProduct";
+import { isProductRegistered } from "./components/product/registerProduct";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import { getSelectedRole, type AccountRole } from "./services/getSigner";
+import { loadRegisteredProducts, type ChainProduct } from "./services/getRegisteredProducts";
 import "./App.css";
 
 const ACTOR_CACHE_KEY = "registered-actors-cache";
@@ -19,6 +20,7 @@ const PRODUCT_CACHE_KEY = "registered-product-cache";
 const SIMULATION_EVENTS_CACHE_KEY = "registered-emission-events-cache";
 const SIMULATION_EVENT_COUNT = 10;
 const STUDIES_COMPLETE_CACHE_KEY = "evaluation-studies-complete";
+const SELECTED_PRODUCT_KEY = "selected-product-id";
 
 type WorkflowTabProps = {
   to: string;
@@ -66,10 +68,44 @@ export default function App() {
   const simulationReady = participantsReady && productReady;
   const [networkOnline, setNetworkOnline] = useState(false);
   const [selectedRole, setSelectedRole] = useState<AccountRole>(() => getSelectedRole());
+  const [products, setProducts] = useState<ChainProduct[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState(() =>
+    window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new",
+  );
+  const navigate = useNavigate();
   const canUseAudit = selectedRole === "auditor";
   const canUseGovernance = selectedRole === "deployer";
   const canUseVoting = true;
   const networkLabel = NETWORK_CONFIG.url.includes("8545") ? "BESU" : "CHAIN";
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setProducts(await loadRegisteredProducts());
+      } catch {
+        setProducts([]);
+      }
+    };
+    void loadProducts();
+    const refreshProducts = () => void loadProducts();
+    const refreshSelection = () => {
+      const productId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+      setSelectedProductId(productId);
+      if (productId === "new") {
+        setProductReady(false);
+        return;
+      }
+      void isProductRegistered(BigInt(productId))
+        .then(setProductReady)
+        .catch(() => setProductReady(false));
+    };
+    window.addEventListener("product-registration-change", refreshProducts);
+    window.addEventListener("product-selection-change", refreshSelection);
+    return () => {
+      window.removeEventListener("product-registration-change", refreshProducts);
+      window.removeEventListener("product-selection-change", refreshSelection);
+    };
+  }, []);
 
   useEffect(() => {
     const updateRole = () => setSelectedRole(getSelectedRole());
@@ -118,7 +154,10 @@ export default function App() {
         setParticipantsReady(false);
       }
       try {
-        setProductReady(await isConfiguredProductRegistered());
+        const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+        setProductReady(
+          selectedId !== "new" && await isProductRegistered(BigInt(selectedId)),
+        );
       } catch {
         setProductReady(false);
       }
@@ -157,6 +196,7 @@ export default function App() {
       "product-registration-change",
       handleRegistrationChange,
     );
+    window.addEventListener("product-selection-change", handleRegistrationChange);
     window.addEventListener(
       "simulation-registration-change",
       handleRegistrationChange,
@@ -175,6 +215,7 @@ export default function App() {
         "product-registration-change",
         handleRegistrationChange,
       );
+      window.removeEventListener("product-selection-change", handleRegistrationChange);
       window.removeEventListener(
         "simulation-registration-change",
         handleRegistrationChange,
@@ -193,6 +234,27 @@ export default function App() {
             <small>tracking console</small>
           </span>
         </NavLink>
+        <div className="product-selector">
+          <label htmlFor="product-selection">Product</label>
+          <select
+            id="product-selection"
+            value={selectedProductId}
+            onChange={(event) => {
+              const productId = event.target.value;
+              setSelectedProductId(productId);
+              window.localStorage.setItem(SELECTED_PRODUCT_KEY, productId);
+              window.dispatchEvent(new Event("product-selection-change"));
+              navigate("/product");
+            }}
+          >
+            <option value="new">New Product</option>
+            {products.map((product) => (
+              <option key={product.productId} value={product.productId}>
+                CMVP-{String(product.productId).padStart(3, "0")}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="network-status">
           <span className={networkOnline ? "online" : ""} />
           {networkLabel} · CHAIN {NETWORK_CONFIG.chainId}

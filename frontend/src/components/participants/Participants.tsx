@@ -3,7 +3,8 @@ import Button from "../../shared/Button";
 import { ACTOR_NAMES } from "../../services/getParticipants";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
-import { loadRegisteredParticipants, registerActors } from "./registerParticipants";
+import { loadRegisteredParticipants } from "./getRegisteredParticipants";
+import { registerActors } from "./registerParticipants";
 
 type ActorField = {
   id: number;
@@ -114,7 +115,7 @@ export default function Participants() {
       <div className="page-heading">
         <div>
           <div className="kicker">Participants</div>
-          <h1>Register Participant On Chain</h1>
+          <h1>Register Participants</h1>
         </div>
       </div>
       <div className="section-grid">

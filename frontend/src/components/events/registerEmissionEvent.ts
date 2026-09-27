@@ -7,7 +7,7 @@ import { getSigner, type AccountRole } from "../../services/getSigner";
 import type { Stage } from "../../services/getTypes";
 
 // Cache key used to find the product created on the Product page.
-const PRODUCT_CACHE_KEY = "registered-product-cache";
+const SELECTED_PRODUCT_KEY = "selected-product-id";
 // Administrator role used to update the carbon-token mirror.
 const ADMIN = "deployer" as AccountRole;
 
@@ -26,12 +26,11 @@ const CARBON_TOKEN_ABI = [
 
 // Read the registered product ID from local storage.
 function getProductId(): bigint {
-  const cached = window.localStorage.getItem(PRODUCT_CACHE_KEY);
-  if (!cached) throw new Error("Register a product before recording events.");
-
-  const saved = JSON.parse(cached) as { productId?: string };
-  if (!saved.productId) throw new Error("Registered product ID is missing.");
-  return BigInt(saved.productId);
+  const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY);
+  if (!selectedId || selectedId === "new") {
+    throw new Error("Select a registered product before recording events.");
+  }
+  return BigInt(selectedId);
 }
 
 // Record one lifecycle emission event and mirror its CO2e value on-chain.

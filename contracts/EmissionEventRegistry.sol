@@ -76,10 +76,6 @@ contract EmissionEventRegistry {
         emit ProductCreated(productId, msg.sender, description);
     }
 
-    /// @notice Append one emission event to a product's chain. There is
-    ///         deliberately NO function to edit or delete an event: the
-    ///         registry is append-only (FR4/FR5; corrections are a governed
-    ///         superseding record, added by the GovernanceModule phase).
     function recordEvent(
         uint256 productId,
         uint8 stageId,

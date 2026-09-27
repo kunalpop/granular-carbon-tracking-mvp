@@ -9,6 +9,7 @@ import { getSelectedRole, getSigner } from "./getSigner";
 export const EVENT_REGISTRY_ABI = [
   "event ProductCreated(uint256 indexed productId, address indexed createdBy, string description)",
   "function productExists(uint256 productId) view returns (bool)",
+  "function getProduct(uint256 productId) view returns (tuple(string description, address createdBy, uint64 createdAt, bool exists))",
   "function eventCount(uint256 productId) view returns (uint256)",
   "function eventAt(uint256 productId, uint256 index) view returns (tuple(uint256 productId, uint8 stageId, address actor, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, int256 co2eGrams, string methodology, bytes32 evidenceHash, bytes32 prevEventHash, uint64 timestamp, string schemaVersion, bytes32 eventHash))",
   "function recordEvent(uint256 productId, uint8 stageId, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, string methodology, bytes32 evidenceHash, string schemaVersion)",

@@ -4,9 +4,10 @@ import Stage from "../../shared/Stage";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import { registerEmissionEvent } from "./registerEmissionEvent";
 import { getSelectedRole, type AccountRole } from "../../services/getSigner";
+import { eventRegistryForControl } from "../../services/useContracts";
 
 const SCALE = 1000n;
-const EVENTS_CACHE_KEY = "registered-emission-events-cache";
+const SELECTED_PRODUCT_KEY = "selected-product-id";
 const PRODUCT_CACHE_KEY = "registered-product-cache";
 
 function loadRegisteredProductDescription(): string {
@@ -37,15 +38,7 @@ export default function Events() {
   const [productDescription, setProductDescription] = useState(
     loadRegisteredProductDescription,
   );
-  const [recordedEvents, setRecordedEvents] = useState<RecordedEvent[]>(() => {
-    try {
-      return JSON.parse(
-        window.localStorage.getItem(EVENTS_CACHE_KEY) ?? "[]",
-      ) as RecordedEvent[];
-    } catch {
-      return [];
-    }
-  });
+  const [recordedEvents, setRecordedEvents] = useState<RecordedEvent[]>([]);
   const [recordingStages, setRecordingStages] = useState<Set<number>>(
     () => new Set(),
   );
@@ -72,13 +65,6 @@ export default function Events() {
     !previousStagesRecorded;
 
   useEffect(() => {
-    window.localStorage.setItem(
-      EVENTS_CACHE_KEY,
-      JSON.stringify(recordedEvents),
-    );
-  }, [recordedEvents]);
-
-  useEffect(() => {
     const updateRole = () => {
       setSelectedRole(getSelectedRole());
       setCurrentStage(0);
@@ -89,11 +75,39 @@ export default function Events() {
   }, []);
 
   useEffect(() => {
-    const updateProduct = () =>
+    const loadSelectedProductEvents = async () => {
+      const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
       setProductDescription(loadRegisteredProductDescription());
+      if (selectedId === "new") {
+        setRecordedEvents([]);
+        return;
+      }
+
+      try {
+        const registry = eventRegistryForControl();
+        const productId = BigInt(selectedId);
+        const count = Number(await registry.eventCount(productId));
+        const events = await Promise.all(
+          Array.from({ length: count }, (_, index) => registry.eventAt(productId, index)),
+        );
+        setRecordedEvents(events.map((record) => ({
+          stageId: Number(record.stageId),
+          co2eKg: Number(record.co2eGrams) / 1000,
+          eventHash: String(record.eventHash),
+        })));
+      } catch {
+        setRecordedEvents([]);
+      }
+    };
+
+    const updateProduct = () => void loadSelectedProductEvents();
+    void loadSelectedProductEvents();
+    window.addEventListener("product-selection-change", updateProduct);
     window.addEventListener("product-registration-change", updateProduct);
-    return () =>
+    return () => {
+      window.removeEventListener("product-selection-change", updateProduct);
       window.removeEventListener("product-registration-change", updateProduct);
+    };
   }, []);
   const event = {
     stageId: activeStage.stageId,
@@ -153,10 +167,6 @@ export default function Events() {
         },
       ];
       setRecordedEvents(nextRecordedEvents);
-      window.localStorage.setItem(
-        EVENTS_CACHE_KEY,
-        JSON.stringify(nextRecordedEvents),
-      );
       window.dispatchEvent(new Event("simulation-registration-change"));
     } catch (cause) {
       setRecordingError(
@@ -181,7 +191,7 @@ export default function Events() {
         <div className="page-heading">
           <div>
             <div className="kicker">Lifecycle Event Capture</div>
-            <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s) On Chain"}</h1>
+            <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s)"}</h1>
           </div>
           <p>No events have been recorded by participants yet.</p>
         </div>
@@ -199,12 +209,8 @@ export default function Events() {
       <div className="page-heading">
         <div>
           <div className="kicker">Lifecycle Event Capture</div>
-          <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s) On Chain"}</h1>
+          <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s)"}</h1>
         </div>
-        <p>
-          Run the configured lifecycle stages and record one emission event for
-          each participant in sequence.
-        </p>
       </div>
 
       <div className="section-grid">
