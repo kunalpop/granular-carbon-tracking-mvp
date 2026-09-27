@@ -22,6 +22,14 @@ export type RegisteredProduct = {
 
 const ADMIN = "deployer";
 
+export async function isConfiguredProductRegistered(): Promise<boolean> {
+  const events = getEmissionEventRegistryContract(
+    EMISSION_EVENT_REGISTRY_ABI,
+    getSigner(ADMIN),
+  );
+  return Boolean(await events.productExists(1n));
+}
+
 export async function isProductRegistered(productId: bigint): Promise<boolean> {
   const signer = getSigner(ADMIN);
   const events = getEmissionEventRegistryContract(

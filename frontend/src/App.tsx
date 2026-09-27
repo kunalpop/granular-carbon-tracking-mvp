@@ -8,6 +8,8 @@ import Governance from "./components/governance/Governance";
 import Voting from "./components/governance/Voting";
 import Audit from "./components/audit/Audit";
 import AccountControl from "./components/audit/AccountControl";
+import { areActorsRegistered } from "./components/participants/registerParticipants";
+import { isConfiguredProductRegistered } from "./components/product/registerProduct";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import { getSelectedRole, type AccountRole } from "./services/getSigner";
 import "./App.css";
@@ -44,14 +46,8 @@ function WorkflowTab({ to, number, label, enabled }: WorkflowTabProps) {
 }
 
 export default function App() {
-  const [participantsReady, setParticipantsReady] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return Boolean(window.localStorage.getItem(ACTOR_CACHE_KEY));
-  });
-  const [productReady, setProductReady] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return Boolean(window.localStorage.getItem(PRODUCT_CACHE_KEY));
-  });
+  const [participantsReady, setParticipantsReady] = useState(false);
+  const [productReady, setProductReady] = useState(false);
   const [simulationComplete, setSimulationComplete] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -110,16 +106,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const syncStatus = () => {
+    const syncStatus = async () => {
       if (typeof window === "undefined") {
         setParticipantsReady(false);
         return;
       }
 
-      setParticipantsReady(
-        Boolean(window.localStorage.getItem(ACTOR_CACHE_KEY)),
-      );
-      setProductReady(Boolean(window.localStorage.getItem(PRODUCT_CACHE_KEY)));
+      try {
+        setParticipantsReady(await areActorsRegistered());
+      } catch {
+        setParticipantsReady(false);
+      }
+      try {
+        setProductReady(await isConfiguredProductRegistered());
+      } catch {
+        setProductReady(false);
+      }
       try {
         const events = JSON.parse(
           window.localStorage.getItem(SIMULATION_EVENTS_CACHE_KEY) ?? "[]",
@@ -140,11 +142,11 @@ export default function App() {
         event.key === SIMULATION_EVENTS_CACHE_KEY ||
         event.key === STUDIES_COMPLETE_CACHE_KEY
       ) {
-        syncStatus();
+        void syncStatus();
       }
     };
 
-    const handleRegistrationChange = () => syncStatus();
+    const handleRegistrationChange = () => void syncStatus();
 
     window.addEventListener("storage", handleStorage);
     window.addEventListener(
@@ -161,7 +163,7 @@ export default function App() {
     );
     window.addEventListener("studies-complete", handleRegistrationChange);
 
-    syncStatus();
+    void syncStatus();
 
     return () => {
       window.removeEventListener("storage", handleStorage);
