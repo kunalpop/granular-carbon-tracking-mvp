@@ -163,6 +163,7 @@ export default function Corrections() {
                 recording={busy === event.index}
                 recorded={event.corrected || submitted.has(event.index)}
                 thresholdBreached={breached}
+                thresholdKg={event.thresholdKg}
                 onActivityChange={(value) =>
                   setDrafts((current) => ({
                     ...current,
@@ -200,6 +201,16 @@ export default function Corrections() {
                   }))
                 }
                 onRecord={() => void correct(event)}
+                onDiscard={() =>
+                  setDrafts((current) => ({
+                    ...current,
+                    [event.index]: {
+                      activity: event.activity,
+                      factor: event.emissionFactor,
+                      reason: `Correction for Stage ${event.stageId}: `,
+                    },
+                  }))
+                }
               />
             </div>
           );

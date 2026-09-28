@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
 
 export type StageEvent = {
@@ -19,6 +19,7 @@ type StageProps = StageEvent & {
   recorded?: boolean;
   recording?: boolean;
   thresholdBreached?: boolean;
+  thresholdKg?: number;
   onRecord: () => void;
   actionLabel?: string;
   canRecord?: boolean;
@@ -30,6 +31,7 @@ type StageProps = StageEvent & {
   onEmissionFactorChange?: (value: string) => void;
   onEmissionFactorBlur?: () => void;
   onReasonChange?: (value: string) => void;
+  onDiscard?: () => void;
 };
 
 export default function Stage({
@@ -45,6 +47,7 @@ export default function Stage({
   recorded = false,
   recording = false,
   thresholdBreached = false,
+  thresholdKg,
   onRecord,
   actionLabel = "Record Event",
   canRecord = true,
@@ -58,9 +61,16 @@ export default function Stage({
   eventIndex,
   reason,
   onReasonChange,
+  onDiscard,
 }: StageProps) {
   const [activityInput, setActivityInput] = useState(activity.split(" ")[0]);
   const [emissionFactorInput, setEmissionFactorInput] = useState(emissionFactor.split(" ")[0]);
+  useEffect(() => {
+    setActivityInput(activity.split(" ")[0]);
+  }, [activity]);
+  useEffect(() => {
+    setEmissionFactorInput(emissionFactor.split(" ")[0]);
+  }, [emissionFactor]);
   const statusLabel = thresholdBreached
     ? "THRESHOLD BREACHED"
     : recorded
@@ -112,6 +122,12 @@ export default function Stage({
           <span>CO2e</span>
           <span>{co2eKg.toFixed(2)} kg</span>
         </div>
+        {thresholdKg !== undefined && (
+          <div className="data-row">
+            <span>CO2e Threshold</span>
+            <span>{thresholdKg > 0 ? thresholdKg.toFixed(2) + " kg" : "Not configured"}</span>
+          </div>
+        )}
         <div className="data-row">
           <span>Reporting standard</span>
           <span>{reportingStandard}</span>
@@ -140,6 +156,11 @@ export default function Stage({
           <Button onClick={onRecord} disabled={recorded || recording || locked || recordDisabled}>
             {recording ? (actionLabel === "Submit" ? "Submitting..." : actionLabel === "Correct" ? "Correct..." : "Recording...") : recorded ? (actionLabel === "Submit" ? "Submitted" : actionLabel === "Correct" ? "Corrected" : "Event Recorded") : actionLabel}
           </Button>
+          {onDiscard && (
+            <Button variant="secondary" onClick={onDiscard} disabled={recorded || recording || locked}>
+              Discard
+            </Button>
+          )}
         </div>
       )}
     </article>

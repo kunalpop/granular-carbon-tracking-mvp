@@ -18,7 +18,6 @@ type ParticipantRegistration = {
   stages: string;
 };
 
-
 export async function areParticipantsRegistered(): Promise<boolean> {
   const participants = getParticipantRegistryContract(
     PARTICIPANT_REGISTRY_ABI,
@@ -42,16 +41,18 @@ export async function registerParticipants(actors: ParticipantRegistration[]) {
   );
   const registrationJobs = actors.flatMap((actor, index) => {
     if (registrationStates[index]) return [];
-    return [async (nonce: number) => {
-      const tx = await participants.registerParticipant(
-        actor.address,
-        actor.name,
-        actor.role,
-        { nonce, gasLimit: 400_000 },
-      );
-      console.log(`  registered ${actor.role.padEnd(14)} ${actor.name}`);
-      return tx;
-    }];
+    return [
+      async (nonce: number) => {
+        const tx = await participants.registerParticipant(
+          actor.address,
+          actor.name,
+          actor.role,
+          { nonce, gasLimit: 400_000 },
+        );
+        console.log(`  registered ${actor.role.padEnd(14)} ${actor.name}`);
+        return tx;
+      },
+    ];
   });
 
   // The admin wallet is shared by every write. Explicit nonces allow all
@@ -83,7 +84,9 @@ export async function registerParticipants(actors: ParticipantRegistration[]) {
           nonce: nonce++,
           gasLimit: 400_000,
         });
-        console.log(`  authorised ${actor.role.padEnd(14)} for stage ${stageId}`);
+        console.log(
+          `  authorised ${actor.role.padEnd(14)} for stage ${stageId}`,
+        );
         return tx;
       }),
   );

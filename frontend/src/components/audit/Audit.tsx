@@ -99,7 +99,7 @@ export default function Audit() {
           className={tab === "corrections" ? "active" : ""}
           onClick={() => setTab("corrections")}
         >
-          Corrections
+          Tasks
         </button>
         <button
           className={tab === "escalations" ? "active" : ""}
@@ -111,7 +111,7 @@ export default function Audit() {
           className={tab === "history" ? "active" : ""}
           onClick={() => setTab("history")}
         >
-          Audit History
+          History
         </button>
       </div>
       {tab === "corrections" && <Corrections />}
