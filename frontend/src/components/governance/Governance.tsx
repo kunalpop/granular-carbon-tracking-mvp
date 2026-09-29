@@ -1,14 +1,10 @@
-import { Interface } from "ethers";
 import { useEffect, useState } from "react";
-import Stage from "../../shared/Stage";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import Button from "../../shared/Button";
 import {
-  eventRegistryForControl,
   formatAddress,
   formatGrams,
   governanceForControl,
-  multisigForControl,
 } from "../../services/controlContracts";
 import {
   ACCOUNT_CHANGE_EVENT,
@@ -16,16 +12,6 @@ import {
 } from "../../services/getSigner";
 
 type Tab = "pending" | "history";
-type EventRecord = {
-  index: bigint;
-  stageId: bigint;
-  activityData: bigint;
-  activityUnit: string;
-  emissionFactor: bigint;
-  co2eGrams: bigint;
-  evidenceHash: string;
-  eventHash: string;
-};
 type CorrectionRecord = {
   id: bigint;
   productId: bigint;
@@ -34,14 +20,6 @@ type CorrectionRecord = {
   reason: string;
   correctedBy: string;
   supersedesCorrectionId: bigint;
-};
-type MultiTransaction = {
-  id: bigint;
-  target: string;
-  data: string;
-  executed: boolean;
-  confirmations: bigint;
-  eventOwner: string;
 };
 
 const defaultProductId = () => {
@@ -55,9 +33,7 @@ const defaultProductId = () => {
 export default function Governance() {
   const [tab, setTab] = useState<Tab>("pending");
   const [productId, setProductId] = useState(defaultProductId);
-  const [events, setEvents] = useState<EventRecord[]>([]);
   const [corrections, setCorrections] = useState<CorrectionRecord[]>([]);
-  const [transactions, setTransactions] = useState<MultiTransaction[]>([]);
   const [role, setRole] = useState(getSelectedRole());
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -66,16 +42,6 @@ export default function Governance() {
   const loadData = async () => {
     setError("");
     try {
-      const id = BigInt(productId || "1");
-      const registry = eventRegistryForControl();
-      const eventCount = await registry.eventCount(id);
-      const nextEvents: EventRecord[] = [];
-      for (let index = 0n; index < eventCount; index++) {
-        const event = await registry.eventAt(id, index);
-        nextEvents.push({ index, ...event });
-      }
-      setEvents(nextEvents);
-
       const governance = governanceForControl();
       const correctionCount = await governance.correctionCount();
       const nextCorrections: CorrectionRecord[] = [];
@@ -89,14 +55,6 @@ export default function Governance() {
       }
       setCorrections(nextCorrections);
 
-      const multisig = multisigForControl();
-      const transactionCount = await multisig.transactionCount();
-      const nextTransactions: MultiTransaction[] = [];
-      for (let txId = 0n; txId < transactionCount; txId++) {
-        const transaction = await multisig.transactionAt(txId);
-        nextTransactions.push({ id: txId, ...transaction });
-      }
-      setTransactions(nextTransactions);
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -159,13 +117,13 @@ export default function Governance() {
           className={tab === "pending" ? "active" : ""}
           onClick={() => setTab("pending")}
         >
-          Pending Corrections
+          Emission Thresholds
         </button>
         <button
           className={tab === "history" ? "active" : ""}
           onClick={() => setTab("history")}
         >
-          Correction History
+          History
         </button>
       </div>
       {message && (
@@ -178,110 +136,60 @@ export default function Governance() {
           {error}
         </p>
       )}
-      {tab === "pending" && (
-        <VoteQueue transactions={transactions} events={events} busy={busy} onSubmit={submit} />
-      )}
+      {tab === "pending" && <ThresholdManager busy={busy} onSubmit={submit} />}
       {tab === "history" && (
-        <CorrectionHistory events={events} corrections={corrections} />
+        <CorrectionHistory corrections={corrections} />
       )}
     </>
   );
 }
 
-function VoteQueue({
-  transactions,
-  events,
-  busy,
-  onSubmit,
-}: {
-  transactions: MultiTransaction[];
-  events: EventRecord[];
-  busy: boolean;
-  onSubmit: (action: () => Promise<unknown>, success: string) => Promise<void>;
-}) {
-  const correctEventInterface = new Interface([
-    "function correctEvent(uint256 productId, uint256 originalIndex, uint256 correctedActivityData, int256 correctedEmissionFactor, string reason, bytes32 evidenceHash)",
-  ]);
-  const pending = transactions.flatMap((transaction) => {
-    if (transaction.executed) return [];
-    try {
-      const decoded = correctEventInterface.decodeFunctionData("correctEvent", transaction.data);
-      const originalIndex = BigInt(decoded[1].toString());
-      const event = events.find((item) => item.index === originalIndex);
-      if (!event) return [];
-      return [{ transaction, event, activity: Number(decoded[2]) / 1000, factor: Number(decoded[3]) / 1000, reason: String(decoded[4]) }];
-    } catch {
-      return [];
-    }
-  });
-
+function ThresholdManager({ busy, onSubmit }: { busy: boolean; onSubmit: (action: () => Promise<unknown>, success: string) => Promise<void> }) {
+  const [values, setValues] = useState<Record<number, string>>({});
+  const [saved, setSaved] = useState<Set<number>>(new Set());
+  useEffect(() => {
+    const loadThresholds = async () => {
+      try {
+        const governance = governanceForControl();
+        const next: Record<number, string> = {};
+        for (const stage of EMISSION_FACTORS.stages) {
+          const grams = Number(await governance.stageThresholdGrams(stage.stageId));
+          const defaultGrams = Math.abs(stage.activityValue * stage.emissionFactor_gCO2ePerUnit);
+          next[stage.stageId] = (grams > 0 ? grams / 1000 : defaultGrams / 1000).toFixed(2);
+        }
+        setValues(next);
+        setSaved(new Set(EMISSION_FACTORS.stages.filter((stage) => Number(next[stage.stageId]) > 0).map((stage) => stage.stageId)));
+      } catch {
+        // Keep editable inputs available if the initial read fails.
+      }
+    };
+    void loadThresholds();
+  }, []);
   return (
     <section className="panel">
-      <div className="form-heading">
-        <div>
-          <h2>Pending Corrections</h2>
-          <p>Proposed corrections awaiting consortium confirmation.</p>
-        </div>
-        <span className="status threshold">{pending.length} pending</span>
-      </div>
-      {pending.length === 0 && <p>No pending corrections.</p>}
+      <div className="form-heading"><div><h2>Emission Thresholds</h2><p>Set the maximum CO₂e allowed for each lifecycle stage. Values are saved on chain in grams.</p></div></div>
       <div className="audit-corrections">
-        {pending.map(({ transaction, event, activity, factor, reason }) => {
-          const stage = EMISSION_FACTORS.stages.find((item) => item.stageId === Number(event.stageId));
-          if (!stage) return null;
-          const confirmations = transaction.confirmations ?? 0n;
-          const thresholdBreached = Math.abs(Number(event.co2eGrams)) > 0;
-          return (
-            <div className="correction-card" key={String(transaction.id ?? 0n)}>
-              <Stage
-                stageId={Number(event.stageId)}
-                title={stage.name}
-                owner={stage.actorRole}
-                activity={`${activity} ${event.activityUnit}`}
-                emissionFactor={`${factor} gCO2e per ${event.activityUnit}`}
-                emissionSchema={stage.methodology}
-                co2eKg={Number(event.co2eGrams) / 1000}
-                reportingStandard={stage.methodology}
-                previousEvent={event.index > 0n ? `event-${event.index - 1n}` : null}
-                eventIndex={Number(event.index)}
-                reason={reason}
-                editable={false}
-                canRecord={false}
-                thresholdBreached={thresholdBreached}
-                onRecord={() => undefined}
-              />
-              <div className="action-row">
-                <span className="status threshold">{String(confirmations)} / 2 confirmations</span>
-                <Button
-                  variant="secondary"
-                  disabled={busy}
-                  onClick={() => void onSubmit(async () => {
-                    const call = await multisigForControl().confirm(transaction.id);
-                    await call.wait();
-                  }, `Correction #${String(transaction.id)} confirmed.`)}
-                >Confirm</Button>
-                <Button
-                  disabled={busy || confirmations < 2n}
-                  onClick={() => void onSubmit(async () => {
-                    const call = await multisigForControl().execute(transaction.id);
-                    await call.wait();
-                  }, `Correction #${String(transaction.id)} executed.`)}
-                >Execute</Button>
-              </div>
+        {EMISSION_FACTORS.stages.map((stage) => (
+          <div className="audit-row" key={stage.stageId}>
+            <div><strong>{stage.name}</strong><small>Stage {stage.stageId} · {stage.activityUnit}</small></div>
+            <div className="action-row">
+              {saved.has(stage.stageId) && <span className="status ready">{Number(values[stage.stageId] ?? 0).toFixed(2)} kg CO₂e</span>}
+              {!saved.has(stage.stageId) && <input aria-label={`Threshold for ${stage.name}`} type="number" min="0" step="0.01" placeholder="kg CO₂e" value={values[stage.stageId] ?? ""} onChange={(event) => setValues((current) => ({ ...current, [stage.stageId]: event.target.value }))} />}
+              {saved.has(stage.stageId) ? <Button variant="secondary" disabled={busy} onClick={() => setSaved((current) => { const next = new Set(current); next.delete(stage.stageId); return next; })}>Edit</Button> : <Button disabled={busy || values[stage.stageId] === undefined || values[stage.stageId] === "" || Number(values[stage.stageId]) < 0} onClick={() => void (async () => { await onSubmit(async () => { const grams = BigInt(Math.round(Number(values[stage.stageId]) * 1000)); const call = await governanceForControl().setStageThreshold(stage.stageId, grams); await call.wait(); }, `${stage.name} threshold saved on chain.`); setSaved((current) => new Set(current).add(stage.stageId)); })()}>Save</Button>}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-function CorrectionHistory({ corrections }: { events: EventRecord[]; corrections: CorrectionRecord[] }) {
+function CorrectionHistory({ corrections }: { corrections: CorrectionRecord[] }) {
   return (
     <section className="panel">
       <div className="form-heading">
         <div>
-          <h2>Correction History</h2>
+          <h2>History</h2>
           <p>Corrections approved and executed through the consortium multisig.</p>
         </div>
       </div>

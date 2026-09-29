@@ -21,6 +21,7 @@ type RecordedEvent = {
   correctedActivityValue?: number;
   correctedEmissionFactor?: number;
   correctedCo2eKg?: number;
+  thresholdKg?: number;
 };
 
 export default function Events() {
@@ -85,6 +86,8 @@ export default function Events() {
         const productId = BigInt(selectedId);
         const count = Number(await registry.eventCount(productId));
         const correctionCount = Number(await governance.correctionCount());
+        const thresholds = new Map<number, number>();
+        for (const lifecycleStage of EMISSION_FACTORS.stages) thresholds.set(lifecycleStage.stageId, Number(await governance.stageThresholdGrams(lifecycleStage.stageId)) / 1000);
         const corrections = new Map<number, { activity: number; factor: number; co2e: number }>();
         for (let correctionId = 1; correctionId <= correctionCount; correctionId++) {
           const correction = await governance.correctionAt(correctionId);
@@ -108,6 +111,7 @@ export default function Events() {
             correctedActivityValue: correction?.activity,
             correctedEmissionFactor: correction?.factor,
             correctedCo2eKg: correction?.co2e,
+            thresholdKg: thresholds.get(Number(record.stageId)) ?? 0,
           };
         })));
       } catch {
@@ -131,12 +135,13 @@ export default function Events() {
     stageId: activeStage.stageId,
     title: activeStage.name,
     owner: activeStage.actorRole,
-    activity: `${displayedActivity} ${activeStage.activityUnit}`,
-    emissionFactor: `${displayedFactor} gCO2e per ${
+    activity: `${displayedActivity.toFixed(2)} ${activeStage.activityUnit}`,
+    emissionFactor: `${displayedFactor.toFixed(2)} gCO2e per ${
       activeStage.activityUnit
     }`,
     emissionSchema: EMISSION_FACTORS.schemaVersion,
     co2eKg: recordedStage?.correctedCo2eKg ?? (draft.activityValue * draft.emissionFactor) / 1000,
+    thresholdKg: recordedStage?.thresholdKg,
     reportingStandard: activeStage.methodology,
     previousEvent:
       currentStage > 0 ? `event-${stages[currentStage - 1].stageId}` : null,
@@ -200,9 +205,6 @@ export default function Events() {
     }
   };
 
-  const stageLimit = (activeStage as { co2eLimitKg?: number }).co2eLimitKg;
-  const thresholdBreached =
-    stageLimit !== undefined && co2eForStage(activeStage) > stageLimit;
 
   if (canSeeAllStages && recordedEvents.length === 0) {
     return (
@@ -284,8 +286,9 @@ export default function Events() {
                     : "Unaudited"
               }
               recording={recordingStages.has(activeStage.stageId)}
+              thresholdKg={recordedStage?.thresholdKg}
               thresholdBreached={
-                recordedStages.has(activeStage.stageId) && thresholdBreached
+                recordedStages.has(activeStage.stageId) && recordedStage?.thresholdKg !== undefined && recordedStage.thresholdKg > 0 && event.co2eKg > recordedStage.thresholdKg
               }
               onRecord={recordCurrentStage}
             />
