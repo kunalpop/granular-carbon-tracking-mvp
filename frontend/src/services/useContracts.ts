@@ -10,6 +10,7 @@ export const EVENT_REGISTRY_ABI = [
   "event ProductCreated(uint256 indexed productId, address indexed createdBy, string description)",
   "function productExists(uint256 productId) view returns (bool)",
   "function getProduct(uint256 productId) view returns (tuple(string description, address createdBy, uint64 createdAt, bool exists))",
+  "function auditStatus(uint256 productId, uint256 eventIndex) view returns (uint8)",
   "function eventCount(uint256 productId) view returns (uint256)",
   "function eventAt(uint256 productId, uint256 index) view returns (tuple(uint256 productId, uint8 stageId, address actor, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, int256 co2eGrams, string methodology, bytes32 evidenceHash, bytes32 prevEventHash, uint64 timestamp, string schemaVersion, bytes32 eventHash))",
   "function recordEvent(uint256 productId, uint8 stageId, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, string methodology, bytes32 evidenceHash, string schemaVersion)",
@@ -34,16 +35,16 @@ export const MULTISIG_ABI = [
   "function ownerCount() view returns (uint256)",
   "function owners(uint256) view returns (address)",
   "function isOwner(address) view returns (bool)",
+  "function deployerOwner() view returns (address)",
+  "function auditorOwner() view returns (address)",
   "function submit(address target, bytes data) returns (uint256)",
   "function submit(address target, bytes data, address eventOwner) returns (uint256)",
   "function confirm(uint256 txId)",
   "function execute(uint256 txId)",
   "function reject(uint256 txId)",
   "function transactionCount() view returns (uint256)",
-  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, address eventOwner, uint8 status))",
-  "function voteCount(uint256 txId) view returns (uint256)",
+  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, uint256 voteCount, uint8 status, address eventOwner))",
   "function voteStatus(uint256 txId, address owner) view returns (uint8)",
-  "",
 ];
 
 export function controlSigner() {

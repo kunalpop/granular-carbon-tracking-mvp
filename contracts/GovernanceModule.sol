@@ -47,6 +47,7 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
     /// Correction ids are 1-based so that 0 can mean "none".
     Correction[] private _corrections;
     mapping(uint256 => mapping(uint256 => uint256)) public latestCorrectionId;
+    mapping(uint256 => mapping(uint256 => bool)) public discardedCorrectionTask;
 
     // ------------------------------ DP5 ------------------------------
     mapping(uint8 => uint256) public stageThresholdGrams; // 0 = no threshold
@@ -62,6 +63,7 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
     Escalation[] private _escalations;
     mapping(uint256 => mapping(uint256 => bool)) private _autoEscalated;
 
+    event CorrectionTaskDiscarded(uint256 indexed productId, uint256 indexed eventIndex, address indexed discardedBy);
     event CorrectionLogged(
         uint256 indexed productId,
         uint256 indexed originalIndex,
@@ -107,6 +109,19 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
     ///      holds UPGRADER_ROLE, so no single account can swap the logic.
     function _authorizeUpgrade(address) internal override onlyRole(UPGRADER_ROLE) {}
 
+    // --------------------- audit task disposition ---------------------
+
+    /// @notice Permanently dismiss an audit correction task without modifying
+    ///         the underlying emission event.
+    function discardCorrectionTask(uint256 productId, uint256 eventIndex)
+        external
+        onlyRole(AUDITOR_ROLE)
+    {
+        discardedCorrectionTask[productId][eventIndex] = true;
+        eventRegistry.setAuditStatus(productId, eventIndex, EmissionEventRegistry.AuditStatus.Audited);
+        emit CorrectionTaskDiscarded(productId, eventIndex, msg.sender);
+    }
+
     // --------------------- DP4: governed correction ---------------------
 
     /// @notice Append a superseding correction for a recorded event. The
@@ -145,6 +160,8 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         );
         correctionId = _corrections.length; // 1-based
         latestCorrectionId[productId][originalIndex] = correctionId;
+
+        eventRegistry.setAuditStatus(productId, originalIndex, EmissionEventRegistry.AuditStatus.Audited);
 
         emit CorrectionLogged(
             productId,

@@ -1,5 +1,5 @@
 import { Interface, keccak256, toUtf8Bytes } from "ethers";
-import { multisigForControl } from "../../services/controlContracts";
+import { eventRegistryForControl, multisigForControl } from "../../services/controlContracts";
 import { CONTRACT_ADDRESSES } from "../../services/contractAddresses";
 
 const GOVERNANCE_CORRECTION_ABI = [
@@ -27,4 +27,5 @@ export async function submitCorrection(
   const multisig = multisigForControl();
   const transaction = await multisig["submit(address,bytes,address)"](CONTRACT_ADDRESSES.governanceModule, data, eventOwner);
   await transaction.wait();
+  await (await eventRegistryForControl().setAuditStatus(productId, eventIndex, 1)).wait();
 }

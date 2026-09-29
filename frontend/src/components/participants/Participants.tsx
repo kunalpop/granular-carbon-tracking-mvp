@@ -14,26 +14,6 @@ type ActorField = {
   stages: string;
 };
 
-const ACTOR_CACHE_KEY = "registered-actors-cache";
-let inMemoryActorCache: ActorField[] | null = null;
-
-function loadCachedActors(): ActorField[] {
-  if (inMemoryActorCache) return inMemoryActorCache;
-
-  if (typeof window === "undefined") return [];
-
-  try {
-    const saved = window.localStorage.getItem(ACTOR_CACHE_KEY);
-    if (!saved) return [];
-
-    const parsed = JSON.parse(saved) as ActorField[];
-    inMemoryActorCache = parsed;
-    return parsed;
-  } catch {
-    return [];
-  }
-}
-
 function getDefaultActors(): ActorField[] {
   return Object.entries(ACTOR_NAMES).map(([role, name], i) => ({
     id: i + 1,
@@ -45,9 +25,7 @@ function getDefaultActors(): ActorField[] {
 }
 
 export default function Participants() {
-  const [actorFields, setActorFields] = useState<ActorField[]>(() =>
-    loadCachedActors().length > 0 ? loadCachedActors() : getDefaultActors(),
-  );
+  const [actorFields, setActorFields] = useState<ActorField[]>(getDefaultActors);
   const [actorsAdded, setActorsAdded] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [error, setError] = useState<string>();
@@ -62,13 +40,17 @@ export default function Participants() {
 
   useEffect(() => {
     const verifyActors = async () => {
-      const registered = await loadRegisteredParticipants();
-      if (!registered) {
-        setActorsAdded(false);
-        return;
+      try {
+        const registered = await loadRegisteredParticipants();
+        if (!registered) {
+          setActorsAdded(false);
+          return;
+        }
+        setActorFields(registered);
+        setActorsAdded(true);
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : "Unable to load registered participants.");
       }
-      setActorFields(registered);
-      setActorsAdded(true);
     };
     void verifyActors();
   }, []);
@@ -82,14 +64,7 @@ export default function Participants() {
     try {
       await registerActors(actorFields);
 
-      inMemoryActorCache = actorFields;
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(
-          ACTOR_CACHE_KEY,
-          JSON.stringify(actorFields),
-        );
-        window.dispatchEvent(new CustomEvent("actors-registration-change"));
-      }
+      window.dispatchEvent(new CustomEvent("actors-registration-change"));
       setActorsAdded(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Participant registration failed.");

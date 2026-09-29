@@ -47,9 +47,11 @@ async function main() {
       .filter((account) => account.role !== "deployer" && account.role !== "auditor")
       .map((account) => account.address),
   ];
+  // Correction proposals are limited to the deployer, auditor, and the
+  // original event owner, so require all three stakeholder votes.
   const multisig = await ethers.deployContract("ConsortiumMultisig", [
     consortiumOwners,
-    2n,
+    3n,
   ]);
   await multisig.waitForDeployment();
   console.log(`ConsortiumMultisig     ${multisig.target}`);
@@ -70,7 +72,10 @@ async function main() {
   await (await governance.grantRole(await governance.AUDITOR_ROLE(), addrOf("auditor"))).wait();
   await (await governance.grantRole(await governance.CORRECTOR_ROLE(), multisig.target)).wait();
   await (await governance.grantRole(await governance.AUDITOR_ROLE(), multisig.target)).wait();
-  console.log(`Corrector/auditor roles granted to auditor and multisig`);
+  await (await events.setStatusWriter(addrOf("auditor"), true)).wait();
+  await (await events.setStatusWriter(multisig.target, true)).wait();
+  await (await events.setStatusWriter(governance.target, true)).wait();
+  console.log(`Corrector/auditor roles and audit-status writers configured`);
 
   // Pin schema 1.0.0 in the ontology: hash of the actual schema document.
   const schemaPath = path.join(__dirname, "schema", "emission-event-schema-1.0.0.json");

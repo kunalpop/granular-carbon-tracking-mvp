@@ -9,10 +9,14 @@ import { getSelectedRole, getSigner } from "./getSigner";
 export const EVENT_REGISTRY_ABI = [
   "function eventCount(uint256 productId) view returns (uint256)",
   "function eventAt(uint256 productId, uint256 index) view returns (tuple(uint256 productId, uint8 stageId, address actor, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, int256 co2eGrams, string methodology, bytes32 evidenceHash, bytes32 prevEventHash, uint64 timestamp, string schemaVersion, bytes32 eventHash))",
+  "function auditStatus(uint256 productId, uint256 eventIndex) view returns (uint8)",
+  "function setAuditStatus(uint256 productId, uint256 eventIndex, uint8 status)",
   "function recordEvent(uint256 productId, uint8 stageId, uint256 activityData, string activityUnit, int256 emissionFactor, string efSource, string methodology, bytes32 evidenceHash, string schemaVersion)",
 ];
 
 export const GOVERNANCE_ABI = [
+  "function discardedCorrectionTask(uint256 productId, uint256 eventIndex) view returns (bool)",
+  "function discardCorrectionTask(uint256 productId, uint256 eventIndex)",
   "function correctEvent(uint256 productId, uint256 originalIndex, uint256 correctedActivityData, int256 correctedEmissionFactor, string reason, bytes32 evidenceHash) returns (uint256)",
   "function correctionCount() view returns (uint256)",
   "function correctionAt(uint256 correctionId) view returns (tuple(uint256 productId, uint256 originalIndex, bytes32 originalEventHash, uint256 correctedActivityData, int256 correctedEmissionFactor, int256 correctedCo2eGrams, string reason, bytes32 evidenceHash, address correctedBy, uint64 timestamp, uint256 supersedesCorrectionId))",
@@ -30,13 +34,18 @@ export const MULTISIG_ABI = [
   "function required() view returns (uint256)",
   "function ownerCount() view returns (uint256)",
   "function isOwner(address) view returns (bool)",
+  "function deployerOwner() view returns (address)",
+  "function auditorOwner() view returns (address)",
   "function submit(address target, bytes data) returns (uint256)",
   "function submit(address target, bytes data, address eventOwner) returns (uint256)",
+  "function vote(uint256 txId, uint8 decision)",
   "function confirm(uint256 txId)",
+  "function reject(uint256 txId)",
   "function execute(uint256 txId)",
   "function transactionCount() view returns (uint256)",
-  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, uint256 confirmations, address eventOwner))",
-  "function confirmedBy(uint256 txId, address owner) view returns (bool)",
+  "function transactionAt(uint256 txId) view returns (tuple(address target, bytes data, bool executed, uint256 voteCount, uint8 status, address eventOwner))",
+  "function voteStatus(uint256 txId, address owner) view returns (uint8)",
+  "function owners(uint256 index) view returns (address)",
 ];
 
 export function controlSigner() {

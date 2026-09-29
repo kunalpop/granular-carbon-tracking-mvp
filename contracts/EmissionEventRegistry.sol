@@ -46,7 +46,13 @@ contract EmissionEventRegistry {
     mapping(uint256 => EmissionEvent[]) private _eventsByProduct;
     mapping(uint256 => bytes32) public lastEventHash;
 
+    enum AuditStatus { Unaudited, Pending, Audited }
+    mapping(uint256 => mapping(uint256 => AuditStatus)) public auditStatus;
+    address public immutable statusAdmin;
+    mapping(address => bool) public statusWriter;
+
     event ProductCreated(uint256 indexed productId, address indexed createdBy, string description);
+    event AuditStatusChanged(uint256 indexed productId, uint256 indexed eventIndex, AuditStatus status, address indexed changedBy);
     event EmissionEventRecorded(
         uint256 indexed productId,
         uint8 indexed stageId,
@@ -62,9 +68,25 @@ contract EmissionEventRegistry {
     error UnknownProduct(uint256 productId);
     error NotAuthorisedForStage(address actor, uint8 stageId);
     error NotRegisteredParticipant(address actor);
+    error NotStatusAdmin(address account);
+    error NotStatusWriter(address account);
+    error InvalidEventIndex(uint256 productId, uint256 eventIndex);
 
     constructor(ParticipantRegistry registry) {
         participantRegistry = registry;
+        statusAdmin = msg.sender;
+    }
+
+    function setStatusWriter(address writer, bool enabled) external {
+        if (msg.sender != statusAdmin) revert NotStatusAdmin(msg.sender);
+        statusWriter[writer] = enabled;
+    }
+
+    function setAuditStatus(uint256 productId, uint256 eventIndex, AuditStatus status) external {
+        if (!statusWriter[msg.sender]) revert NotStatusWriter(msg.sender);
+        if (eventIndex >= _eventsByProduct[productId].length) revert InvalidEventIndex(productId, eventIndex);
+        auditStatus[productId][eventIndex] = status;
+        emit AuditStatusChanged(productId, eventIndex, status, msg.sender);
     }
 
     /// @notice Open a product passport. Any active registered participant may

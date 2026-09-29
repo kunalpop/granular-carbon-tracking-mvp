@@ -5,26 +5,22 @@ import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import { registerEmissionEvent } from "./registerEmissionEvent";
 import { getSelectedRole, type AccountRole } from "../../services/getSigner";
 import { eventRegistryForControl } from "../../services/useContracts";
+import { governanceForControl } from "../../services/controlContracts";
 
 const SCALE = 1000n;
 const SELECTED_PRODUCT_KEY = "selected-product-id";
-const PRODUCT_CACHE_KEY = "registered-product-cache";
-
 function loadRegisteredProductDescription(): string {
-  try {
-    const saved = JSON.parse(
-      window.localStorage.getItem(PRODUCT_CACHE_KEY) ?? "null",
-    ) as { description?: string } | null;
-    return saved?.description ?? EMISSION_FACTORS.referenceProduct;
-  } catch {
-    return EMISSION_FACTORS.referenceProduct;
-  }
+  return EMISSION_FACTORS.referenceProduct;
 }
 
 type RecordedEvent = {
   stageId: number;
   co2eKg: number;
   eventHash: string;
+  auditStatus: number;
+  correctedActivityValue?: number;
+  correctedEmissionFactor?: number;
+  correctedCo2eKg?: number;
 };
 
 export default function Events() {
@@ -85,15 +81,34 @@ export default function Events() {
 
       try {
         const registry = eventRegistryForControl();
+        const governance = governanceForControl();
         const productId = BigInt(selectedId);
         const count = Number(await registry.eventCount(productId));
+        const correctionCount = Number(await governance.correctionCount());
+        const corrections = new Map<number, { activity: number; factor: number; co2e: number }>();
+        for (let correctionId = 1; correctionId <= correctionCount; correctionId++) {
+          const correction = await governance.correctionAt(correctionId);
+          if (BigInt(correction.productId.toString()) !== productId) continue;
+          corrections.set(Number(correction.originalIndex), {
+            activity: Number(correction.correctedActivityData) / 1000,
+            factor: Number(correction.correctedEmissionFactor) / 1000,
+            co2e: Number(correction.correctedCo2eGrams) / 1000,
+          });
+        }
         const events = await Promise.all(
           Array.from({ length: count }, (_, index) => registry.eventAt(productId, index)),
         );
-        setRecordedEvents(events.map((record) => ({
-          stageId: Number(record.stageId),
-          co2eKg: Number(record.co2eGrams) / 1000,
-          eventHash: String(record.eventHash),
+        setRecordedEvents(await Promise.all(events.map(async (record, index) => {
+          const correction = corrections.get(index);
+          return {
+            stageId: Number(record.stageId),
+            co2eKg: correction?.co2e ?? Number(record.co2eGrams) / 1000,
+            eventHash: String(record.eventHash),
+            auditStatus: Number(await registry.auditStatus(productId, BigInt(index))),
+            correctedActivityValue: correction?.activity,
+            correctedEmissionFactor: correction?.factor,
+            correctedCo2eKg: correction?.co2e,
+          };
         })));
       } catch {
         setRecordedEvents([]);
@@ -109,16 +124,19 @@ export default function Events() {
       window.removeEventListener("product-registration-change", updateProduct);
     };
   }, []);
+  const recordedStage = recordedEvents.find((item) => item.stageId === activeStage.stageId);
+  const displayedActivity = recordedStage?.correctedActivityValue ?? draft.activityValue;
+  const displayedFactor = recordedStage?.correctedEmissionFactor ?? draft.emissionFactor / Number(SCALE);
   const event = {
     stageId: activeStage.stageId,
     title: activeStage.name,
     owner: activeStage.actorRole,
-    activity: `${draft.activityValue} ${activeStage.activityUnit}`,
-    emissionFactor: `${draft.emissionFactor / Number(SCALE)} gCO2e per ${
+    activity: `${displayedActivity} ${activeStage.activityUnit}`,
+    emissionFactor: `${displayedFactor} gCO2e per ${
       activeStage.activityUnit
     }`,
     emissionSchema: EMISSION_FACTORS.schemaVersion,
-    co2eKg: (draft.activityValue * draft.emissionFactor) / 1000,
+    co2eKg: recordedStage?.correctedCo2eKg ?? (draft.activityValue * draft.emissionFactor) / 1000,
     reportingStandard: activeStage.methodology,
     previousEvent:
       currentStage > 0 ? `event-${stages[currentStage - 1].stageId}` : null,
@@ -164,6 +182,7 @@ export default function Events() {
           stageId: activeStage.stageId,
           co2eKg: result.co2eKg,
           eventHash: result.eventHash,
+          auditStatus: 0,
         },
       ];
       setRecordedEvents(nextRecordedEvents);
@@ -257,6 +276,13 @@ export default function Events() {
                 }))
               }
               recorded={recordedStages.has(activeStage.stageId)}
+              auditStatus={
+                recordedEvents.find((item) => item.stageId === activeStage.stageId)?.auditStatus === 2
+                  ? "Audited"
+                  : recordedEvents.find((item) => item.stageId === activeStage.stageId)?.auditStatus === 1
+                    ? "Pending"
+                    : "Unaudited"
+              }
               recording={recordingStages.has(activeStage.stageId)}
               thresholdBreached={
                 recordedStages.has(activeStage.stageId) && thresholdBreached

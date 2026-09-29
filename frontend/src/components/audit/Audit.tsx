@@ -29,10 +29,7 @@ type Escalation = {
 
 const defaultProductId = () => {
   try {
-    const cached = window.localStorage.getItem("registered-product-cache");
-    return cached
-      ? (JSON.parse(cached) as { productId: string }).productId
-      : "1";
+    return window.localStorage.getItem("selected-product-id") ?? "1";
   } catch {
     return "1";
   }

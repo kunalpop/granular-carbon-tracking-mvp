@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { eventRegistryForControl } from "../../services/controlContracts";
 import {
   runTamperingStudy,
   type TamperingStudyResult,
@@ -14,11 +15,26 @@ import {
 } from "./studyPerformance";
 
 const tabs = ["Tampering", "Aggregation", "Performance"];
-const EVENTS_CACHE_KEY = "registered-emission-events-cache";
 const STUDIES_COMPLETE_CACHE_KEY = "evaluation-studies-complete";
 const TAMPERING_RESULT_CACHE_KEY = "tampering-study-result";
 const AGGREGATION_RESULT_CACHE_KEY = "aggregation-study-result";
 const PERFORMANCE_RESULT_CACHE_KEY = "performance-study-result";
+
+async function loadRecordedEvents(): Promise<RecordedEvent[]> {
+  const selectedId = window.localStorage.getItem("selected-product-id") ?? "new";
+  if (selectedId === "new") return [];
+  const registry = eventRegistryForControl();
+  const productId = BigInt(selectedId);
+  const count = Number(await registry.eventCount(productId));
+  const records = await Promise.all(
+    Array.from({ length: count }, (_, index) => registry.eventAt(productId, index)),
+  );
+  return records.map((record) => ({
+    stageId: Number(record.stageId),
+    co2eKg: Number(record.co2eGrams) / 1000,
+    eventHash: String(record.eventHash),
+  }));
+}
 
 function readCached<T>(key: string): T | undefined {
   try {
@@ -70,9 +86,7 @@ export default function Results() {
   const handleRunTamperingStudy = async () => {
     setTamperingStudyState("running");
     try {
-      const events = JSON.parse(
-        window.localStorage.getItem(EVENTS_CACHE_KEY) ?? "[]",
-      ) as RecordedEvent[];
+      const events = await loadRecordedEvents();
       const result = await runTamperingStudy(events);
       setTamperingResult(result);
       window.localStorage.setItem(TAMPERING_RESULT_CACHE_KEY, JSON.stringify(result));
@@ -84,9 +98,7 @@ export default function Results() {
   const handleRunAggregationStudy = async () => {
     setAggregationStudyState("running");
     try {
-      const events = JSON.parse(
-        window.localStorage.getItem(EVENTS_CACHE_KEY) ?? "[]",
-      ) as RecordedEvent[];
+      const events = await loadRecordedEvents();
       const result = await runAggregationStudy(events);
       setAggregationResult(result);
       window.localStorage.setItem(AGGREGATION_RESULT_CACHE_KEY, JSON.stringify(result));

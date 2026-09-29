@@ -6,7 +6,6 @@ import { registerProduct, type RegisteredProduct } from "./registerProduct";
 import { eventRegistryForControl } from "../../services/useContracts";
 import { loadRegisteredProducts } from "../../services/getRegisteredProducts";
 
-const PRODUCT_CACHE_KEY = "registered-product-cache";
 const PRODUCT_REVIEW_KEY = "product-review-status-v2";
 const PRODUCT_REVIEW_DATA_KEY = "product-review-data-v2";
 type ReviewStatus = "draft" | "sent" | "confirmed";
@@ -164,14 +163,6 @@ export default function Product() {
       if (isDeployer && review.status === "confirmed") {
         const registeredProduct = await registerProduct(review.oemDescription, oemAddress);
         setProduct(registeredProduct);
-        window.localStorage.setItem(
-          PRODUCT_CACHE_KEY,
-          JSON.stringify({
-            productId: registeredProduct.productId.toString(),
-            description: registeredProduct.description,
-            oemAddress: registeredProduct.oemAddress,
-          }),
-        );
         window.localStorage.removeItem(PRODUCT_REVIEW_KEY);
         window.localStorage.removeItem(PRODUCT_REVIEW_DATA_KEY);
         window.localStorage.setItem(

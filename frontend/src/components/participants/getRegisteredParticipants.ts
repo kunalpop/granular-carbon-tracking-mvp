@@ -44,14 +44,7 @@ export async function loadRegisteredParticipants() {
 
   const rows = await Promise.all(
     actorAccounts.map(async ({ address, stageIds }, index) => {
-      const [record, stageAuthorizations] = await Promise.all([
-        participants.getParticipant(address),
-        Promise.all(
-          stageIds.map((stageId) => participants.canWriteStage(address, stageId)),
-        ),
-      ]);
-
-      if (stageAuthorizations.some((authorized) => !authorized)) return undefined;
+      const record = await participants.getParticipant(address);
 
       return {
         id: index + 1,

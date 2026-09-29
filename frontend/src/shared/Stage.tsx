@@ -18,7 +18,10 @@ export type StageEvent = {
 type StageProps = StageEvent & {
   recorded?: boolean;
   recording?: boolean;
+  discarding?: boolean;
   thresholdBreached?: boolean;
+  pendingVote?: boolean;
+  auditStatus?: "Unaudited" | "Pending" | "Audited";
   thresholdKg?: number;
   onRecord: () => void;
   actionLabel?: string;
@@ -46,7 +49,10 @@ export default function Stage({
   previousEvent,
   recorded = false,
   recording = false,
+  discarding = false,
   thresholdBreached = false,
+  pendingVote = false,
+  auditStatus,
   thresholdKg,
   onRecord,
   actionLabel = "Record Event",
@@ -71,11 +77,19 @@ export default function Stage({
   useEffect(() => {
     setEmissionFactorInput(emissionFactor.split(" ")[0]);
   }, [emissionFactor]);
-  const statusLabel = thresholdBreached
+  const statusLabel = auditStatus === "Audited"
+    ? "AUDITED"
+    : auditStatus === "Pending"
+      ? "PENDING"
+      : auditStatus === "Unaudited"
+        ? "UNAUDITED"
+        : thresholdBreached
     ? "THRESHOLD BREACHED"
-    : recorded
-      ? "RECORDED"
-      : "PENDING";
+    : pendingVote
+      ? "PENDING VOTE"
+      : recorded
+        ? "RECORDED"
+        : "PENDING";
 
   return (
     <article className="stage-event-card" id={`event-${stageId}`}>
@@ -83,7 +97,7 @@ export default function Stage({
         <span className="card-id">{String(stageId).padStart(2, "0")}</span>
         <span
           className={`status ${
-            thresholdBreached ? "threshold" : recorded ? "ready" : ""
+            thresholdBreached ? "threshold" : pendingVote || recorded ? "ready" : ""
           }`}
         >
           {statusLabel}
@@ -153,12 +167,12 @@ export default function Stage({
       </div>
       {canRecord && (
         <div className="action-row">
-          <Button onClick={onRecord} disabled={recorded || recording || locked || recordDisabled}>
+          <Button onClick={onRecord} disabled={recorded || recording || discarding || locked || recordDisabled}>
             {recording ? (actionLabel === "Submit" ? "Submitting..." : actionLabel === "Correct" ? "Correct..." : "Recording...") : recorded ? (actionLabel === "Submit" ? "Submitted" : actionLabel === "Correct" ? "Corrected" : "Event Recorded") : actionLabel}
           </Button>
           {onDiscard && (
-            <Button variant="secondary" onClick={onDiscard} disabled={recorded || recording || locked}>
-              Discard
+            <Button variant="secondary" onClick={onDiscard} disabled={recorded || recording || discarding || locked}>
+              {discarding ? "Discarding..." : "Discard"}
             </Button>
           )}
         </div>

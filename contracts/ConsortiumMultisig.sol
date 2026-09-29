@@ -14,7 +14,8 @@ contract ConsortiumMultisig {
         address target;
         bytes data;
         bool executed;
-        uint256 confirmations;
+        uint256 voteCount;
+        uint8 status;
         address eventOwner;
     }
 
@@ -23,18 +24,18 @@ contract ConsortiumMultisig {
     uint256 public immutable required;
 
     Transaction[] private _transactions;
-    mapping(uint256 => mapping(address => bool)) public confirmedBy;
+    mapping(uint256 => mapping(address => uint8)) public voteStatus;
     address public immutable deployerOwner;
     address public immutable auditorOwner;
 
     event TransactionSubmitted(uint256 indexed txId, address indexed by, address target);
-    event TransactionConfirmed(uint256 indexed txId, address indexed by, uint256 confirmations);
+    event TransactionVoted(uint256 indexed txId, address indexed by, uint8 decision, uint256 voteCount);
     event TransactionExecuted(uint256 indexed txId, address indexed by);
 
     error NotAnOwner(address account);
     error InvalidSetup();
     error UnknownTransaction(uint256 txId);
-    error AlreadyConfirmed(uint256 txId, address owner);
+    error AlreadyVoted(uint256 txId, address owner);
     error AlreadyExecuted(uint256 txId);
     error NotEnoughConfirmations(uint256 txId, uint256 have, uint256 need);
     error ExecutionFailed(uint256 txId);
@@ -57,34 +58,44 @@ contract ConsortiumMultisig {
     }
 
     function submit(address target, bytes calldata data) external onlyOwner returns (uint256 txId) {
-        _transactions.push(Transaction(target, data, false, 0, address(0)));
+        _transactions.push(Transaction(target, data, false, 0, 0, address(0)));
         txId = _transactions.length - 1;
         emit TransactionSubmitted(txId, msg.sender, target);
     }
 
     function submit(address target, bytes calldata data, address eventOwner) external onlyOwner returns (uint256 txId) {
         if (!isOwner[eventOwner]) revert NotAnOwner(eventOwner);
-        _transactions.push(Transaction(target, data, false, 0, eventOwner));
+        _transactions.push(Transaction(target, data, false, 0, 0, eventOwner));
         txId = _transactions.length - 1;
         emit TransactionSubmitted(txId, msg.sender, target);
     }
 
-    function confirm(uint256 txId) external onlyOwner {
+    function vote(uint256 txId, uint8 decision) public onlyOwner {
         if (txId >= _transactions.length) revert UnknownTransaction(txId);
         Transaction storage t = _transactions[txId];
         if (t.eventOwner != address(0) && msg.sender != deployerOwner && msg.sender != auditorOwner && msg.sender != t.eventOwner) revert NotAnOwner(msg.sender);
         if (t.executed) revert AlreadyExecuted(txId);
-        if (confirmedBy[txId][msg.sender]) revert AlreadyConfirmed(txId, msg.sender);
-        confirmedBy[txId][msg.sender] = true;
-        t.confirmations += 1;
-        emit TransactionConfirmed(txId, msg.sender, t.confirmations);
+        if (decision != 1 && decision != 2) revert InvalidSetup();
+        if (voteStatus[txId][msg.sender] != 0) revert AlreadyVoted(txId, msg.sender);
+        voteStatus[txId][msg.sender] = decision;
+        t.voteCount += 1;
+        uint256 approvals = 0;
+        for (uint256 i = 0; i < owners.length; i++) {
+            if (voteStatus[txId][owners[i]] == 1) approvals++;
+        }
+        if (approvals >= required) t.status = 1;
+        else if (approvals + (owners.length - t.voteCount) < required) t.status = 2;
+        emit TransactionVoted(txId, msg.sender, decision, t.voteCount);
     }
+
+    function confirm(uint256 txId) external onlyOwner { vote(txId, 1); }
+    function reject(uint256 txId) external onlyOwner { vote(txId, 2); }
 
     function execute(uint256 txId) external onlyOwner {
         if (txId >= _transactions.length) revert UnknownTransaction(txId);
         Transaction storage t = _transactions[txId];
         if (t.executed) revert AlreadyExecuted(txId);
-        if (t.confirmations < required) revert NotEnoughConfirmations(txId, t.confirmations, required);
+        if (t.status != 1) revert NotEnoughConfirmations(txId, t.voteCount, required);
         t.executed = true;
         (bool ok, ) = t.target.call(t.data);
         if (!ok) revert ExecutionFailed(txId);

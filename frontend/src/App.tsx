@@ -13,11 +13,9 @@ import { isProductRegistered } from "./components/product/registerProduct";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import { getSelectedRole, type AccountRole } from "./services/getSigner";
 import { loadRegisteredProducts, type ChainProduct } from "./services/getRegisteredProducts";
+import { eventRegistryForControl } from "./services/controlContracts";
 import "./App.css";
 
-const ACTOR_CACHE_KEY = "registered-actors-cache";
-const PRODUCT_CACHE_KEY = "registered-product-cache";
-const SIMULATION_EVENTS_CACHE_KEY = "registered-emission-events-cache";
 const SIMULATION_EVENT_COUNT = 10;
 const STUDIES_COMPLETE_CACHE_KEY = "evaluation-studies-complete";
 const SELECTED_PRODUCT_KEY = "selected-product-id";
@@ -50,17 +48,7 @@ function WorkflowTab({ to, number, label, enabled }: WorkflowTabProps) {
 export default function App() {
   const [participantsReady, setParticipantsReady] = useState(false);
   const [productReady, setProductReady] = useState(false);
-  const [simulationComplete, setSimulationComplete] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const events = JSON.parse(
-        window.localStorage.getItem(SIMULATION_EVENTS_CACHE_KEY) ?? "[]",
-      ) as unknown[];
-      return events.length >= SIMULATION_EVENT_COUNT;
-    } catch {
-      return false;
-    }
-  });
+  const [simulationComplete, setSimulationComplete] = useState(false);
   const [studiesComplete, setStudiesComplete] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(STUDIES_COMPLETE_CACHE_KEY) === "true";
@@ -162,10 +150,14 @@ export default function App() {
         setProductReady(false);
       }
       try {
-        const events = JSON.parse(
-          window.localStorage.getItem(SIMULATION_EVENTS_CACHE_KEY) ?? "[]",
-        ) as unknown[];
-        setSimulationComplete(events.length >= SIMULATION_EVENT_COUNT);
+        const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+        if (selectedId === "new") {
+          setSimulationComplete(false);
+        } else {
+          const registry = eventRegistryForControl();
+          const count = await registry.eventCount(BigInt(selectedId));
+          setSimulationComplete(Number(count) >= SIMULATION_EVENT_COUNT);
+        }
       } catch {
         setSimulationComplete(false);
       }
@@ -176,9 +168,6 @@ export default function App() {
 
     const handleStorage = (event: StorageEvent) => {
       if (
-        event.key === ACTOR_CACHE_KEY ||
-        event.key === PRODUCT_CACHE_KEY ||
-        event.key === SIMULATION_EVENTS_CACHE_KEY ||
         event.key === STUDIES_COMPLETE_CACHE_KEY
       ) {
         void syncStatus();
@@ -186,6 +175,7 @@ export default function App() {
     };
 
     const handleRegistrationChange = () => void syncStatus();
+    window.addEventListener("simulation-registration-change", handleRegistrationChange);
 
     window.addEventListener("storage", handleStorage);
     window.addEventListener(
