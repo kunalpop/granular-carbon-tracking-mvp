@@ -2,6 +2,12 @@ import { Interface } from "ethers";
 import { useEffect, useState } from "react";
 import { formatAddress, formatGrams, governanceForControl, multisigForControl } from "../../services/controlContracts";
 
+const SELECTED_PRODUCT_KEY = "selected-product-id";
+function selectedProductId(): string {
+  const selected = window.localStorage.getItem(SELECTED_PRODUCT_KEY);
+  return selected && selected !== "new" ? selected : "1";
+}
+
 type ProposalOutcome = {
   id: bigint;
   productId: bigint;
@@ -33,6 +39,7 @@ export default function AuditHistory() {
   useEffect(() => {
     const load = async () => {
       try {
+        const selectedId = BigInt(selectedProductId());
         const governance = governanceForControl();
         const count = Number(await governance.correctionCount());
         const result: Correction[] = [];
@@ -50,7 +57,7 @@ export default function AuditHistory() {
             timestamp: correction.timestamp,
           });
         }
-        setCorrections(result.reverse());
+        setCorrections(result.filter((correction) => correction.productId === selectedId).reverse());
 
         const multisig = multisigForControl();
         const decoder = new Interface(["function correctEvent(uint256,uint256,uint256,int256,string,bytes32)"]);
@@ -69,7 +76,12 @@ export default function AuditHistory() {
               if (decision === 1) votes.push(`${formatAddress(owner)} approved`);
               if (decision === 2) votes.push(`${formatAddress(owner)} rejected`);
             }
-            outcomes.push({ id: BigInt(transactionId), productId: BigInt(args[0].toString()), eventIndex: BigInt(args[1].toString()), reason: String(args[4]), status: Number(raw[4]), executed: Boolean(raw[2]), votes });
+            const status = Number(raw[4]);
+            const executed = Boolean(raw[2]);
+            if (status === 0 && !executed) continue;
+            const proposalProductId = BigInt(args[0].toString());
+            if (proposalProductId !== selectedId) continue;
+            outcomes.push({ id: BigInt(transactionId), productId: proposalProductId, eventIndex: BigInt(args[1].toString()), reason: String(args[4]), status, executed, votes });
           } catch {
             // Ignore non-correction multisig transactions.
           }

@@ -187,7 +187,7 @@ export default function Corrections() {
                   }))
                 }
                 editable={
-                  !busy && !event.corrected && !submitted.has(event.index)
+                  busy !== event.index && !event.corrected && !submitted.has(event.index)
                 }
                 canRecord={!event.corrected && !submitted.has(event.index)}
                 recordDisabled={!changed}

@@ -70,10 +70,6 @@ export default function Audit() {
           <div className="kicker">Lifecycle Control</div>
           <h1>Audit</h1>
         </div>
-        <p>
-          Screen emissions for threshold breaches and preserve every
-          investigation trail.
-        </p>
       </div>
       {error && <p className="feedback error" role="alert">{error}</p>}
       <div className="control-toolbar">
