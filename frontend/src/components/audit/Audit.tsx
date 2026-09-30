@@ -1,19 +1,17 @@
-import { Interface } from "ethers";
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import Corrections from "./Corrections";
 import AuditHistory from "./AuditHistory";
 import {
+  eventRegistryForControl,
   formatAddress,
   formatGrams,
   governanceForControl,
-  eventRegistryForControl,
-  multisigForControl,
 } from "../../services/controlContracts";
-import { CONTRACT_ADDRESSES } from "../../services/contractAddresses";
 import {
   ACCOUNT_CHANGE_EVENT,
   getSelectedRole,
+  getSigner,
 } from "../../services/getSigner";
 
 type AuditTab = "corrections" | "escalations" | "history";
@@ -25,6 +23,8 @@ type Escalation = {
   reason: string;
   raisedBy: string;
   timestamp: bigint;
+  resolved: boolean;
+  resolvedAt: bigint;
 };
 
 const defaultProductId = () => {
@@ -35,8 +35,9 @@ const defaultProductId = () => {
   }
 };
 
-export default function Audit() {
-  const [tab, setTab] = useState<AuditTab>("corrections");
+export default function Audit({ initialTab = "corrections" }: { initialTab?: AuditTab }) {
+  const initialAuditTab = initialTab;
+  const [tab, setTab] = useState<AuditTab>(initialAuditTab);
   const [productId, setProductId] = useState(defaultProductId);
   const [escalations, setEscalations] = useState<Escalation[]>([]);
   const [role, setRole] = useState(getSelectedRole());
@@ -47,8 +48,27 @@ export default function Audit() {
       const governance = governanceForControl();
       const count = await governance.escalationCount();
       const next: Escalation[] = [];
-      for (let index = 0n; index < count; index++)
-        next.push(await governance.escalationAt(index));
+      for (let index = 0n; index < count; index++) {
+        const escalation = await governance.escalationAt(index);
+        const resolved = Boolean(await governance.escalationResolved(index));
+        let resolvedAt = 0n;
+        try {
+          resolvedAt = await governance.escalationResolvedAt(index);
+        } catch {
+          // Older deployments do not expose the resolution timestamp getter.
+        }
+        next.push({
+          productId: escalation[0],
+          eventIndex: escalation[1],
+          co2eGrams: escalation[2],
+          thresholdGrams: escalation[3],
+          reason: escalation[4],
+          raisedBy: escalation[5],
+          timestamp: escalation[6],
+          resolved,
+          resolvedAt,
+        });
+      }
       setEscalations(next);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load audit data.");
@@ -68,7 +88,7 @@ export default function Audit() {
       <div className="page-heading">
         <div>
           <div className="kicker">Lifecycle Control</div>
-          <h1>Audit</h1>
+          <h1>{initialTab === "escalations" ? "Escalations" : "Audit"}</h1>
         </div>
       </div>
       {error && <p className="feedback error" role="alert">{error}</p>}
@@ -83,7 +103,7 @@ export default function Audit() {
         </label>
         <span className="status ready">{role} signer active</span>
       </div>
-      <div
+      {initialTab !== "escalations" && <div
         className="result-tabs control-tabs"
         role="tablist"
         aria-label="Audit actions"
@@ -95,25 +115,17 @@ export default function Audit() {
           Tasks
         </button>
         <button
-          className={tab === "escalations" ? "active" : ""}
-          onClick={() => setTab("escalations")}
-        >
-          Escalations
-        </button>
-        <button
           className={tab === "history" ? "active" : ""}
           onClick={() => setTab("history")}
         >
           History
         </button>
-      </div>
+      </div>}
       {tab === "corrections" && <Corrections />}
-      {tab === "escalations" && (
-        <>
-          <EscalationForm productId={productId} onSubmitted={loadEscalations} />
-          <EscalationList escalations={escalations} />
-        </>
-      )}
+      {tab === "escalations" && (<>
+        <EscalationForm productId={productId} onSubmitted={loadEscalations} />
+        <EscalationList escalations={escalations} currentAddress={getSigner(role).address} />
+      </>)}
       {tab === "history" && <AuditHistory />}
     </>
   );
@@ -138,14 +150,24 @@ function EscalationForm({
     setStatus("submitting");
     setError("");
     try {
-      const registry = eventRegistryForControl();
-      const recordedEvent = await registry.eventAt(productId, eventIndex);
-      const iface = new Interface(["function raiseEscalation(uint256 productId, uint256 eventIndex, string reason)"]);
-      const data = iface.encodeFunctionData("raiseEscalation", [productId, eventIndex, reason]);
-      const multisig = multisigForControl();
-      const transaction = await multisig["submit(address,bytes,address)"](CONTRACT_ADDRESSES.governanceModule, data, recordedEvent.actor);
+      if (!/^\d+$/.test(eventIndex.trim())) {
+        throw new Error("Event index must be a non-negative integer.");
+      }
+
+      const index = BigInt(eventIndex.trim());
+      const eventCount = await eventRegistryForControl().eventCount(productId);
+      if (index >= eventCount) {
+        throw new Error(
+          eventCount === 0n
+            ? `Product ${productId} has no recorded events.`
+            : `Event index ${index} is out of range. Product ${productId} has ${eventCount} recorded event${eventCount === 1n ? "" : "s"} (valid indexes: 0–${eventCount - 1n}).`,
+        );
+      }
+
+      const transaction = await governanceForControl().raiseEscalation(productId, eventIndex, reason);
       await transaction.wait();
       setStatus("submitted");
+      setEventIndex("");
       setReason("");
       await onSubmitted();
     } catch (cause) {
@@ -161,7 +183,6 @@ function EscalationForm({
           <h2>Raise escalation</h2>
           <p>Submit an investigation reason for a recorded event.</p>
         </div>
-        <span className="status threshold">Audit record</span>
       </div>
       <div className="form-grid">
         <label className="field">
@@ -175,7 +196,7 @@ function EscalationForm({
       </div>
       {error && <p className="feedback error" role="alert">{error}</p>}
       <div className="action-row">
-        <Button disabled={status === "submitting"}>
+        <Button type="submit" disabled={status === "submitting"}>
           {status === "submitting" ? "Submitting..." : status === "submitted" ? "Submitted" : "Submit"}
         </Button>
       </div>
@@ -183,7 +204,16 @@ function EscalationForm({
   );
 }
 
-function EscalationList({ escalations }: { escalations: Escalation[] }) {
+function EscalationList({
+  escalations,
+  currentAddress,
+}: {
+  escalations: Escalation[];
+  currentAddress: string;
+}) {
+  const accountEscalations = escalations.filter(
+    (item) => item.raisedBy.toLowerCase() === currentAddress.toLowerCase(),
+  );
   return (
     <section className="panel">
       <div className="form-heading">
@@ -192,10 +222,10 @@ function EscalationList({ escalations }: { escalations: Escalation[] }) {
           <p>Automatic and manual escalations are immutable audit records.</p>
         </div>
       </div>
-      {escalations.length === 0 && (
-        <p>No escalations recorded for this deployment.</p>
+      {accountEscalations.length === 0 && (
+        <p>No escalations recorded by the current account.</p>
       )}
-      {escalations.map((item, index) => (
+      {accountEscalations.map((item, index) => (
         <div
           className="audit-row"
           key={`${String(item.eventIndex ?? 0n)}-${index}`}
@@ -206,15 +236,12 @@ function EscalationList({ escalations }: { escalations: Escalation[] }) {
               Event {String(item.eventIndex ?? 0n)} · {formatGrams(item.co2eGrams)}
             </strong>
             <small>
-              {item.reason} · raised by {formatAddress(item.raisedBy)}
+              {item.reason} · raised by {formatAddress(item.raisedBy)} · {new Date(Number(item.timestamp) * 1000).toLocaleString()}
             </small>
+            {item.resolved && <small>Resolved on chain{item.resolvedAt > 0n ? ` · ${new Date(Number(item.resolvedAt) * 1000).toLocaleString()}` : " · timestamp unavailable on this deployment"}</small>}
           </div>
-          <span
-            className={item.thresholdGrams > 0n ? "status threshold" : "status"}
-          >
-            {item.thresholdGrams > 0n
-              ? `Threshold ${formatGrams(item.thresholdGrams)}`
-              : "Manual"}
+          <span className={item.resolved ? "status ready" : "status threshold"}>
+            {item.resolved ? "Resolved" : "Pending"}
           </span>
         </div>
       ))}

@@ -62,6 +62,8 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
     }
     Escalation[] private _escalations;
     mapping(uint256 => mapping(uint256 => bool)) private _autoEscalated;
+    mapping(uint256 => bool) public escalationResolved;
+    mapping(uint256 => uint64) public escalationResolvedAt;
 
     event CorrectionTaskDiscarded(uint256 indexed productId, uint256 indexed eventIndex, address indexed discardedBy);
     event CorrectionLogged(
@@ -83,6 +85,7 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         string reason,
         address indexed raisedBy
     );
+    event EscalationResolved(uint256 indexed escalationIndex, address indexed resolvedBy, uint64 timestamp);
     event StageThresholdSet(uint8 indexed stageId, uint256 maxAbsGrams);
 
     error InvalidStage(uint8 stageId);
@@ -242,8 +245,9 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         uint256 productId,
         uint256 eventIndex,
         string calldata reason
-    ) external onlyRole(AUDITOR_ROLE) {
+    ) external {
         EmissionEventRegistry.EmissionEvent memory e = eventRegistry.eventAt(productId, eventIndex);
+        require(hasRole(AUDITOR_ROLE, msg.sender) || msg.sender == e.actor, "not escalation reporter");
         _escalations.push(
             Escalation(productId, eventIndex, e.co2eGrams, 0, reason, msg.sender, uint64(block.timestamp))
         );
@@ -256,5 +260,11 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
 
     function escalationAt(uint256 index) external view returns (Escalation memory) {
         return _escalations[index];
+    }
+
+    function resolveEscalation(uint256 index) external onlyRole(GOVERNOR_ROLE) {
+        escalationResolved[index] = true;
+        escalationResolvedAt[index] = uint64(block.timestamp);
+        emit EscalationResolved(index, msg.sender, uint64(block.timestamp));
     }
 }

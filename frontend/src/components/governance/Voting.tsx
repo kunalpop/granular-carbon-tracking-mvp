@@ -39,6 +39,7 @@ export default function Voting() {
       const auditorOwner = (await multisig.auditorOwner()).toLowerCase();
       const total = await multisig.transactionCount();
       const decoder = new Interface(["function correctEvent(uint256,uint256,uint256,int256,string,bytes32)"]);
+      const escalationDecoder = new Interface(["function raiseEscalation(uint256,uint256,string)"]);
       const next: Proposal[] = [];
       for (let id = 0n; id < total; id++) {
         let raw = await multisig.transactionAt(id);
@@ -73,8 +74,14 @@ export default function Voting() {
           try { decision = Number(await multisig.voteStatus(id, address)); } catch { /* Legacy deployments have no per-voter status; show the pending proposal. */ }
           next.push({ tx, event, activity: Number(args[2]) / 1000, factor: Number(args[3]) / 1000, reason: String(args[4]), voted: decision !== 0, rejected: decision === 2 });
         } catch (cause) {
-          const detail = cause instanceof Error ? cause.message : "Unknown proposal error";
-          setError((current) => current || `Unable to load proposal #${id}: ${detail}`);
+          // Escalation proposals are handled by Governance, not the correction vote cards.
+          try {
+            escalationDecoder.decodeFunctionData("raiseEscalation", tx.data);
+            continue;
+          } catch {
+            const detail = cause instanceof Error ? cause.message : "Unknown proposal error";
+            setError((current) => current || `Unable to load proposal #${id}: ${detail}`);
+          }
         }
       }
       if (generation === loadGeneration.current) setProposals(next);

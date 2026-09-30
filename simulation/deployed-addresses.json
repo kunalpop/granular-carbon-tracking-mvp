@@ -1,14 +1,14 @@
 {
   "chainId": 2026,
-  "deployedAtBlock": 21666,
+  "deployedAtBlock": 24300,
   "addresses": {
-    "ParticipantRegistry": "0xE11151e57046D698C5bD5681aEbAd818f43E64c4",
-    "EmissionEventRegistry": "0x375Fff830D5A050029238b897c5A019Db8e82035",
-    "CarbonToken": "0x332f561Bba354777e0801c62704bE438A0c1457C",
-    "AggregationContract": "0x6a8D8F319D224Ae143E566eAED25297E943bF8dF",
-    "OntologyRegistry": "0xa5067562Ef315638Fe20E1bFF8469Cf0Bb4e5F8B",
-    "ConsortiumMultisig": "0xF403bE479FC2f97499FBCC223b09a502ad4BcB5b",
-    "GovernanceModule": "0x11637b64BCfE50D8e8e32Ec257E5879C8aC99998",
-    "GovernanceModuleImplementation": "0x7B7815563f12eb1E3AB211e803fA761f508f4b57"
+    "ParticipantRegistry": "0xfD68eC88F2D75B6b78BfEF9F77b2c62f7AEF995D",
+    "EmissionEventRegistry": "0xdDe3cc95C87CdE4902A3ebf7a51C0f16d50c4F1d",
+    "CarbonToken": "0x6DeA7d32C58e1a2518dCbed195a8CCFA31aD2633",
+    "AggregationContract": "0xc5065C23f1E5566CB311b0b8c120ED9a51655199",
+    "OntologyRegistry": "0xb89464Df52E0c9953Ed9c68BF673A1Bc0c09078f",
+    "ConsortiumMultisig": "0x19d9dA0122B2CD5EBae511f3bC4eE91C7940cD91",
+    "GovernanceModule": "0x119887ABFBE146871408190601340a99E8f5a816",
+    "GovernanceModuleImplementation": "0xD55D771F7Ab4cF8B24EE368abD2dC51955959505"
   }
 }

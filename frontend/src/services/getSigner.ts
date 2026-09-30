@@ -14,6 +14,26 @@ export const ACCOUNT_OPTIONS = accounts.map((account) => ({
   address: account.address,
 }));
 
+const ACCOUNT_NAMES: Record<string, string> = {
+  deployer: "Deployer",
+  smelter: "AluCo Primary Smelting",
+  pcbSupplier: "Shenzhen PCB Works",
+  batteryMaker: "CellTech Batteries",
+  screenSupplier: "PanelView Displays",
+  oem: "LaptopCorp Assembly",
+  logistics: "BlueWater Freight",
+  usePhaseAgent: "Corporate IT (use phase)",
+  repairer: "FixIt Refurbishment",
+  recycler: "GreenLoop Recycling",
+  auditor: "Consortium Auditor",
+};
+
+export function accountName(address?: string): string {
+  if (!address) return "Unknown account";
+  const account = accounts.find((candidate) => candidate.address.toLowerCase() === address.toLowerCase());
+  return account ? ACCOUNT_NAMES[account.role] ?? account.role : "Unknown account";
+}
+
 export const ACCOUNT_CHANGE_EVENT = "control-account-change";
 export const SELECTED_ACCOUNT_KEY = "selected-control-account";
 

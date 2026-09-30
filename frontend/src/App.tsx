@@ -62,6 +62,8 @@ export default function App() {
   );
   const navigate = useNavigate();
   const canUseAudit = selectedRole === "auditor";
+  const canUseEscalations = selectedRole !== "deployer";
+  const isParticipant = selectedRole !== "deployer" && selectedRole !== "auditor";
   const canUseGovernance = selectedRole === "deployer";
   const canUseVoting = true;
   const networkLabel = NETWORK_CONFIG.url.includes("8545") ? "BESU" : "CHAIN";
@@ -257,11 +259,10 @@ export default function App() {
             <>
           <p className="eyebrow">Lifecycle Control</p>
           <nav aria-label="Lifecycle control navigation">
+            {canUseGovernance && <WorkflowTab to="/governance" number="01" label="Governance" enabled />}
             {canUseAudit && <WorkflowTab to="/audit" number="01" label="Audit" enabled />}
-            {canUseGovernance && (
-              <WorkflowTab to="/governance" number="02" label="Governance" enabled />
-            )}
-            {canUseVoting && <WorkflowTab to="/voting" number="03" label="Voting" enabled />}
+            {canUseVoting && <WorkflowTab to="/voting" number={isParticipant ? "01" : "02"} label="Voting" enabled />}
+            {canUseEscalations && <WorkflowTab to="/escalations" number={isParticipant ? "02" : "03"} label="Escalations" enabled />}
           </nav>
           </>
           )}
@@ -358,6 +359,7 @@ export default function App() {
               element={canUseGovernance ? <Governance /> : <Navigate to="/voting" replace />}
             />
             <Route path="/voting" element={<Voting />} />
+            <Route path="/escalations" element={canUseEscalations ? <Audit initialTab="escalations" /> : <Navigate to="/participants" replace />} />
             <Route
               path="/audit"
               element={canUseAudit ? <Audit /> : <Navigate to="/participants" replace />}

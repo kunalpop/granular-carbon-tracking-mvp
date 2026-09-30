@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { EMISSION_FACTORS } from "../../services/emissionFactors";
 import Button from "../../shared/Button";
+import Escalation, { type EscalationCardRecord } from "../../shared/Escalation";
 import {
   formatAddress,
   formatGrams,
@@ -11,7 +12,8 @@ import {
   getSelectedRole,
 } from "../../services/getSigner";
 
-type Tab = "pending" | "history";
+type Tab = "pending" | "escalations" | "history";
+type EscalationRecord = EscalationCardRecord & { resolved: boolean };
 type CorrectionRecord = {
   id: bigint;
   productId: bigint;
@@ -34,10 +36,18 @@ export default function Governance() {
   const [tab, setTab] = useState<Tab>("pending");
   const [productId, setProductId] = useState(defaultProductId);
   const [corrections, setCorrections] = useState<CorrectionRecord[]>([]);
+  const [escalations, setEscalations] = useState<EscalationRecord[]>([]);
   const [role, setRole] = useState(getSelectedRole());
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [escalationComments, setEscalationComments] = useState<Record<string, string>>(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("escalation-resolution-comments") ?? "{}");
+    } catch {
+      return {};
+    }
+  });
 
   const loadData = async () => {
     setError("");
@@ -54,6 +64,23 @@ export default function Governance() {
         nextCorrections.push({ id: correctionId, ...correction });
       }
       setCorrections(nextCorrections);
+      const escalationCount = await governance.escalationCount();
+      const nextEscalations: EscalationRecord[] = [];
+      for (let id = 0n; id < escalationCount; id++) {
+        const escalation = await governance.escalationAt(id);
+        nextEscalations.push({
+          id,
+          productId: escalation[0],
+          eventIndex: escalation[1],
+          co2eGrams: escalation[2],
+          thresholdGrams: escalation[3],
+          reason: escalation[4],
+          raisedBy: escalation[5],
+          timestamp: escalation[6],
+          resolved: Boolean(await governance.escalationResolved(id)),
+        });
+      }
+      setEscalations(nextEscalations);
 
     } catch (cause) {
       setError(
@@ -120,6 +147,12 @@ export default function Governance() {
           Emission Thresholds
         </button>
         <button
+          className={tab === "escalations" ? "active" : ""}
+          onClick={() => setTab("escalations")}
+        >
+          Escalations
+        </button>
+        <button
           className={tab === "history" ? "active" : ""}
           onClick={() => setTab("history")}
         >
@@ -137,9 +170,25 @@ export default function Governance() {
         </p>
       )}
       {tab === "pending" && <ThresholdManager busy={busy} onSubmit={submit} />}
-      {tab === "history" && (
-        <CorrectionHistory corrections={corrections} />
-      )}
+      {tab === "escalations" && <EscalationManager
+        escalations={escalations}
+        busy={busy}
+        comments={escalationComments}
+        onCommentChange={(id, comment) => {
+          setEscalationComments((current) => {
+            const next = { ...current, [String(id)]: comment };
+            window.localStorage.setItem("escalation-resolution-comments", JSON.stringify(next));
+            return next;
+          });
+        }}
+        onResolve={(id) => submit(async () => {
+          const comment = escalationComments[String(id)]?.trim();
+          if (!comment) throw new Error("Add a resolution comment before resolving this escalation.");
+          const call = await governanceForControl().resolveEscalation(id);
+          await call.wait();
+        }, "Escalation resolved and recorded on chain.")}
+      />}
+      {tab === "history" && <GovernanceHistory corrections={corrections} escalations={escalations} />}
     </>
   );
 }
@@ -184,7 +233,42 @@ function ThresholdManager({ busy, onSubmit }: { busy: boolean; onSubmit: (action
   );
 }
 
-function CorrectionHistory({ corrections }: { corrections: CorrectionRecord[] }) {
+
+function EscalationManager({
+  escalations,
+  busy,
+  comments,
+  onCommentChange,
+  onResolve,
+}: {
+  escalations: EscalationRecord[];
+  busy: boolean;
+  comments: Record<string, string>;
+  onCommentChange: (id: bigint, comment: string) => void;
+  onResolve: (id: bigint) => Promise<void>;
+}) {
+  const pending = escalations.filter((item) => !item.resolved);
+  return (
+    <section className="panel">
+      <div className="form-heading"><div><h2>Escalations</h2><p>Review the evidence and record a resolution comment before closing each escalation.</p></div></div>
+      {pending.length === 0 && <p>No unresolved escalations.</p>}
+      <div className="audit-corrections">
+        {pending.map((item) => (
+          <Escalation
+            key={String(item.id)}
+            escalation={item}
+            comment={comments[String(item.id)] ?? ""}
+            busy={busy}
+            onCommentChange={(comment) => onCommentChange(item.id, comment)}
+            onResolve={() => void onResolve(item.id)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function GovernanceHistory({ corrections, escalations }: { corrections: CorrectionRecord[]; escalations: EscalationRecord[] }) {
   return (
     <section className="panel">
       <div className="form-heading">
@@ -193,7 +277,7 @@ function CorrectionHistory({ corrections }: { corrections: CorrectionRecord[] })
           <p>Corrections approved and executed through the consortium multisig.</p>
         </div>
       </div>
-      {corrections.length === 0 && <p>No approved corrections recorded.</p>}
+      {corrections.length === 0 && escalations.every((item) => !item.resolved) && <p>No approved corrections or resolved escalations recorded.</p>}
       <div className="audit-corrections">
         {corrections.slice().reverse().map((correction) => (
           <article className="audit-row" key={String(correction.id ?? 0n)}>
@@ -208,6 +292,12 @@ function CorrectionHistory({ corrections }: { corrections: CorrectionRecord[] })
               </small>
             </div>
             <span className="status ready">APPROVED</span>
+          </article>
+        ))}
+        {escalations.filter((item) => item.resolved).slice().reverse().map((item) => (
+          <article className="audit-row" key={`escalation-${String(item.id)}`}>
+            <div><span className="card-id">ESCALATION #{String(item.id + 1n)}</span><strong>Product {String(item.productId)} · Event {String(item.eventIndex)}</strong><small>{item.reason} · raised by {formatAddress(item.raisedBy)}</small></div>
+            <span className="status ready">RESOLVED</span>
           </article>
         ))}
       </div>

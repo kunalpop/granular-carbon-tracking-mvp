@@ -27,6 +27,9 @@ export const GOVERNANCE_ABI = [
   "function screenProduct(uint256 productId) returns (uint256)",
   "function raiseEscalation(uint256 productId, uint256 eventIndex, string reason)",
   "function escalationCount() view returns (uint256)",
+  "function escalationResolved(uint256 index) view returns (bool)",
+  "function escalationResolvedAt(uint256 index) view returns (uint64)",
+  "function resolveEscalation(uint256 index)",
   "function escalationAt(uint256 index) view returns (tuple(uint256 productId, uint256 eventIndex, int256 co2eGrams, uint256 thresholdGrams, string reason, address raisedBy, uint64 timestamp))",
 ];
 
