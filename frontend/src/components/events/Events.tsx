@@ -84,6 +84,8 @@ export default function Events() {
         const registry = eventRegistryForControl();
         const governance = governanceForControl();
         const productId = BigInt(selectedId);
+        const product = await registry.getProduct(productId);
+        setProductDescription(String(product.description));
         const count = Number(await registry.eventCount(productId));
         const correctionCount = Number(await governance.correctionCount());
         const thresholds = new Map<number, number>();

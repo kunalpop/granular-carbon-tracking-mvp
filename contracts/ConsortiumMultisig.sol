@@ -83,8 +83,8 @@ contract ConsortiumMultisig {
         for (uint256 i = 0; i < owners.length; i++) {
             if (voteStatus[txId][owners[i]] == 1) approvals++;
         }
-        if (approvals >= required) t.status = 1;
-        else if (approvals + (owners.length - t.voteCount) < required) t.status = 2;
+        if (t.voteCount == owners.length && approvals >= required) t.status = 1;
+        else if (t.voteCount == owners.length && approvals < required) t.status = 2;
         emit TransactionVoted(txId, msg.sender, decision, t.voteCount);
     }
 

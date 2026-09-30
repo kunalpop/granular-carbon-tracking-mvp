@@ -47,11 +47,11 @@ async function main() {
       .filter((account) => account.role !== "deployer" && account.role !== "auditor")
       .map((account) => account.address),
   ];
-  // Correction proposals are limited to the deployer, auditor, and the
-  // original event owner, so require all three stakeholder votes.
+  // Correction proposals require all three stakeholder votes, with a 2-of-3
+  // approval quorum once every stakeholder has voted.
   const multisig = await ethers.deployContract("ConsortiumMultisig", [
     consortiumOwners,
-    3n,
+    2n,
   ]);
   await multisig.waitForDeployment();
   console.log(`ConsortiumMultisig     ${multisig.target}`);
