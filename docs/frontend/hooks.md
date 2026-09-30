@@ -16,13 +16,15 @@ configured local Besu network.
 
 ### Provider
 
-`useContracts.ts` creates a `JsonRpcProvider` using the URL and chain ID from
-`frontend/src/services/networkConfig.ts`.
+`useContracts.ts` creates one `JsonRpcProvider` using the local Besu endpoint
+`http://127.0.0.1:8545` and the chain ID from
+`frontend/src/services/networkConfig.ts`. This provider is used when a factory
+is called without a signer.
 
 ### Contract address configuration
 
-It reads contract addresses from `frontend/src/services/contractAddresses.ts`.
-The address mapping includes:
+The shared contract factory reads deployed addresses from
+`frontend/src/services/contractAddresses.ts`. The address mapping includes:
 
 - Participant Registry
 - Emission Event Registry
@@ -44,42 +46,45 @@ The file exports these factory functions:
 - `getConsortiumMultisigContract(abi, signer?)`
 - `getGovernanceModuleContract(abi, signer?)`
 
-Each function receives an ABI and optionally a signer. If no signer is
-provided, the contract uses the read-only JSON-RPC provider. When a signer is
-provided, the returned contract can submit transactions.
+Each factory receives an ABI and optionally a signer. Without a signer, the
+returned ethers contract is read-only and uses the JSON-RPC provider. With a
+signer, it can submit transactions to the corresponding contract.
 
 ## Services
 
 The hooks and workflow components rely on these files in
 `frontend/src/services`:
 
-- `services/networkConfig.ts` for the RPC URL and chain ID.
-- `services/contractAddresses.ts` for deployed contract addresses.
-- `services/emissionFactors.ts` for the lifecycle factor data imported from
-  `simulation/emission-factors.json`.
-- `services/getActors.ts` for configured participant names and roles.
-- `services/getSigner.ts` for role-based wallets used by registration helpers.
-- `services/getTypes.ts` for shared lifecycle stage types.
+- `networkConfig.ts` provides the RPC URL and chain ID.
+- `contractAddresses.ts` provides deployed contract addresses.
+- `emissionFactors.ts` provides lifecycle stages, actor roles, activity units,
+  emission factors, sources, and methodologies.
+- `getSigner.ts` provides role-based wallets and account-selection helpers.
+- `getTypes.ts` provides shared lifecycle stage types.
+- `controlContracts.ts` provides contract access used by governance controls.
+- `useContracts.ts` provides the service-level contract factory used by some
+  workflow helpers.
+- `getParticipants.ts` reads registered participant data.
+- `getRegisteredProducts.ts` reads registered product data.
 
-These service files provide configuration, deployed contract addresses,
-emission-factor data, actor names, signer wallets, and shared TypeScript types.
+Participant, product, event, audit, governance, and study state is managed by
+page components and workflow helpers rather than custom React hooks.
 
-Participant, product, event, and study state is managed inside their page or
-study components rather than through custom React hooks.
-
-## Shared Components
+## Shared components
 
 The frontend keeps reusable UI components in `frontend/src/shared`:
 
 ```text
 frontend/src/shared/
   Button.tsx
+  Escalation.tsx
   Stage.tsx
 ```
 
-- `Button.tsx` provides the shared button element with primary and secondary
-  variants, standard button props, and a default button type.
-- `Stage.tsx` renders one simulation event card, including activity, emission
-  factor, schema, owner, CO2e, reporting standard, previous event, recording
-  state, threshold status, and its Record Event button.
-  uses `Stage.tsx` for event recording.
+- `Button.tsx` provides primary and secondary button variants, standard button
+  props, and a default button type.
+- `Escalation.tsx` renders escalation details, comments, and resolution
+  controls.
+- `Stage.tsx` renders an emission-event card with activity, emission factor,
+  schema, owner, CO2e, reporting standard, previous event, audit status,
+  threshold status, and record or discard controls.

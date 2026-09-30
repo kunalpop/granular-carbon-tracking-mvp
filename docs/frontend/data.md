@@ -1,101 +1,201 @@
 # Data
 
-This document describes the data used by each phase of the frontend workflow.
+This document describes the data stored on chain, read by the frontend from
+contract state and events, and cached in browser localStorage.
 
-## 1. Participant registration
+## On-chain data
 
-Source files:
+### Participant registry
 
-- `frontend/src/services/getActors.ts` — configured participant names and roles.
-- `network/accounts.json` — participant wallet accounts and addresses.
-- `frontend/src/services/emissionFactors.ts` — lifecycle stages used to assign
-  stage permissions.
+Source: `contracts/ParticipantRegistry.sol`
 
-The participant registration flow builds participant records containing:
+The participant registry stores the consortium identities and stage permissions:
 
-- Numeric participant ID
+- Participant wallet address
 - Organisation name
 - Organisation role
-- Wallet address
-- Assigned lifecycle stage
+- Active/inactive status
+- Registration timestamp
+- Authorised lifecycle stages, from stage 1 to stage 10
 
-`registerParticipants.ts` uses the participant registry contract to register
-each account and authorise its stages. `Participants.tsx` verifies the result
-against the chain before treating registration as complete.
+The contract emits registration, activation, deactivation, stage-authorisation,
+and stage-revocation events. `Participants.tsx` and the participant helper files
+use this data to register accounts and verify their permissions.
 
-## 2. Product registration
+### Product and emission-event registry
 
-Source files:
+Source: `contracts/EmissionEventRegistry.sol`
 
-- `simulation/emission-factors.json` — reference product and product ID
-  configuration.
-- `frontend/src/services/emissionFactors.ts` — frontend access to the factor
-  configuration.
-- `frontend/src/services/getSigner.ts` — signer used for product operations.
-
-The product record contains:
+Each product contains:
 
 - Product ID
 - Product description
-- OEM/passport-holder address
+- Creator address
+- Creation timestamp
+- Existence flag
 
-`registerProduct.ts` creates the product in the emission event registry and
-mints the passport NFT through the carbon token contract. `Product.tsx`
-restores and verifies the product before displaying it as registered.
+Each product's append-only emission-event chain contains:
 
-## 3. Event registration
+- Product ID and lifecycle stage ID
+- Authorised actor address
+- Activity data, stored with a 1,000x fixed-point scale
+- Activity unit, such as `kWh`, `tkm`, or `kg`
+- Emission factor, stored with a 1,000x fixed-point scale
+- Emission-factor source
+- On-chain calculated signed CO2e in grams
+- Methodology or reporting standard
+- Evidence-file hash
+- Previous event hash
+- Block timestamp
+- Ontology schema version
+- Event hash
 
-Each lifecycle stage in `simulation/emission-factors.json` provides:
+The contract calculates CO2e on chain. Positive values are mirrored as carbon
+minting and negative values as carbon burning. The previous-event and event
+hashes create a tamper-evident chain.
 
-- `stageId` and `name`
-- `actorRole`
-- `activityValue` and `activityUnit`
-- `emissionFactor_gCO2ePerUnit`
-- `efSource`
-- `methodology`
+The registry also stores per-event audit status: `Unaudited`, `Pending`, or
+`Audited`. The frontend reads products and events using `eventAt`, `getEvents`,
+`eventCount`, and `verifyChain`, and reads the corresponding contract events for
+history and audit views.
 
-`registerEmissionEvent.ts` converts activity and emission-factor values to the
-contract's x1000 fixed-point representation, hashes compact evidence, and calls
-`EmissionEventRegistry.recordEvent`. The contract calculates signed `co2eGrams`
-from activity and emission factor. Positive values are mirrored with
-`CarbonToken.mintCarbon`; negative values are mirrored with
-`CarbonToken.burnCarbon`.
+### Carbon token data
 
-`Simulation.tsx` displays the returned event data in `Stage.tsx` and stores the
-stage ID, CO2e in kilograms, and event hash for progress and Results gating.
+Source: `contracts/CarbonToken.sol`
 
-## 4. Evaluation data
+The ERC-1155 token contract stores:
 
-### Tampering study
+- Passport token existence for each product
+- Carbon-credit token balances
+- Total carbon grams minted per product
+- Total carbon grams burned per product
+- Net carbon balance per product
 
-`studyTampering.ts` uses the cached frontend events to evaluate six browser-safe
-scenarios: naive and competent value lowering, event deletion, and back-dating.
-It reports control status, findings, and detected/undetected scenario counts.
+The contract emits passport-mint, carbon-mint, and carbon-burn events. Passport
+IDs and carbon IDs are derived from the product ID.
 
-### Aggregation study
+### Governance data
 
-`studyAggregation.ts` uses cached events and the lifecycle factor data to check
-independent totals, per-stage totals, event hashes, traceability, completeness,
-and fault cases for missing, inconsistent, removed, and altered events.
+Source: `contracts/GovernanceModule.sol`
 
-### Performance study
+Correction records contain:
 
-`studyPerformance.ts` loads the committed benchmark files:
+- Product ID and original event index
+- Original event hash
+- Corrected activity data
+- Corrected emission factor
+- On-chain recalculated corrected CO2e
+- Correction reason
+- Supporting evidence hash
+- Correcting account
+- Timestamp
+- Previous correction ID, when superseding an earlier correction
 
-- `evaluation/study-c-performance/results/results-4-validators.json`
-- `evaluation/study-c-performance/results/results-7-validators.json`
+The module also stores the latest correction per event and whether a correction
+task was discarded.
 
-It compares throughput in transactions per second and average latency in
-milliseconds, and calculates the percentage change between configurations.
-The browser does not execute the original Docker/Hardhat benchmark driver.
+Escalation records contain:
 
-## LocalStorage keys
+- Product ID and event index
+- Event CO2e
+- Threshold used, or zero for a manual escalation
+- Escalation reason
+- Raising account
+- Timestamp
+- Resolved status and resolution timestamp
 
-- `registered-actors-cache` — registered participant details.
-- `registered-product-cache` — product ID, description, and OEM address.
-- `registered-emission-events-cache` — recorded stage IDs, CO2e values, and
-  event hashes.
-- `tampering-study-result` — Tampering Study result object.
-- `aggregation-study-result` — Aggregation Study result object.
-- `performance-study-result` — Performance Study result object.
-- `evaluation-studies-complete` — flag indicating all three studies completed.
+The module stores stage thresholds in grams and emits correction, escalation,
+resolution, threshold, and discarded-task events. `Governance.tsx`, `Voting.tsx`,
+`Corrections.tsx`, and `AuditHistory.tsx` read this data from the chain.
+
+### Aggregation data
+
+Source: `contracts/AggregationContract.sol`
+
+Aggregation is calculated from public registry and token state rather than
+stored as a separate ledger. The contract exposes:
+
+- Product-level total CO2e
+- Per-stage CO2e totals
+- Presence of events for each of the ten stages
+- Product completeness status
+- Cross-checks between event totals and net carbon-token totals
+
+### Ontology/schema data
+
+Source: `contracts/OntologyRegistry.sol`
+
+The ontology registry stores versioned event schemas:
+
+- Semantic schema version
+- Schema-document hash
+- Off-chain schema URI
+- Registration timestamp
+- Deprecated status
+- Current schema version
+
+Emission events store the schema version used when they were recorded. Schema
+registration, deprecation, and current-version changes are emitted on chain.
+
+### Consortium multisig data
+
+Source: `contracts/ConsortiumMultisig.sol`
+
+The multisig stores:
+
+- Owner addresses and owner membership
+- Required confirmation count
+- Submitted transaction target and calldata
+- Optional event owner
+- Execution status
+- Vote count
+- Per-owner vote decisions
+
+It emits transaction-submitted, transaction-voted, and transaction-executed
+events. These records provide the on-chain approval history for multi-party
+administrative actions.
+
+## Frontend configuration and derived data
+
+- `frontend/src/services/emissionFactors.ts` provides the lifecycle stage names,
+  actor roles, activity units, emission factors, sources, and methodologies used
+  by the event forms and display cards.
+- `network/accounts.json` provides the configured demo participant accounts and
+  addresses.
+- `frontend/src/services/contractAddresses.ts` and the deployment artifacts
+  provide the addresses used to read and write each contract.
+- `evaluation/study-c-performance/results/*.json` contains committed benchmark
+  data used by the browser Performance Study.
+- `studyTampering.ts` and `studyAggregation.ts` derive evaluation results from
+  cached events and lifecycle metadata; these results are not written on chain.
+
+## LocalStorage data
+
+The browser cache is used for UI state, workflow progress, and study results.
+It is not the authoritative record; on-chain contract state and events are the
+source of truth for registered participants, products, emission events,
+corrections, escalations, and governance actions.
+
+- `selected-control-account` — active demo account role used to choose the signer.
+- `selected-product-id` — currently selected product ID, or `new` during product
+  creation.
+- `registered-actors-cache` — registered participant details, roles, addresses,
+  and assigned stages.
+- `registered-product-cache` — registered product ID, description, and OEM
+  address.
+- `registered-emission-events-cache` — recorded event stage IDs, CO2e values,
+  and event hashes used for progress and study gating.
+- `product-review-status-v2` — product-review state: `draft`, `sent`, or
+  `confirmed`.
+- `product-review-data-v2` — serialized product-review details and timestamps.
+- `escalation-resolution-comments` — locally entered resolution comments keyed
+  by escalation index.
+- `tampering-study-result` — serialized Tampering Study result and scenario
+  outcomes.
+- `aggregation-study-result` — serialized Aggregation Study checks and results.
+- `performance-study-result` — serialized Performance Study benchmark metrics.
+- `evaluation-studies-complete` — completion flag set after all three studies
+  finish; controls visibility of the sidebar reset button.
+
+The application reset control clears localStorage. Clearing the browser cache
+does not remove or modify any on-chain data.
