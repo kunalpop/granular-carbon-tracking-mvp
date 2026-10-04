@@ -1,8 +1,8 @@
 This folder contains the frontend documentation for the current implementation. Use the links below to jump directly to the relevant markdown files in this directory.
 
-## Documentation set
+## Content
 
-- [Overview](overview.md) — end-to-end workflow and role-aware product lifecycle guidance
+- [User Guide](guide.md) — end-to-end workflow and role-aware product lifecycle guidance
 - [Pages](pages.md) — route-by-route description of the frontend pages
 - [Components](components.md) — component inventory for the application
 - [Hooks](hooks.md) — hooks, services, and shared UI helper documentation
