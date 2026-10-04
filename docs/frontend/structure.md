@@ -85,7 +85,7 @@ frontend/src/
 │   │   ├── Product.tsx
 │   │   ├── mintProduct.ts
 │   │   └── registerProduct.ts
-│   └── result/
+│   └── results/
 │       ├── Results.tsx
 │       ├── studyAggregation.ts
 │       ├── studyPerformance.ts
@@ -121,7 +121,7 @@ frontend/src/
   submission views.
 - `components/governance` manages thresholds, escalations, governance history,
   and correction voting.
-- `components/result` runs the Tampering, Aggregation, and Performance studies.
+- `components/results` runs the Tampering, Aggregation, and Performance studies.
 - `hooks` and `services` provide contract factories, network configuration,
   signers, addresses, lifecycle metadata, and chain-data readers.
 - `shared` contains reusable buttons, stage cards, and escalation controls.

@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { NavLink, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import Participants from "./components/participants/Participants";
 import Product from "./components/product/Product";
 import Simulation from "./components/events/Events";
-import Results from "./components/result/Results";
+import Results from "./components/results/Results";
 import Governance from "./components/governance/Governance";
 import Voting from "./components/governance/Voting";
 import Audit from "./components/audit/Audit";
@@ -12,7 +18,10 @@ import { areActorsRegistered } from "./components/participants/registerParticipa
 import { isProductRegistered } from "./components/product/registerProduct";
 import { NETWORK_CONFIG } from "./services/networkConfig";
 import { getSelectedRole, type AccountRole } from "./services/getSigner";
-import { loadRegisteredProducts, type ChainProduct } from "./services/getRegisteredProducts";
+import {
+  loadRegisteredProducts,
+  type ChainProduct,
+} from "./services/getRegisteredProducts";
 import { eventRegistryForControl } from "./services/controlContracts";
 import "./App.css";
 
@@ -55,15 +64,18 @@ export default function App() {
   });
   const simulationReady = participantsReady && productReady;
   const [networkOnline, setNetworkOnline] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<AccountRole>(() => getSelectedRole());
+  const [selectedRole, setSelectedRole] = useState<AccountRole>(() =>
+    getSelectedRole(),
+  );
   const [products, setProducts] = useState<ChainProduct[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState(() =>
-    window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new",
+  const [selectedProductId, setSelectedProductId] = useState(
+    () => window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new",
   );
   const navigate = useNavigate();
   const canUseAudit = selectedRole === "auditor";
   const canUseEscalations = selectedRole !== "deployer";
-  const isParticipant = selectedRole !== "deployer" && selectedRole !== "auditor";
+  const isParticipant =
+    selectedRole !== "deployer" && selectedRole !== "auditor";
   const canUseGovernance = selectedRole === "deployer";
   const canUseVoting = true;
   const networkLabel = NETWORK_CONFIG.url.includes("8545") ? "BESU" : "CHAIN";
@@ -79,7 +91,8 @@ export default function App() {
     void loadProducts();
     const refreshProducts = () => void loadProducts();
     const refreshSelection = () => {
-      const productId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+      const productId =
+        window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
       setSelectedProductId(productId);
       if (productId === "new") {
         setProductReady(false);
@@ -92,7 +105,10 @@ export default function App() {
     window.addEventListener("product-registration-change", refreshProducts);
     window.addEventListener("product-selection-change", refreshSelection);
     return () => {
-      window.removeEventListener("product-registration-change", refreshProducts);
+      window.removeEventListener(
+        "product-registration-change",
+        refreshProducts,
+      );
       window.removeEventListener("product-selection-change", refreshSelection);
     };
   }, []);
@@ -100,7 +116,8 @@ export default function App() {
   useEffect(() => {
     const updateRole = () => setSelectedRole(getSelectedRole());
     window.addEventListener("control-account-change", updateRole);
-    return () => window.removeEventListener("control-account-change", updateRole);
+    return () =>
+      window.removeEventListener("control-account-change", updateRole);
   }, []);
 
   useEffect(() => {
@@ -144,15 +161,18 @@ export default function App() {
         setParticipantsReady(false);
       }
       try {
-        const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+        const selectedId =
+          window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
         setProductReady(
-          selectedId !== "new" && await isProductRegistered(BigInt(selectedId)),
+          selectedId !== "new" &&
+            (await isProductRegistered(BigInt(selectedId))),
         );
       } catch {
         setProductReady(false);
       }
       try {
-        const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
+        const selectedId =
+          window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
         if (selectedId === "new") {
           setSimulationComplete(false);
         } else {
@@ -169,15 +189,16 @@ export default function App() {
     };
 
     const handleStorage = (event: StorageEvent) => {
-      if (
-        event.key === STUDIES_COMPLETE_CACHE_KEY
-      ) {
+      if (event.key === STUDIES_COMPLETE_CACHE_KEY) {
         void syncStatus();
       }
     };
 
     const handleRegistrationChange = () => void syncStatus();
-    window.addEventListener("simulation-registration-change", handleRegistrationChange);
+    window.addEventListener(
+      "simulation-registration-change",
+      handleRegistrationChange,
+    );
 
     window.addEventListener("storage", handleStorage);
     window.addEventListener(
@@ -188,7 +209,10 @@ export default function App() {
       "product-registration-change",
       handleRegistrationChange,
     );
-    window.addEventListener("product-selection-change", handleRegistrationChange);
+    window.addEventListener(
+      "product-selection-change",
+      handleRegistrationChange,
+    );
     window.addEventListener(
       "simulation-registration-change",
       handleRegistrationChange,
@@ -207,7 +231,10 @@ export default function App() {
         "product-registration-change",
         handleRegistrationChange,
       );
-      window.removeEventListener("product-selection-change", handleRegistrationChange);
+      window.removeEventListener(
+        "product-selection-change",
+        handleRegistrationChange,
+      );
       window.removeEventListener(
         "simulation-registration-change",
         handleRegistrationChange,
@@ -257,14 +284,37 @@ export default function App() {
         <aside className="sidebar">
           {(canUseAudit || canUseGovernance || canUseVoting) && (
             <>
-          <p className="eyebrow">Lifecycle Control</p>
-          <nav aria-label="Lifecycle control navigation">
-            {canUseGovernance && <WorkflowTab to="/governance" number="01" label="Governance" enabled />}
-            {canUseAudit && <WorkflowTab to="/audit" number="01" label="Audit" enabled />}
-            {canUseVoting && <WorkflowTab to="/voting" number={isParticipant ? "01" : "02"} label="Voting" enabled />}
-            {canUseEscalations && <WorkflowTab to="/escalations" number={isParticipant ? "02" : "03"} label="Escalations" enabled />}
-          </nav>
-          </>
+              <p className="eyebrow">Lifecycle Control</p>
+              <nav aria-label="Lifecycle control navigation">
+                {canUseGovernance && (
+                  <WorkflowTab
+                    to="/governance"
+                    number="01"
+                    label="Governance"
+                    enabled
+                  />
+                )}
+                {canUseAudit && (
+                  <WorkflowTab to="/audit" number="01" label="Audit" enabled />
+                )}
+                {canUseVoting && (
+                  <WorkflowTab
+                    to="/voting"
+                    number={isParticipant ? "01" : "02"}
+                    label="Voting"
+                    enabled
+                  />
+                )}
+                {canUseEscalations && (
+                  <WorkflowTab
+                    to="/escalations"
+                    number={isParticipant ? "02" : "03"}
+                    label="Escalations"
+                    enabled
+                  />
+                )}
+              </nav>
+            </>
           )}
           <p className="eyebrow control-eyebrow">Product Foorprints</p>
           <nav aria-label="Primary navigation">
@@ -356,13 +406,34 @@ export default function App() {
             />
             <Route
               path="/governance"
-              element={canUseGovernance ? <Governance /> : <Navigate to="/voting" replace />}
+              element={
+                canUseGovernance ? (
+                  <Governance />
+                ) : (
+                  <Navigate to="/voting" replace />
+                )
+              }
             />
             <Route path="/voting" element={<Voting />} />
-            <Route path="/escalations" element={canUseEscalations ? <Audit initialTab="escalations" /> : <Navigate to="/participants" replace />} />
+            <Route
+              path="/escalations"
+              element={
+                canUseEscalations ? (
+                  <Audit initialTab="escalations" />
+                ) : (
+                  <Navigate to="/participants" replace />
+                )
+              }
+            />
             <Route
               path="/audit"
-              element={canUseAudit ? <Audit /> : <Navigate to="/participants" replace />}
+              element={
+                canUseAudit ? (
+                  <Audit />
+                ) : (
+                  <Navigate to="/participants" replace />
+                )
+              }
             />
             <Route path="*" element={<Navigate to="/participants" replace />} />
           </Routes>

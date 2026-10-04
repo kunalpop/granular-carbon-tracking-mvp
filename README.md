@@ -1,8 +1,8 @@
 # Carbon MVP — Permissioned Blockchain Prototype for Granular Product Carbon Tracking
 
-A proof-of-concept system built for the dissertation *Blockchain Enabled Granular
+A proof-of-concept system built for the dissertation _Blockchain Enabled Granular
 Carbon Tracking: Designing, Building and Evaluating an Assurance Architecture for
-Product-Level Scope 3 Reporting Across Product Life Cycle* (Ong). It demonstrates
+Product-Level Scope 3 Reporting Across Product Life Cycle_ (Ong). It demonstrates
 that granular, per-stage product carbon events can be recorded, verified,
 aggregated, and audited on a permissioned blockchain in a way that is more
 tamper-evident than a spreadsheet or a centralised database.
@@ -28,16 +28,16 @@ full citations in Appendix E and simulation/synthetic/factors-table.json).
 
 ## Layout
 
-| Folder | Purpose |
-|---|---|
-| `network/` | Besu private network: Docker Compose file, genesis block, node keys |
-| `contracts/` | The seven Solidity smart contracts |
-| `test/` | Automated tests for the contracts |
-| `simulation/` | Supply-chain simulation: actors, ten lifecycle stages, emission factors |
-| `audit/` | Auditor tools: provenance reconstruction and integrity verification |
-| `baselines/` | Spreadsheet and SQLite comparators for the tamper-evidence study |
-| `evaluation/` | Studies A (tampering), B (aggregation), C (performance) and their results |
-| `docs/` | Reserved; architecture documentation lives in Chapter 4 of the dissertation |
+| Folder        | Purpose                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| `network/`    | Besu private network: Docker Compose file, genesis block, node keys         |
+| `contracts/`  | The seven Solidity smart contracts                                          |
+| `test/`       | Automated tests for the contracts                                           |
+| `simulation/` | Supply-chain simulation: actors, ten lifecycle stages, emission factors     |
+| `audit/`      | Auditor tools: provenance reconstruction and integrity verification         |
+| `baselines/`  | Spreadsheet and SQLite comparators for the tamper-evidence study            |
+| `evaluation/` | Studies A (tampering), B (aggregation), C (performance) and their results   |
+| `docs/`       | Reserved; architecture documentation lives in Chapter 4 of the dissertation |
 
 ## Toolchain
 
@@ -60,15 +60,15 @@ npx hardhat test     # run the contract tests
 **Prerequisite:** Docker Desktop must be running (whale icon in the system
 tray). Then, from the project folder:
 
-| What | Command |
-|---|---|
-| Start the network (5 nodes) | `npm run network:up` |
-| Check it is healthy | `npm run network:health` |
-| Thorough check (sends test transactions) | `npm run network:health:full` |
-| Stop the network (chain data is kept) | `npm run network:down` |
-| Stop AND erase the chain back to block 0 | `npm run network:reset` |
-| Deploy the contracts to the network | `npm run deploy:besu` |
-| Run the 10-stage laptop lifecycle simulation | `npm run simulate` |
+| What                                         | Command                       |
+| -------------------------------------------- | ----------------------------- |
+| Start the network (5 nodes)                  | `npm run network:up`          |
+| Check it is healthy                          | `npm run network:health`      |
+| Thorough check (sends test transactions)     | `npm run network:health:full` |
+| Stop the network (chain data is kept)        | `npm run network:down`        |
+| Stop AND erase the chain back to block 0     | `npm run network:reset`       |
+| Deploy the contracts to the network          | `npm run deploy:besu`         |
+| Run the 10-stage laptop lifecycle simulation | `npm run simulate`            |
 
 After a `network:reset`, run `deploy:besu` again before `simulate` (a wiped
 chain forgets the contracts). Each `simulate` run tracks a NEW laptop (product
@@ -181,7 +181,7 @@ Curated tables, charts, and the plain-English summary land in
 
 **Determinism notes.** Contract tests and Studies A/B assertions are
 deterministic. Chain data (timestamps, hashes, addresses) differs per
-deployment; the *properties* asserted are the reproducible objects. The
+deployment; the _properties_ asserted are the reproducible objects. The
 committed keys are simulation props enabling exact reproduction; they secure
 nothing outside this project.
 
@@ -202,122 +202,64 @@ nothing outside this project.
   at startup (it persists allowlist state back to the file) — do not be
   surprised when comments added to that file disappear.
 
-## Frontend
+# Frontend
 
-The frontend is an evidence-oriented React application that guides an operator
-through the complete lifecycle of a product carbon passport. It registers and
-authorises supply-chain participants, creates a product passport, records ten
-lifecycle events, and runs Tampering, Aggregation, and Performance studies.
+This folder contains the frontend documentation for the current implementation. Use the links below to jump directly to the relevant markdown files in this directory.
 
-### User flow
+## Documentation set
 
-```mermaid
-flowchart TD
-    A[Participants] -->|Register participants| B[Product]
-    B -->|Create product and mint passport| C[Simulation]
-    C --> D{Current stage recorded?}
-    D -->|No| E[Record event and mirror CO2e]
-    E --> D
-    D -->|Yes| F{All 10 stages recorded?}
-    F -->|No| C
-    F -->|Yes| G[Results]
-    G --> H[Tampering Study]
-    G --> I[Aggregation Study]
-    G --> J[Performance Study]
-    H --> K{All studies complete?}
-    I --> K
-    J --> K
-    K -->|Yes| L[Start New Simulation]
-    L --> A
-```
+- [overview.md](docs/frontend/overview.md) — end-to-end workflow and role-aware product lifecycle guidance
+- [pages.md](docs/frontend/pages.md) — route-by-route description of the frontend pages
+- [components.md](docs/frontend/components.md) — component inventory for the application
+- [hooks.md](docs/frontend/hooks.md) — hooks, services, and shared UI helper documentation
+- [data.md](docs/frontend/data.md) — on-chain and localStorage data model summary
+- [implementation.md](docs/frontend/implementation.md) — technical implementation details and routing flow
+- [studies.md](docs/frontend/studies.md) — Tampering, Aggregation, and Performance studies
+- [structure.md](docs/frontend/structure.md) — repository and frontend folder structure
 
-1. Register participants and authorise their lifecycle stages.
-2. Register the product and mint its passport.
-3. Record each lifecycle event with activity, factor, methodology, schema, and
-   evidence hash.
-4. Complete all ten stages to activate Results.
-5. Run the three evaluation studies.
-6. Clear browser state after all studies complete to start again.
+## Overview
 
-### Pages
+The frontend is a role-aware React workflow for tracking a product carbon footprint from participant registration through lifecycle recording, governance review, and evaluation studies.
 
-The application has four routes: `/actors`, `/product`, `/events`, and
-`/results`. The actors page registers participants; Product creates and mints
-the passport; Events records sequential events; and Results runs the three
-evaluation studies. Product, Events, and Results are enabled progressively
-from the stored workflow state.
+The main workflow is:
 
-### Components
+1. Register participant accounts and stage permissions.
+2. Select or create a product and mint the passport.
+3. Record 10 lifecycle events in order.
+4. Review corrections, voting, governance thresholds, and escalations.
+5. Run Tampering, Aggregation, and Performance studies.
+6. Clear local browser state to start a new simulation.
 
-Workflow components are grouped under `frontend/src/components`:
+### Current route overview
 
-- `participants/Participants.tsx` and `registerParticipants.ts` register and
-  authorise participants.
-- `product/Product.tsx` and `registerProduct.ts` register the product and mint
-  its passport.
-- `simulation/Simulation.tsx` and `registerEmissionEvent.ts` record events.
-- `result/Results.tsx` and the three `study*.ts` files run evaluations.
+The app currently exposes these routes in the app shell:
 
-Shared components are under `frontend/src/shared`: `Button.tsx` provides the
-renders a compact lifecycle marker.
+- `/participants`
+- `/product`
+- `/events`
+- `/results`
+- `/audit`
+- `/voting`
+- `/governance`
+- `/escalations`
 
-### Hooks, Services, and Shared Components
+Later workflow pages are gated by account role and product state.
 
-`hooks/useContracts.ts` creates ethers contract instances using the configured
-Besu provider, deployed addresses, ABIs, and optional signers. Services provide
-network configuration, contract addresses, emission-factor data, actor names,
-signer wallets, and shared lifecycle types.
-
-### Data
-
-Lifecycle data supplies participant permissions, product configuration, event
-activity, emission factors, reporting sources, and methodologies. Event
-registration uses x1000 fixed-point values and signed CO2e grams. Study C loads
-the committed four-validator and seven-validator benchmark JSON files.
-
-### Studies
-
-- Tampering checks value lowering, event deletion, and back-dating scenarios.
-- Aggregation checks totals, stage subtotals, hashes, completeness, and fault
-  cases.
-- Performance compares validator benchmark results for throughput and latency.
-
-Study states and results persist in localStorage. After all three studies are
-complete, the sidebar exposes a reset control that clears localStorage and
-starts a new simulation.
-
-### Structure
+## Structure
 
 ```text
-frontend/
-└── src/
-    ├── App.tsx
-    ├── main.tsx
-    ├── components/
-    │   ├── participants/
-    │   ├── product/
-    │   ├── result/
-    │   └── simulation/
-    ├── hooks/
-    ├── services/
-    └── shared/
+frontend/src/
+├── App.tsx
+├── main.tsx
+├── components/
+│   ├── audit/
+│   ├── events/
+│   ├── governance/
+│   ├── participants/
+│   ├── product/
+│   └── results/
+├── hooks/
+├── services/
+├── shared/
+└── assets/
 ```
-
-### Implementation
-
-`App.tsx` owns routes, navigation gates, network status, completion status, and
-the reset action. `main.tsx` mounts the application inside `BrowserRouter` and
-`React.StrictMode`. The lifecycle proceeds through participant registration,
-product registration, ten sequential event registrations, Results activation,
-the three evaluations, and the optional reset to a new simulation.
-
-### LocalStorage
-
-- `registered-actors-cache` — registered participant details.
-- `registered-product-cache` — product ID, description, and OEM address.
-- `registered-emission-events-cache` — recorded stage IDs, CO2e values, and
-  event hashes.
-- `tampering-study-result` — Tampering Study result object.
-- `aggregation-study-result` — Aggregation Study result object.
-- `performance-study-result` — Performance Study result object.
-- `evaluation-studies-complete` — flag indicating all three studies completed.
