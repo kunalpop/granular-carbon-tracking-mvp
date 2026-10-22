@@ -1,59 +1,50 @@
-This folder contains the frontend documentation for the current implementation. Use the links below to jump directly to the relevant markdown files in this directory.
+# Frontend documentation
 
-## Content
+This documentation describes the React application in `frontend/src` as it is
+currently implemented. The frontend is a local Besu demo console: contract
+records are read from and written to the configured chain, while browser
+storage keeps selections, the in-progress product review, study outputs, and
+the reset gate.
 
-- [User Guide](guide.md) — end-to-end workflow and role-aware product lifecycle guidance
-- [Pages](pages.md) — route-by-route description of the frontend pages
-- [Components](components.md) — component inventory for the application
-- [Hooks](hooks.md) — hooks, services, and shared UI helper documentation
-- [Data](data.md) — on-chain and localStorage data model summary
-- [Implementation](implementation.md) — technical implementation details and routing flow
-- [Studies](studies.md) — Tampering, Aggregation, and Performance studies
-- [Structure](structure.md) — repository and frontend folder structure
+## Contents
 
-## Overview
+- [User guide](guide.md) — role-by-role workflow and product/event lifecycle
+- [Pages](pages.md) — routes, page behavior, and access gates
+- [Components](components.md) — page and shared component responsibilities
+- [Hooks and services](hooks.md) — contract clients, signers, and metadata
+- [Data](data.md) — on-chain records and browser storage
+- [Implementation](implementation.md) — shell, routing, integrations, and state
+- [Studies](studies.md) — what the browser study tabs actually calculate
+- [Structure](structure.md) — current source and documentation layout
 
-The frontend is a role-aware React workflow for tracking a product carbon footprint from participant registration through lifecycle recording, governance review, and evaluation studies.
+## Application at a glance
 
-The main workflow is:
+The app lets a user switch among configured demo accounts, register
+participants, complete a deployer/OEM product-description review, record
+sequential lifecycle events, propose and vote on corrections, review
+governance/escalations, and inspect three study tabs.
 
-1. Register participant accounts and stage permissions.
-2. Select or create a product and mint the passport.
-3. Record 10 lifecycle events in order.
-4. Review corrections, voting, governance thresholds, and escalations.
-5. Run Tampering, Aggregation, and Performance studies.
-6. Clear local browser state to start a new simulation.
+The implemented routes are `/participants`, `/product`, `/events`, `/results`,
+`/governance`, `/voting`, `/escalations`, and `/audit`. Unknown paths redirect
+to `/participants`. Access gates and role-specific controls are described in
+[Pages](pages.md).
 
-### Current route overview
+## Source of truth
 
-The app currently exposes these routes in the app shell:
+- Participant, product, event, correction, escalation, threshold, vote, and
+  token records are read from the deployed contracts.
+- `simulation/emission-factors.json` supplies the frontend's stage metadata and
+  default activity/factor values.
+- `simulation/deployed-addresses.json` supplies the deployed contract
+  addresses; workflow helpers pass function-signature ABIs to ethers.
+- `localStorage` is not a replacement for chain state. It stores selected
+  account/product, the local product review, escalation comments, study
+  outputs, and whether all studies have completed.
 
-- `/participants`
-- `/product`
-- `/events`
-- `/results`
-- `/audit`
-- `/voting`
-- `/governance`
-- `/escalations`
+The browser study calculations are simplified display/evaluation workflows.
+They do not alter chain state or run the original Docker/Hardhat evaluation
+drivers. See [Studies](studies.md) for their exact inputs and limitations.
 
-Later workflow pages are gated by account role and product state.
+---
 
-## Structure
-
-```text
-frontend/src/
-├── App.tsx
-├── main.tsx
-├── components/
-│   ├── audit/
-│   ├── events/
-│   ├── governance/
-│   ├── participants/
-│   ├── product/
-│   └── results/
-├── hooks/
-├── services/
-├── shared/
-└── assets/
-```
+[Frontend Page](../../README.md#frontend) · [Project Page](../../README.md)

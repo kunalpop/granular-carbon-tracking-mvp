@@ -10,7 +10,7 @@ tamper-evident than a spreadsheet or a centralised database.
 The full design rationale is Chapter 4 of the dissertation; the evaluation
 protocols are Appendix D.
 
-## What it does
+### What it does
 
 The prototype follows **one laptop** through ten lifecycle stages — aluminium
 smelting, PCB, battery, screen, assembly, packaging, shipping, use phase,
@@ -26,7 +26,9 @@ are simulated; emission factors are parameterised from published sources
 (IAI, IEA, DESNZ, EPA WARM, Peiseler et al. 2024, Lövehagen et al. 2023 —
 full citations in Appendix E and simulation/synthetic/factors-table.json).
 
-## Layout
+## Backend
+
+### Layout
 
 | Folder        | Purpose                                                                     |
 | ------------- | --------------------------------------------------------------------------- |
@@ -37,9 +39,9 @@ full citations in Appendix E and simulation/synthetic/factors-table.json).
 | `audit/`      | Auditor tools: provenance reconstruction and integrity verification         |
 | `baselines/`  | Spreadsheet and SQLite comparators for the tamper-evidence study            |
 | `evaluation/` | Studies A (tampering), B (aggregation), C (performance) and their results   |
-| `docs/`       | Reserved; architecture documentation lives in Chapter 4 of the dissertation |
+| `docs/`       | Frontend documentation and user guide in `docs/frontend/`                  |
 
-## Toolchain
+### Toolchain
 
 - **Node.js + TypeScript** — everything that isn't a smart contract
 - **Hardhat** — compile, test, and deploy the Solidity contracts
@@ -47,7 +49,7 @@ full citations in Appendix E and simulation/synthetic/factors-table.json).
 - **Hyperledger Besu 26.7.1** (via Docker, image pinned) — the permissioned EVM network
 - **Custom open-loop benchmark driver** — throughput, latency, block-time and finality measurement for Study C. Hyperledger Caliper could not be used: its current release has withdrawn EVM support and its last EVM-capable release fails to install on this environment (see dissertation Appendix D.3). Toolchain versions as evaluated: Besu 26.7.1, Node 24.19, Docker Desktop 29.6.2, Solidity 0.8.28, Slither 0.11.6.
 
-## Getting started
+### Getting started
 
 ```
 npm install          # fetch project libraries (first time only)
@@ -55,7 +57,7 @@ npx hardhat compile  # compile the smart contracts
 npx hardhat test     # run the contract tests
 ```
 
-## Running the blockchain network
+### Running the blockchain network
 
 **Prerequisite:** Docker Desktop must be running (whale icon in the system
 tray). Then, from the project folder:
@@ -92,7 +94,7 @@ survives and continues where it left off on the next start. `network:reset`
 is the nuclear option: it deletes the ledger entirely (useful for starting
 an experiment from a clean slate).
 
-## Reproducing everything from scratch
+### Reproducing everything from scratch
 
 Everything below has been run end-to-end on Windows 11; total time is roughly
 an hour, most of it unattended. Commands go in a terminal opened in the
@@ -202,64 +204,137 @@ nothing outside this project.
   at startup (it persists allowlist state back to the file) — do not be
   surprised when comments added to that file disappear.
 
-# Frontend
+## Frontend
 
-This folder contains the frontend documentation for the current implementation. Use the links below to jump directly to the relevant markdown files in this directory.
+The React application lives in `frontend/`. This section covers installing,
+running, and validating the browser app.
 
-## Content
+> **Frontend documentation:** [Open the frontend guide and reference](./docs/frontend/README.md)
 
-- [User Guide](guide.md) — end-to-end workflow and role-aware product lifecycle guidance
-- [Pages](pages.md) — route-by-route description of the frontend pages
-- [Components](components.md) — component inventory for the application
-- [Hooks](hooks.md) — hooks, services, and shared UI helper documentation
-- [Data](data.md) — on-chain and localStorage data model summary
-- [Implementation](implementation.md) — technical implementation details and routing flow
-- [Studies](studies.md) — Tampering, Aggregation, and Performance studies
-- [Structure](structure.md) — repository and frontend folder structure
+### Toolchain
 
-## Overview
+- **Node.js 24+ and npm** — install and run the frontend package.
+- **React 19 and TypeScript 6** — application UI and type checking.
+- **Vite 8** — local development server and production bundler.
+- **Oxlint** — frontend lint command.
+- **Besu network** — required for pages that read or write contract state.
 
-The frontend is a role-aware React workflow for tracking a product carbon footprint from participant registration through lifecycle recording, governance review, and evaluation studies.
+The frontend has its own `package.json` and lockfile. Install its packages from
+the `frontend/` directory; the root `npm install` installs the backend and
+contract toolchain, not this separate package.
 
-The main workflow is:
+### Starting the frontend
 
-1. Register participant accounts and stage permissions.
-2. Select or create a product and mint the passport.
-3. Record 10 lifecycle events in order.
-4. Review corrections, voting, governance thresholds, and escalations.
-5. Run Tampering, Aggregation, and Performance studies.
-6. Clear local browser state to start a new simulation.
+**Prerequisites:** install the root dependencies, start the local Besu network,
+and deploy the contracts as described in the Backend section. The frontend
+expects the default local RPC at `http://127.0.0.1:8545` on chain ID `2026`.
 
-### Current route overview
+From the repository root:
 
-The app currently exposes these routes in the app shell:
-
-- `/participants`
-- `/product`
-- `/events`
-- `/results`
-- `/audit`
-- `/voting`
-- `/governance`
-- `/escalations`
-
-Later workflow pages are gated by account role and product state.
-
-## Structure
-
-```text
-frontend/src/
-├── App.tsx
-├── main.tsx
-├── components/
-│   ├── audit/
-│   ├── events/
-│   ├── governance/
-│   ├── participants/
-│   ├── product/
-│   └── results/
-├── hooks/
-├── services/
-├── shared/
-└── assets/
 ```
+npm run network:up
+npm run network:health
+npm run deploy:besu
+```
+
+Then open a second terminal and install/start the frontend:
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Vite prints the local URL when the server is ready (normally
+`http://localhost:5173`). Open that URL in a browser on the same machine as the
+Besu RPC endpoint. Keep the development server running while using the app.
+
+If the contracts have already been deployed to the running chain, the deploy
+step can be skipped. A network reset deletes deployed chain state; after a
+reset, deploy the contracts again before using contract-backed pages.
+
+### Frontend commands
+
+Run these commands from `frontend/`:
+
+| What                       | Command             |
+| -------------------------- | ------------------- |
+| Start the Vite dev server  | `npm run dev`       |
+| Type-check and build       | `npm run build`     |
+| Lint frontend source       | `npm run lint`      |
+| Serve the production build | `npm run preview`   |
+
+`npm run build` runs the TypeScript project build before Vite bundles the
+application. Build output is written to `frontend/dist/`. `npm run preview`
+serves that output locally for a production-build check; it is not a deployment
+or a replacement for an HTTP server configured for the target environment.
+
+Use `npm run lint` after frontend source changes. The contract tests and
+Hardhat commands in the Backend section do not lint or type-check the
+standalone frontend package.
+
+### Runtime requirements
+
+The browser app reads its demo accounts from `network/accounts.json`, contract
+addresses from `simulation/deployed-addresses.json`, and lifecycle defaults
+from `simulation/emission-factors.json`. These files must remain available
+from the repository layout when running Vite or building the app; the frontend
+imports them directly.
+
+Contract access is configured for the local Besu endpoint and chain ID above.
+The current frontend does not provide a settings screen or environment-variable
+override for changing that endpoint. Running the browser on another computer
+does not redirect `127.0.0.1` to the repository host; the endpoint and browser
+must be configured for the same local network environment.
+
+The demo account configuration contains test keys intended only for this
+research project. Do not use these accounts or keys to protect assets or
+operate a public network. Keep the frontend on a trusted local development
+environment.
+
+### Build and verification
+
+To validate a frontend change:
+
+```
+cd frontend
+npm run lint
+npm run build
+```
+
+Both commands should complete successfully before sharing a production build.
+The build checks TypeScript and creates static assets, but does not check that
+Besu is reachable, that contracts are deployed, or that the application can
+complete a chain transaction. Check the network separately with the root
+`npm run network:health` command.
+
+After a successful build, optionally inspect the generated app locally:
+
+```
+npm run preview
+```
+
+Open the URL printed by Vite. To return to development mode, stop the preview
+server and run `npm run dev`. The two modes use the same configured chain
+addresses and local RPC endpoint.
+
+### Troubleshooting
+
+- **Vite cannot start:** confirm that frontend dependencies are installed from
+  `frontend/`. If port 5173 is occupied, use the alternate URL Vite prints.
+- **The network indicator is offline:** check that Besu is running and that
+  the local RPC is reachable on port 8545; then run
+  `npm run network:health` from the repository root.
+- **Pages show missing or empty chain data:** confirm that deployment
+  addresses in `simulation/deployed-addresses.json` match the running chain.
+  After `network:reset`, redeploy before opening the app.
+- **Transactions fail:** check the selected demo account, account permissions,
+  network health, and the contract state for the selected product. The
+  application has no wallet-installation step; it uses the configured local
+  demo accounts.
+- **A built page fails after direct navigation:** use Vite preview for local
+  checks. Any production host must serve the React app's entry point for
+  client-side routes.
+
+For the role-specific workflow, route behavior, browser storage, contract
+integration, and study limitations, see the [frontend documentation index](./docs/frontend/README.md).

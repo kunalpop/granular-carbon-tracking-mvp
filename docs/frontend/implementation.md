@@ -1,113 +1,79 @@
 # Implementation
 
-## Application shell
+## Application shell and entry point
 
-### `App.tsx`
+`frontend/src/main.tsx` creates the React root, wraps the application in
+`React.StrictMode`, `BrowserRouter`, and an error boundary, and imports the
+global stylesheet. `App.tsx` renders the header, product selector, Besu
+network indicator, account selector, sidebar, workflow navigation, and routed
+page content.
 
-`App.tsx` is the main application shell and route coordinator. It:
+## Routes and workflow gates
 
-- renders the top bar, product selector, network status, sidebar, and main content
-- defines the route set used by the app
-- gates access to later workflow steps using participant registration, product selection, and event completion state
-- tracks the selected role and product ID in localStorage
-- exposes the reset flow that clears browser state and returns the user to `/participants`
+The route table is in `App.tsx`:
 
-### `main.tsx`
+- `/participants` is always available.
+- `/product` requires the app's participant-ready flag. That flag currently
+  checks whether the OEM is registered; the Participants page separately
+  checks all configured accounts before displaying them as registered.
+- `/events` requires the participant-ready flag and a registered selected
+  product.
+- `/results` requires at least ten events on the selected product.
+- `/governance` is restricted to the deployer role.
+- `/audit` is restricted to the auditor role.
+- `/voting` is routable for any role; `Voting.tsx` filters correction proposals
+  to eligible multisig owners.
+- `/escalations` is available to every role except deployer.
+- Any other path redirects to `/participants`.
 
-`main.tsx` is the browser entry point. It imports the global stylesheet, creates the React root, wraps the app in `React.StrictMode`, and provides `BrowserRouter` for navigation.
+Sidebar visibility follows the selected role and workflow state, but page
+components enforce or apply their own action-level checks as well.
 
-## Current route structure
+## Signers, provider, and contracts
 
-The active route set in the app is:
+`services/getSigner.ts` loads demo accounts from `network/accounts.json`,
+provides a wallet for each configured role, and stores the selected role under
+`selected-control-account`. The account selector dispatches
+`control-account-change` so components can refresh their role state.
 
-- `/participants`
-- `/product`
-- `/events`
-- `/results`
-- `/audit`
-- `/voting`
-- `/governance`
-- `/escalations`
+The RPC endpoint is `http://127.0.0.1:8545` and the configured chain ID is
+2026 (`services/networkConfig.ts`). `services/contractAddresses.ts` reads
+deployed addresses from `simulation/deployed-addresses.json`.
+`hooks/useContracts.ts` and `services/useContracts.ts` create ethers contracts
+from those addresses. Workflow files supply function-signature ABI fragments
+in TypeScript; the frontend does not import generated Hardhat artifacts.
 
-The route guards in `App.tsx` enforce access based on the selected role and whether the workflow has progressed far enough.
+## Workflow behavior
 
-## Smart-contract integration
+1. `Participants.tsx` reads registration state from `ParticipantRegistry` and,
+   as deployer, registers configured actor accounts and stage permissions.
+2. `Product.tsx` holds the deployer/OEM description review in browser storage.
+   After confirmation, `registerProduct.ts` creates the product using the OEM
+   wallet and mints the passport using the deployer wallet.
+3. `Events.tsx` fetches records for the selected product. A lifecycle actor
+   writes its assigned event in sequence via `registerEmissionEvent.ts`;
+   positive/negative chain-calculated CO2e is mirrored to the carbon token.
+4. `Audit.tsx`, `Corrections.tsx`, `Voting.tsx`, and `Governance.tsx` read and
+   submit correction, vote, threshold, and escalation operations through the
+   registry, governance module, and consortium multisig.
+5. `Results.tsx` runs the browser-compatible study functions or loads
+   committed benchmark JSON. Study results and the completion flag are saved
+   locally.
 
-The frontend uses ethers to read and write the deployed contracts on the local Besu network. Contract addresses come from `frontend/src/services/contractAddresses.ts`, while the ABIs are supplied by the compiled contract artifacts and the control ABI helpers.
+## State and reset behavior
 
-The main contracts used by the app are:
+The chain is authoritative for participant registrations and authorisations,
+products, passports, events, correction proposals/records, votes, thresholds,
+escalations, and token balances. Browser storage contains account/product
+selection, local product-review fields, escalation resolution comments, study
+results, and the all-studies-complete flag. It does not cache registered
+participants, product records, or lifecycle events.
 
-- `ParticipantRegistry.sol`
-- `EmissionEventRegistry.sol`
-- `CarbonToken.sol`
-- `GovernanceModule.sol`
-- `AggregationContract.sol`
-- `OntologyRegistry.sol`
-- `ConsortiumMultisig.sol`
+After all three study results exist, the sidebar exposes **Start New
+Simulation**. It calls `localStorage.clear()` and navigates to
+`/participants`. This resets browser-side workflow state only; it does not
+remove chain data.
 
-Read-only calls use the JSON-RPC provider. Transactional calls use the wallet selected by `getSigner.ts` and the current account role.
+---
 
-## Component layout
-
-The `frontend/src/components` tree is organised by workflow area:
-
-### `audit`
-
-- `AccountControl.tsx` switches the active demo role.
-- `Audit.tsx` provides the audit and escalation review pages.
-- `AuditHistory.tsx` combines correction and escalation history.
-- `Corrections.tsx` reads chain correction records for review.
-- `submitCorrection.ts` submits correction proposals.
-
-### `events`
-
-- `Events.tsx` records lifecycle events and tracks updates.
-- `registerEmissionEvent.ts` submits events to the registry.
-
-### `governance`
-
-- `Governance.tsx` manages thresholds and governance activity.
-- `Voting.tsx` handles accept/reject decisions for proposals.
-
-### `participants`
-
-- `Participants.tsx` displays and registers participant accounts.
-- `registerParticipants.ts` registers participants and their stage permissions.
-- `getRegisteredParticipants.ts` reads participant state from the registry.
-
-### `product`
-
-- `Product.tsx` handles product review and registration state.
-- `registerProduct.ts` registers the product.
-- `mintProduct.ts` mints the product passport.
-
-### `results`
-
-- `Results.tsx` provides the study tabs and summary views.
-- `studyTampering.ts` runs the tampering scenarios.
-- `studyAggregation.ts` checks totals and fault conditions.
-- `studyPerformance.ts` loads benchmark data and compares metrics.
-
-## Shared and service layers
-
-- `frontend/src/shared/Button.tsx` provides button variants.
-- `frontend/src/shared/Escalation.tsx` renders escalation details and resolution actions.
-- `frontend/src/shared/Stage.tsx` renders the event card with status information.
-- `frontend/src/hooks/useContracts.ts` provides the contract factory methods.
-- `frontend/src/services/*` provides network config, signers, contract addresses, lifecycle metadata, and chain readers.
-
-## Current workflow behavior
-
-1. Participant registration sets the authorised actors and stage permissions.
-2. Product registration creates a product and mints its passport.
-3. The events workflow records one lifecycle event at a time in stage order.
-4. Event data is stored on chain and mirrored through the carbon token where relevant.
-5. Auditor, governance, and escalation pages read the on-chain records and provide review actions.
-6. The Results page runs the three browser-safe evaluation studies.
-7. The reset control clears only local browser state; on-chain records remain unchanged.
-
-## State and persistence
-
-On-chain state remains authoritative for participants, products, emission events, corrections, escalations, thresholds, token balances, and governance actions.
-
-LocalStorage stores UI selections, workflow caches, review state, and study results. Clearing the browser cache does not remove blockchain data or deployed contracts.
+[Frontend Page](../../README.md#frontend) · [Project Page](../../README.md)

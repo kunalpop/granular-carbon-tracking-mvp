@@ -1,6 +1,8 @@
 # Data
 
-This document summarises the on-chain state, frontend configuration, and browser cache used by the application. On-chain contract state remains the source of truth; localStorage is only UI and workflow state.
+This document summarises the on-chain state, frontend configuration, and
+browser storage used by the application. On-chain contract state remains the
+source of truth; `localStorage` is only UI and workflow state.
 
 ## On-chain data
 
@@ -14,7 +16,9 @@ Source: `contracts/ParticipantRegistry.sol`
 - Registration timestamp
 - Authorised lifecycle stages, from stage 1 to stage 10
 
-Emits registration, activation, deactivation, stage-authorisation, and stage-revocation events. `Participants.tsx` and the helper files use this data to register accounts and verify permissions.
+Emits registration, activation, deactivation, stage-authorisation, and stage-revocation events. `Participants.tsx` and the helper files use this data to register accounts.
+The registration helper checks and sets stage authorisations; the page's
+registered-participant reader does not verify them.
 
 ### Product and emission-event registry
 
@@ -38,13 +42,20 @@ Each append-only emission event stores:
 - Emission-factor source
 - Signed CO2e in grams, calculated on chain
 - Methodology or reporting standard
-- Evidence-file hash
+- Evidence hash (the event form hashes a generated JSON payload; it does not
+  upload an evidence file)
 - Previous event hash
 - Block timestamp
 - Ontology schema version
 - Event hash
 
-Positive CO2e values represent carbon minting and negative values represent carbon burning. The previous-event and event hashes form a tamper-evident chain. Each event also has an audit status: `Unaudited`, `Pending`, or `Audited`. The frontend reads these values using `eventAt`, `getEvents`, `eventCount`, and `verifyChain`, and reads corresponding contract events for history and audit views.
+Positive CO2e values represent carbon minting and negative values represent
+carbon burning. The previous-event and event hashes form a tamper-evident
+chain. Each event also has an audit status: `Unaudited`, `Pending`, or
+`Audited`. The frontend reads event records with `eventAt`, counts them with
+`eventCount`, and reads `auditStatus`. The current frontend does not call the
+registry's `getEvents` or `verifyChain`; the browser Tampering Study checks
+hash presence but does not verify the on-chain hash chain.
 
 ### Carbon token data
 
@@ -91,6 +102,9 @@ Escalation records contain:
 
 The module stores stage thresholds in grams and emits correction, escalation, resolution, threshold, and discarded-task events. `Governance.tsx`, `Voting.tsx`, `Corrections.tsx`, and `AuditHistory.tsx` read this data from the chain.
 
+The correction form currently hashes its entered correction fields and reason
+as evidence metadata; it does not upload a supporting file.
+
 ### Aggregation data
 
 Source: `contracts/AggregationContract.sol`
@@ -136,27 +150,42 @@ It emits transaction-submitted, transaction-voted, and transaction-executed even
 
 ## Frontend configuration and derived data
 
-- `frontend/src/services/emissionFactors.ts` defines lifecycle stage names, actor roles, activity units, emission factors, sources, and methodologies used by the event forms and display cards.
-- `network/accounts.json` provides the configured demo participant accounts and addresses.
-- `frontend/src/services/contractAddresses.ts` and deployment artifacts provide the addresses used to read and write each contract.
-- `evaluation/study-c-performance/results/*.json` contains committed benchmark data for the browser Performance Study.
-- `studyTampering.ts` and `studyAggregation.ts` derive evaluation results from cached events and lifecycle metadata; these results are not written on chain.
+- `frontend/src/services/emissionFactors.ts` imports
+  `simulation/emission-factors.json`, which defines lifecycle stages, actor
+  roles, units, default activities/factors, sources, and methodologies.
+- `network/accounts.json` provides configured demo wallets, role names, and
+  addresses. It includes lifecycle actors and governance accounts.
+- `frontend/src/services/contractAddresses.ts` reads deployed addresses from
+  `simulation/deployed-addresses.json`.
+- `evaluation/study-c-performance/results/*.json` contains committed benchmark
+  data loaded by the browser Performance Study.
+- The Results page fetches event records from the selected product's registry
+  before running the Tampering and Aggregation browser calculations. They are
+  not read from an event localStorage cache and are not written on chain.
 
 ## LocalStorage data
 
-Browser cache is used for UI state, workflow progress, and study results. It is not authoritative; on-chain state and events remain the source of truth for registered participants, products, emission events, corrections, escalations, and governance actions.
+Browser `localStorage` is used for selections, the in-progress product review,
+escalation comments, study results, and the study-completion reset gate. It is
+not authoritative; on-chain state and events remain the source of truth for
+registered participants, products, emission events, corrections, escalations,
+and governance actions.
 
 - `selected-control-account` — active demo account role used to choose the signer.
 - `selected-product-id` — current product ID, or `new` during product creation.
-- `registered-actors-cache` — registered participant details, roles, addresses, and assigned stages.
-- `registered-product-cache` — registered product ID, description, and OEM address.
-- `registered-emission-events-cache` — recorded event stage IDs, CO2e values, and event hashes used for progress and study gating.
 - `product-review-status-v2` — product-review state: `draft`, `sent`, or `confirmed`.
-- `product-review-data-v2` — serialized product-review details and timestamps.
+- `product-review-data-v2` — serialized product-review status and deployer/OEM descriptions; it contains no timestamps.
 - `escalation-resolution-comments` — locally entered resolution comments keyed by escalation index.
 - `tampering-study-result` — serialized Tampering Study result and scenario outcomes.
 - `aggregation-study-result` — serialized Aggregation Study checks and results.
 - `performance-study-result` — serialized Performance Study benchmark metrics.
 - `evaluation-studies-complete` — completion flag set after all three studies finish; controls visibility of the sidebar reset button.
 
-The application reset control clears localStorage. Clearing the browser cache does not remove or modify any on-chain data.
+Participant, product, and event data are fetched from contracts rather than
+cached under separate actor, product, or event keys. The application reset
+control calls `localStorage.clear()`, clearing all browser storage for the
+origin. Clearing browser storage does not remove or modify any on-chain data.
+
+---
+
+[Frontend Page](../../README.md#frontend) · [Project Page](../../README.md)

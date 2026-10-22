@@ -4,7 +4,7 @@ This section documents the reusable contract, data, and UI helpers used by the R
 
 ## Hooks
 
-The active hook helper is:
+The `hooks` directory contains one contract-client helper:
 
 ```text
 frontend/src/hooks/useContracts.ts
@@ -12,13 +12,18 @@ frontend/src/hooks/useContracts.ts
 
 ### `useContracts.ts`
 
-This file does not define a React hook in the standard sense, but it does provide the shared ethers contract factory functions used across the app.
+This file does not define a React hook in the standard sense. It provides ethers
+contract factory functions used by workflow helpers.
 
-The provider created in this file uses the local Besu endpoint `http://127.0.0.1:8545` and the chain ID from `frontend/src/services/networkConfig.ts`. When a factory is called without a signer, it returns a read-only contract bound to the JSON-RPC provider.
+The provider uses `http://127.0.0.1:8545` and the chain ID from
+`frontend/src/services/networkConfig.ts`. When a factory is called without a
+signer, it returns a contract bound to the JSON-RPC provider.
 
 ### Contract address configuration
 
-The shared contract factories read deployed addresses from `frontend/src/services/contractAddresses.ts`. The address mapping covers:
+The shared contract factories read deployed addresses from
+`frontend/src/services/contractAddresses.ts`, which loads
+`simulation/deployed-addresses.json`. The address mapping covers:
 
 - Participant Registry
 - Emission Event Registry
@@ -40,7 +45,10 @@ The file exports these factory helpers:
 - `getConsortiumMultisigContract(abi, signer?)`
 - `getGovernanceModuleContract(abi, signer?)`
 
-Each factory accepts an ABI and an optional signer. Without a signer, the contract is read-only; with a signer, it can submit transactions to the corresponding contract.
+Each factory accepts an ABI and an optional signer. Without a signer, calls use
+the JSON-RPC provider; with a signer, the contract can submit transactions.
+ABIs are provided by workflow modules as function-signature arrays rather than
+loaded from generated Hardhat artifacts.
 
 ## Services
 
@@ -48,15 +56,23 @@ The frontend relies on these service files in `frontend/src/services`:
 
 - `networkConfig.ts` provides the RPC URL and chain ID.
 - `contractAddresses.ts` provides deployed contract addresses.
-- `emissionFactors.ts` provides lifecycle stages, actor roles, activity units, emission factors, sources, and methodologies.
-- `getSigner.ts` provides role-based wallets and account-selection helpers.
+- `emissionFactors.ts` imports lifecycle metadata from
+  `simulation/emission-factors.json`.
+- `getSigner.ts` provides wallets for the roles in `network/accounts.json` and
+  account-selection helpers.
 - `getTypes.ts` provides shared lifecycle stage types.
 - `controlContracts.ts` provides contract access for governance controls.
-- `useContracts.ts` provides the ABI-backed contract helpers used by workflow code.
-- `getParticipants.ts` reads registered participant data.
+- `useContracts.ts` provides the ABI-backed contract helpers used by workflow
+  code.
+- `getParticipants.ts` provides configured actor display names.
 - `getRegisteredProducts.ts` reads registered product data.
 
-Participant, product, event, audit, governance, and study state are managed by page components and workflow helpers rather than custom React hooks.
+Participant, product, event, audit, governance, and study state are managed by
+page components and workflow helpers rather than custom React hooks. The
+similarly named `services/useContracts.ts` contains contract ABI fragments and
+control-signer helpers; it is distinct from the contract factories in
+`hooks/useContracts.ts`. Participant registry reads are implemented in
+`components/participants/getRegisteredParticipants.ts`.
 
 ## Shared components
 
@@ -72,3 +88,7 @@ frontend/src/shared/
 - `Button.tsx` provides primary and secondary button variants, shared button props, and a default button type.
 - `Escalation.tsx` renders escalation details, comments, and resolution controls.
 - `Stage.tsx` renders an emission-event card with activity, emission factor, schema, owner, CO2e, reporting standard, previous event, audit status, threshold status, and record or discard controls.
+
+---
+
+[Frontend Page](../../README.md#frontend) · [Project Page](../../README.md)

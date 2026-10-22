@@ -19,7 +19,6 @@ configuration, evaluation assets, and project documentation.
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   ├── dist/
 │   └── package.json
 ├── network/
 │   ├── accounts.json
@@ -131,7 +130,7 @@ frontend/src/
 ```text
 docs/frontend/
 ├── README.md
-├── overview.md
+├── guide.md
 ├── pages.md
 ├── components.md
 ├── hooks.md
@@ -144,3 +143,7 @@ docs/frontend/
 There is no `simulation` component folder in the current frontend source. The
 simulation data directory remains the source of lifecycle factors, schema, and
 supporting evidence used by the frontend and contracts.
+
+---
+
+[Frontend Page](../../README.md#frontend) · [Project Page](../../README.md)
