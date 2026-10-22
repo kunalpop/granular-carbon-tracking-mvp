@@ -12,7 +12,7 @@ the gates below.
 | `/results` | Requires at least 10 events on the selected product. Runs the three browser-side study tabs. |
 | `/governance` | Deployer role only. Manages stage thresholds, displays escalation/correction history, and resolves escalations. |
 | `/voting` | Route is available to every selected role. Only eligible multisig owners receive correction proposal cards and can vote. |
-| `/escalations` | Route is available to every role except deployer. The contract accepts manual escalation submissions only from the auditor or the actor who recorded that event; the page lists escalations raised by the active account. |
+| `/escalations` | Deployer is redirected away. The auditor can choose any registered event on the selected product; an event owner sees the escalation form only when that account recorded an event on the product and can choose only events recorded by that account. The page lists escalations raised by the active account. |
 | `/audit` | Auditor role only. Shows correction tasks and history. |
 
 ## Participants
@@ -27,7 +27,8 @@ from each account's position in the actor list rather than all matching stage
 IDs in the stage metadata. For example, OEM defaults to stage 5 even though it
 owns stages 5 and 6; later actors are shifted by one, and the auditor defaults
 to stage 10. The page's stage rows are based on metadata and may not reflect
-the authorisations the registration helper submits.
+the authorisations the registration form displays. The registration helper
+ensures the OEM is authorised for both stages 5 and 6.
 
 ## Product
 
@@ -55,9 +56,11 @@ cached in `localStorage`.
   deployer role.
 - Escalations are chain records; resolution comments are kept locally, while
   the deployer's resolution transaction is recorded on chain.
-- The `/escalations` route is broader than the contract's manual-escalation
-  permission: a submission succeeds only for the auditor or the actor
-  associated with the selected event.
+- Manual escalation submission is limited in the frontend to the auditor and
+  owners of recorded events. The event-index dropdown is populated from the
+  selected product's on-chain records and filtered by the active account for
+  non-auditors; the contract also enforces that the caller is the auditor or
+  the selected event's actor.
 
 ## Results
 

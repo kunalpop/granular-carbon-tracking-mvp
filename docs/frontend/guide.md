@@ -113,10 +113,13 @@ data.
 1. Choose the <span style="color: #765600;"><strong>Deployer</strong></span>
    role and open **Governance** → **Emission Thresholds**.
 2. Find the lifecycle stage to update and choose **Edit**.
+   If a value is already shown, it may be a suggested starting value from the
+   demo data rather than a threshold saved on chain.
 3. Enter the maximum CO2e for that stage in kilograms, then choose **Save**.
-   The value must be zero or greater.
-4. Wait for the on-screen success message. The app converts the value to grams
-   and saves it to the governance contract on chain.
+   The value must be zero or greater. Saving `0` disables the threshold for
+   that stage.
+4. Wait for the success message confirming that the threshold was saved on
+   chain. The app converts the value from kilograms to grams before saving.
 
 Thresholds are set separately for each stage. The Events page displays the
 configured threshold alongside a recorded event; changing a threshold does
@@ -152,8 +155,9 @@ automatically verify every event hash.
    those accounts are configured multisig owners.
 3. Each eligible account selects its role, opens **Voting**, reviews the
    proposal, and chooses **Accept** or **Reject**. Each account can vote once.
-   All three stakeholders must vote; at least two approvals are required for
-   the proposal to be accepted.
+   At least two approvals are required for the proposal to be accepted; voting
+   can conclude as soon as that threshold is reached. A proposal is rejected
+   once the remaining votes can no longer reach the threshold.
 4. When accepted and executed, the corrected values appear for that event on
    the **Events** page. The original on-chain event remains unchanged; the
    correction is stored separately and used as the effective value for display.

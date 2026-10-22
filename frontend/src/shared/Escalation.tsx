@@ -17,12 +17,16 @@ export default function Escalation({
   escalation,
   comment,
   busy,
+  disabled = false,
+  resolved = false,
   onCommentChange,
   onResolve,
 }: {
   escalation: EscalationCardRecord;
   comment: string;
   busy: boolean;
+  disabled?: boolean;
+  resolved?: boolean;
   onCommentChange: (comment: string) => void;
   onResolve: () => void;
 }) {
@@ -47,7 +51,13 @@ export default function Escalation({
         </label>
       </div>
       <div className="escalation-card__action">
-        <Button type="button" disabled={busy || !comment.trim()} onClick={onResolve}>Resolve</Button>
+        <Button
+          type="button"
+          disabled={busy || disabled || resolved || !comment.trim()}
+          onClick={onResolve}
+        >
+          {resolved ? "Resolved" : busy ? "Resolving..." : "Resolve"}
+        </Button>
       </div>
     </article>
   );

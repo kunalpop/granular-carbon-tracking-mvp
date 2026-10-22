@@ -101,10 +101,13 @@ a {
   height: 7px;
   margin-right: 8px;
   border-radius: 50%;
-  background: #a6a6a6;
+  background: #d96d4f;
 }
 .network-status span.online {
-  background: #f39a3d;
+  background: #54c878;
+}
+.network-status span.offline {
+  background: #d96d4f;
 }
 .account-control {
   display: grid;

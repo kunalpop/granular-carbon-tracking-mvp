@@ -80,11 +80,29 @@ contract ConsortiumMultisig {
         voteStatus[txId][msg.sender] = decision;
         t.voteCount += 1;
         uint256 approvals = 0;
+        uint256 rejections = 0;
+        uint256 eligibleVotes = 0;
+        uint256 eligibleOwners = 0;
         for (uint256 i = 0; i < owners.length; i++) {
-            if (voteStatus[txId][owners[i]] == 1) approvals++;
+            address owner = owners[i];
+            bool eligible = t.eventOwner == address(0)
+                || owner == deployerOwner
+                || owner == auditorOwner
+                || owner == t.eventOwner;
+            if (!eligible) continue;
+
+            eligibleOwners++;
+            uint8 ownerDecision = voteStatus[txId][owner];
+            if (ownerDecision != 0) eligibleVotes++;
+            if (ownerDecision == 1) approvals++;
+            if (ownerDecision == 2) rejections++;
         }
-        if (t.voteCount == 3 && approvals >= required) t.status = 1;
-        else if (t.voteCount == 3 && approvals < required) t.status = 2;
+        if (approvals >= required) t.status = 1;
+        else if (
+            eligibleOwners < required ||
+            rejections > eligibleOwners - required ||
+            eligibleOwners - eligibleVotes + approvals < required
+        ) t.status = 2;
         emit TransactionVoted(txId, msg.sender, decision, t.voteCount);
     }
 

@@ -65,10 +65,13 @@ export async function registerParticipants(actors: ParticipantRegistration[]) {
 
   const stageChecks = await Promise.all(
     actors.flatMap((actor) => {
-      const stageIds = actor.stages
+      const configuredStageIds = actor.stages
         .split(",")
         .map((value) => Number(value.trim()))
         .filter((stageId) => Number.isInteger(stageId) && stageId > 0);
+      const stageIds = actor.role === "oem"
+        ? [...new Set([...configuredStageIds, 5, 6])]
+        : configuredStageIds;
       return stageIds.map(async (stageId) => ({
         actor,
         stageId,

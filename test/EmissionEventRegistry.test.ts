@@ -185,7 +185,12 @@ describe("EmissionEventRegistry", () => {
       const writable = events.interface.fragments
         .filter((f: any) => f.type === "function" && !["view", "pure"].includes(f.stateMutability))
         .map((f: any) => f.name);
-      expect(writable.sort()).to.deep.equal(["createProduct", "recordEvent"]);
+      expect(writable.sort()).to.deep.equal([
+        "createProduct",
+        "recordEvent",
+        "setAuditStatus",
+        "setStatusWriter",
+      ]);
     });
   });
 });

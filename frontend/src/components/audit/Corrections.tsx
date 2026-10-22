@@ -61,8 +61,16 @@ export default function Corrections() {
         const stage = EMISSION_FACTORS.stages.find(
           (item) => item.stageId === Number(event.stageId),
         );
-        const threshold =
-          Number(await governance.stageThresholdGrams(event.stageId)) / 1000;
+        const configuredThresholdGrams = Number(
+          await governance.stageThresholdGrams(event.stageId),
+        );
+        const thresholdConfigured = configuredThresholdGrams > 0;
+        const threshold = thresholdConfigured
+          ? configuredThresholdGrams / 1000
+          : stage
+            ? Math.abs(stage.activityValue * stage.emissionFactor_gCO2ePerUnit) /
+              1000
+            : 0;
         const activity = Number(event.activityData) / 1000;
         const factor = Number(event.emissionFactor) / 1000;
         const auditStatus = Number(await registry.auditStatus(id, index));
@@ -84,12 +92,44 @@ export default function Corrections() {
       const submittedIndexes = new Set<number>();
       const multisig = multisigForControl();
       const transactionCount = Number(await multisig.transactionCount());
+      const ownerCount = Number(await multisig.ownerCount());
+      const owners = await Promise.all(
+        Array.from({ length: ownerCount }, (_, index) => multisig.owners(index)),
+      );
+      const requiredApprovals = Number(await multisig.required());
+      const deployerOwner = (await multisig.deployerOwner()).toLowerCase();
+      const auditorOwner = (await multisig.auditorOwner()).toLowerCase();
       const decoder = new Interface(["function correctEvent(uint256,uint256,uint256,int256,string,bytes32)"]);
       for (let transactionId = 0; transactionId < transactionCount; transactionId++) {
         const transaction = await multisig.transactionAt(transactionId);
         try {
           const args = decoder.decodeFunctionData("correctEvent", transaction.data);
-          if (String(args[0]) === String(id)) submittedIndexes.add(Number(args[1]));
+          const eventOwner = String(transaction.eventOwner).toLowerCase();
+          const eligibleOwners =
+            eventOwner === "0x0000000000000000000000000000000000000000"
+              ? owners
+              : owners.filter((owner) => {
+                  const normalizedOwner = owner.toLowerCase();
+                  return (
+                    normalizedOwner === deployerOwner ||
+                    normalizedOwner === auditorOwner ||
+                    normalizedOwner === eventOwner
+                  );
+                });
+          const decisions = await Promise.all(
+            eligibleOwners.map((owner) => multisig.voteStatus(transactionId, owner)),
+          );
+          const approvalCount = decisions.filter((decision) => Number(decision) === 1).length;
+          const votedCount = decisions.filter((decision) => Number(decision) !== 0).length;
+          const couldStillPass =
+            approvalCount + eligibleOwners.length - votedCount >= requiredApprovals;
+          const isPending =
+            Number(transaction.status) === 0 &&
+            !transaction.executed &&
+            couldStillPass;
+          if (isPending && String(args[0]) === String(id)) {
+            submittedIndexes.add(Number(args[1]));
+          }
         } catch {
           // Ignore non-correction multisig transactions.
         }
@@ -105,7 +145,16 @@ export default function Corrections() {
   };
 
   useEffect(() => {
+    const refresh = () => void load();
+    const interval = window.setInterval(refresh, 5000);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("product-selection-change", refresh);
     void load();
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("product-selection-change", refresh);
+    };
   }, []);
 
   const correct = async (event: ChainEvent) => {
@@ -172,6 +221,7 @@ export default function Corrections() {
                 emissionFactor={`${draft.factor} gCO2e per ${event.unit}`}
                 emissionSchema={stage.methodology}
                 co2eKg={event.co2eKg}
+                correctedCo2eKg={(draft.activity * draft.factor) / 1000}
                 reportingStandard={stage.methodology}
                 previousEvent={
                   event.index > 0

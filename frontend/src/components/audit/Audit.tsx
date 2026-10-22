@@ -12,7 +12,9 @@ import {
   ACCOUNT_CHANGE_EVENT,
   getSelectedRole,
   getSigner,
+  type AccountRole,
 } from "../../services/getSigner";
+import { EMISSION_FACTORS } from "../../services/emissionFactors";
 
 type AuditTab = "corrections" | "escalations" | "history";
 type Escalation = {
@@ -27,11 +29,20 @@ type Escalation = {
   resolvedAt: bigint;
 };
 
+type EscalationEventOption = {
+  index: string;
+  stageId: number;
+  actor: string;
+};
+
+const SELECTED_PRODUCT_KEY = "selected-product-id";
+
 const defaultProductId = () => {
   try {
-    return window.localStorage.getItem("selected-product-id") ?? "1";
+    const selected = window.localStorage.getItem(SELECTED_PRODUCT_KEY);
+    return selected && selected !== "new" ? selected : "";
   } catch {
-    return "1";
+    return "";
   }
 };
 
@@ -41,6 +52,8 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
   const [productId, setProductId] = useState(defaultProductId);
   const [escalations, setEscalations] = useState<Escalation[]>([]);
   const [role, setRole] = useState(getSelectedRole());
+  const [eventOptions, setEventOptions] = useState<EscalationEventOption[]>([]);
+  const [eventsError, setEventsError] = useState("");
   const [error, setError] = useState("");
 
   const loadEscalations = async () => {
@@ -76,11 +89,65 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
   };
 
   useEffect(() => {
-    const sync = () => setRole(getSelectedRole());
+    const sync = () => {
+      setEventOptions([]);
+      setEventsError("");
+      setRole(getSelectedRole());
+    };
+    const syncProduct = () => {
+      setEventOptions([]);
+      setEventsError("");
+      setProductId(defaultProductId());
+    };
     window.addEventListener(ACCOUNT_CHANGE_EVENT, sync);
+    window.addEventListener("product-selection-change", syncProduct);
     void loadEscalations();
-    return () => window.removeEventListener(ACCOUNT_CHANGE_EVENT, sync);
+    return () => {
+      window.removeEventListener(ACCOUNT_CHANGE_EVENT, sync);
+      window.removeEventListener("product-selection-change", syncProduct);
+    };
   }, [role]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadEvents = async () => {
+      if (!productId) return;
+
+      try {
+        const registry = eventRegistryForControl();
+        const count = Number(await registry.eventCount(BigInt(productId)));
+        const events = await Promise.all(
+          Array.from({ length: count }, async (_, index) => {
+            const record = await registry.eventAt(BigInt(productId), index);
+            return {
+              index: String(index),
+              stageId: Number(record.stageId),
+              actor: String(record.actor),
+            };
+          }),
+        );
+        const signerAddress = getSigner(role).address.toLowerCase();
+        const eligibleEvents =
+          role === "auditor"
+            ? events
+            : events.filter((event) => event.actor.toLowerCase() === signerAddress);
+        if (!cancelled) setEventOptions(eligibleEvents);
+      } catch (cause) {
+        if (!cancelled) {
+          setEventsError(
+            cause instanceof Error
+              ? cause.message
+              : "Unable to load registered events.",
+          );
+        }
+      }
+    };
+
+    void loadEvents();
+    return () => {
+      cancelled = true;
+    };
+  }, [productId, role]);
 
 
   return (
@@ -94,12 +161,8 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
       {error && <p className="feedback error" role="alert">{error}</p>}
       <div className="control-toolbar">
         <label className="field compact-field">
-          <span>Product ID</span>
-          <input
-            value={productId}
-            onChange={(event) => setProductId(event.target.value)}
-            inputMode="numeric"
-          />
+          <span>Selected Product ID</span>
+          <input value={productId || "No product selected"} readOnly />
         </label>
         <span className="status ready">{role} signer active</span>
       </div>
@@ -123,7 +186,23 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
       </div>}
       {tab === "corrections" && <Corrections />}
       {tab === "escalations" && (<>
-        <EscalationForm productId={productId} onSubmitted={loadEscalations} />
+        {eventsError ? (
+          <p className="feedback error" role="alert">{eventsError}</p>
+        ) : role === "auditor" || eventOptions.length > 0 ? (
+          <EscalationForm
+            key={`${productId}-${role}`}
+            productId={productId}
+            role={role}
+            events={eventOptions}
+            eventsError={eventsError}
+            onSubmitted={loadEscalations}
+          />
+        ) : (
+          <p className="panel">
+            No event registered for this account on the selected product. Only
+            an event owner can raise an escalation.
+          </p>
+        )}
         <EscalationList escalations={escalations} currentAddress={getSigner(role).address} />
       </>)}
       {tab === "history" && <AuditHistory />}
@@ -134,9 +213,15 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
 
 function EscalationForm({
   productId,
+  role,
+  events,
+  eventsError,
   onSubmitted,
 }: {
   productId: string;
+  role: AccountRole;
+  events: EscalationEventOption[];
+  eventsError: string;
   onSubmitted: () => Promise<void>;
 }) {
   const [eventIndex, setEventIndex] = useState("");
@@ -144,24 +229,20 @@ function EscalationForm({
   const [status, setStatus] = useState<"idle" | "submitting" | "submitted">("idle");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (status !== "submitted") return;
+    const timeout = window.setTimeout(() => setStatus("idle"), 2000);
+    return () => window.clearTimeout(timeout);
+  }, [status]);
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!eventIndex.trim() || !reason.trim()) return;
+    if (!eventIndex || !reason.trim()) return;
     setStatus("submitting");
     setError("");
     try {
-      if (!/^\d+$/.test(eventIndex.trim())) {
-        throw new Error("Event index must be a non-negative integer.");
-      }
-
-      const index = BigInt(eventIndex.trim());
-      const eventCount = await eventRegistryForControl().eventCount(productId);
-      if (index >= eventCount) {
-        throw new Error(
-          eventCount === 0n
-            ? `Product ${productId} has no recorded events.`
-            : `Event index ${index} is out of range. Product ${productId} has ${eventCount} recorded event${eventCount === 1n ? "" : "s"} (valid indexes: 0–${eventCount - 1n}).`,
-        );
+      if (!events.some((registeredEvent) => registeredEvent.index === eventIndex)) {
+        throw new Error("Select a registered event that this account may escalate.");
       }
 
       const transaction = await governanceForControl().raiseEscalation(productId, eventIndex, reason);
@@ -181,22 +262,55 @@ function EscalationForm({
       <div className="form-heading">
         <div>
           <h2>Raise escalation</h2>
-          <p>Submit an investigation reason for a recorded event.</p>
+          <p>
+            {role === "auditor"
+              ? "Select any registered event for investigation."
+              : "Select a registered event recorded by this account."}
+          </p>
         </div>
       </div>
       <div className="form-grid">
         <label className="field">
           <span>Event Index</span>
-          <input value={eventIndex} onChange={(input) => setEventIndex(input.target.value)} inputMode="numeric" required />
+          <select
+            value={eventIndex}
+            onChange={(input) => setEventIndex(input.target.value)}
+            required
+            disabled={!productId || events.length === 0 || Boolean(eventsError)}
+          >
+            <option value="" disabled>
+              {eventsError
+                ? "Unable to load events"
+                : events.length
+                  ? "Select a registered event"
+                  : "No registered events"}
+            </option>
+            {events.map((registeredEvent) => {
+              const stage = EMISSION_FACTORS.stages.find(
+                (item) => item.stageId === registeredEvent.stageId,
+              );
+              return (
+                <option key={registeredEvent.index} value={registeredEvent.index}>
+                  {role === "auditor"
+                    ? `Event: Stage ${registeredEvent.stageId}${stage ? ` — ${stage.name}` : ""}`
+                    : `Event ${registeredEvent.index} - ${stage?.name ?? `Stage ${registeredEvent.stageId}`}`}
+                </option>
+              );
+            })}
+          </select>
         </label>
         <label className="field field-wide">
           <span>Reason</span>
           <textarea value={reason} onChange={(input) => setReason(input.target.value)} placeholder="Describe the issue" required />
         </label>
       </div>
+      {eventsError && <p className="feedback error" role="alert">{eventsError}</p>}
       {error && <p className="feedback error" role="alert">{error}</p>}
       <div className="action-row">
-        <Button type="submit" disabled={status === "submitting"}>
+        <Button
+          type="submit"
+          disabled={status === "submitting" || events.length === 0 || !productId}
+        >
           {status === "submitting" ? "Submitting..." : status === "submitted" ? "Submitted" : "Submit"}
         </Button>
       </div>

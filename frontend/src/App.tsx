@@ -122,9 +122,9 @@ export default function App() {
 
   useEffect(() => {
     async function checkNetwork() {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3000);
         const res = await fetch(NETWORK_CONFIG.url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -136,11 +136,18 @@ export default function App() {
           }),
           signal: controller.signal,
         });
-        clearTimeout(timeout);
+        if (!res.ok) {
+          throw new Error(`Network health check failed: HTTP ${res.status}`);
+        }
         const { result } = await res.json();
-        setNetworkOnline(Boolean(result));
+        setNetworkOnline(
+          typeof result === "string" &&
+            BigInt(result) === BigInt(NETWORK_CONFIG.chainId),
+        );
       } catch {
         setNetworkOnline(false);
+      } finally {
+        clearTimeout(timeout);
       }
     }
     checkNetwork();
@@ -275,7 +282,12 @@ export default function App() {
           </select>
         </div>
         <div className="network-status">
-          <span className={networkOnline ? "online" : ""} />
+          <span
+            className={networkOnline ? "online" : "offline"}
+            role="status"
+            aria-label={networkOnline ? "Network online" : "Network offline"}
+            title={networkOnline ? "Network online" : "Network offline"}
+          />
           {networkLabel} · CHAIN {NETWORK_CONFIG.chainId}
         </div>
         <AccountControl />

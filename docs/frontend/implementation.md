@@ -6,7 +6,10 @@
 `React.StrictMode`, `BrowserRouter`, and an error boundary, and imports the
 global stylesheet. `App.tsx` renders the header, product selector, Besu
 network indicator, account selector, sidebar, workflow navigation, and routed
-page content.
+page content. The header indicator checks `eth_chainId` at the configured RPC
+endpoint on load and every five seconds. It displays green only when the RPC
+response matches the configured chain ID (2026), and red when the endpoint is
+unavailable, returns an error, or reports a different chain.
 
 ## Routes and workflow gates
 
@@ -23,7 +26,12 @@ The route table is in `App.tsx`:
 - `/audit` is restricted to the auditor role.
 - `/voting` is routable for any role; `Voting.tsx` filters correction proposals
   to eligible multisig owners.
-- `/escalations` is available to every role except deployer.
+- `/escalations` redirects the deployer away. The auditor can manually escalate
+  any registered event for the selected product; an event owner sees the form
+  only if that account recorded an event for the product, and the event
+  dropdown is limited to records from that account. The contract independently
+  enforces that the submitter is the auditor or selected event's actor. The
+  page lists escalations raised by the active account.
 - Any other path redirects to `/participants`.
 
 Sidebar visibility follows the selected role and workflow state, but page

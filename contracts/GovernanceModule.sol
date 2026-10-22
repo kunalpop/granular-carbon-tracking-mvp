@@ -247,7 +247,9 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         string calldata reason
     ) external {
         EmissionEventRegistry.EmissionEvent memory e = eventRegistry.eventAt(productId, eventIndex);
-        require(hasRole(AUDITOR_ROLE, msg.sender) || msg.sender == e.actor, "not escalation reporter");
+        if (!hasRole(AUDITOR_ROLE, msg.sender) && msg.sender != e.actor) {
+            revert AccessControlUnauthorizedAccount(msg.sender, AUDITOR_ROLE);
+        }
         _escalations.push(
             Escalation(productId, eventIndex, e.co2eGrams, 0, reason, msg.sender, uint64(block.timestamp))
         );

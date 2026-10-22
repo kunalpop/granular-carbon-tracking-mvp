@@ -7,7 +7,6 @@ import { getSelectedRole, type AccountRole } from "../../services/getSigner";
 import { eventRegistryForControl } from "../../services/useContracts";
 import { governanceForControl } from "../../services/controlContracts";
 
-const SCALE = 1000n;
 const SELECTED_PRODUCT_KEY = "selected-product-id";
 function loadRegisteredProductDescription(): string {
   return EMISSION_FACTORS.referenceProduct;
@@ -132,7 +131,7 @@ export default function Events() {
   }, []);
   const recordedStage = recordedEvents.find((item) => item.stageId === activeStage.stageId);
   const displayedActivity = recordedStage?.correctedActivityValue ?? draft.activityValue;
-  const displayedFactor = recordedStage?.correctedEmissionFactor ?? draft.emissionFactor / Number(SCALE);
+  const displayedFactor = recordedStage?.correctedEmissionFactor ?? draft.emissionFactor;
   const event = {
     stageId: activeStage.stageId,
     title: activeStage.name,
@@ -142,7 +141,8 @@ export default function Events() {
       activeStage.activityUnit
     }`,
     emissionSchema: EMISSION_FACTORS.schemaVersion,
-    co2eKg: recordedStage?.correctedCo2eKg ?? (draft.activityValue * draft.emissionFactor) / 1000,
+    co2eKg: recordedStage?.co2eKg ??
+      (displayedActivity * displayedFactor) / 1000,
     thresholdKg: recordedStage?.thresholdKg,
     reportingStandard: activeStage.methodology,
     previousEvent:
@@ -275,7 +275,7 @@ export default function Events() {
                   ...current,
                   [activeStage.stageId]: {
                     ...draft,
-                    emissionFactor: (Number(value) || 0) * Number(SCALE),
+                      emissionFactor: Number(value) || 0,
                   },
                 }))
               }

@@ -34,6 +34,14 @@ export function accountName(address?: string): string {
   return account ? ACCOUNT_NAMES[account.role] ?? account.role : "Unknown account";
 }
 
+export function accountRoleName(address?: string): string {
+  if (!address) return "Unknown account";
+  const account = accounts.find(
+    (candidate) => candidate.address.toLowerCase() === address.toLowerCase(),
+  );
+  return account ? account.role.toLowerCase() : "Unknown account";
+}
+
 export const ACCOUNT_CHANGE_EVENT = "control-account-change";
 export const SELECTED_ACCOUNT_KEY = "selected-control-account";
 

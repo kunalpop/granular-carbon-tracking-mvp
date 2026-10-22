@@ -9,6 +9,7 @@ export type StageEvent = {
   emissionFactor: string;
   emissionSchema: string;
   co2eKg: number;
+  correctedCo2eKg?: number;
   reportingStandard: string;
   previousEvent: string | null;
   eventIndex?: number;
@@ -45,6 +46,7 @@ export default function Stage({
   emissionFactor,
   emissionSchema,
   co2eKg,
+  correctedCo2eKg,
   reportingStandard,
   previousEvent,
   recorded = false,
@@ -136,10 +138,18 @@ export default function Stage({
           <span>CO2e</span>
           <span>{co2eKg.toFixed(2)} kg</span>
         </div>
+        {correctedCo2eKg !== undefined && (
+          <div className="data-row">
+            <span>Corrected CO2e</span>
+            <span>{correctedCo2eKg.toFixed(2)} kg</span>
+          </div>
+        )}
         {thresholdKg !== undefined && (
           <div className="data-row">
             <span>CO2e Threshold</span>
-            <span>{thresholdKg > 0 ? thresholdKg.toFixed(2) + " kg" : "Not configured"}</span>
+            <span>
+              {thresholdKg > 0 ? `${thresholdKg.toFixed(2)} kg` : "Not configured"}
+            </span>
           </div>
         )}
         <div className="data-row">

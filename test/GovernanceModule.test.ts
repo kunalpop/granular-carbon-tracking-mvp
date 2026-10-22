@@ -35,6 +35,9 @@ describe("GovernanceModule", () => {
 
     await governance.grantRole(await governance.CORRECTOR_ROLE(), auditor.address);
     await governance.grantRole(await governance.AUDITOR_ROLE(), auditor.address);
+    await events.setStatusWriter(auditor.address, true);
+    await events.setStatusWriter(await multisig.getAddress(), true);
+    await events.setStatusWriter(await governance.getAddress(), true);
 
     // Two recorded events to govern over.
     await participants.registerParticipant(smelter.address, "AluCo", "smelter");
@@ -61,8 +64,57 @@ describe("GovernanceModule", () => {
       const writable = events.interface.fragments
         .filter((f: any) => f.type === "function" && !["view", "pure"].includes(f.stateMutability))
         .map((f: any) => f.name);
-      // Only appending exists; nothing can edit or delete.
-      expect(writable.sort()).to.deep.equal(["createProduct", "recordEvent"]);
+      // Audit metadata is mutable, but emission records have no edit/delete path.
+      expect(writable.sort()).to.deep.equal([
+        "createProduct",
+        "recordEvent",
+        "setAuditStatus",
+        "setStatusWriter",
+      ]);
+    });
+
+    describe("ConsortiumMultisig event-owner voting", () => {
+      async function deployEventOwnerMultisig() {
+        const [deployer, auditor, eventOwner, otherOwner1, otherOwner2] =
+          await ethers.getSigners();
+        const multisig = await ethers.deployContract("ConsortiumMultisig", [
+          [
+            deployer.address,
+            auditor.address,
+            eventOwner.address,
+            otherOwner1.address,
+            otherOwner2.address,
+          ],
+          2n,
+        ]);
+        await multisig
+          .connect(deployer)
+          ["submit(address,bytes,address)"](deployer.address, "0x", eventOwner.address);
+        return { multisig, deployer, auditor, eventOwner };
+      }
+
+      it("rejects after two of three eligible voters reject", async () => {
+        const { multisig, deployer, auditor, eventOwner } =
+          await deployEventOwnerMultisig();
+        await multisig.connect(deployer).vote(0, 1);
+        await multisig.connect(auditor).vote(0, 2);
+        await multisig.connect(eventOwner).vote(0, 2);
+
+        const transaction = await multisig.transactionAt(0);
+        expect(transaction.status).to.equal(2n);
+        expect(transaction.voteCount).to.equal(3n);
+      });
+
+      it("approves after two of three eligible voters approve", async () => {
+        const { multisig, deployer, auditor, eventOwner } =
+          await deployEventOwnerMultisig();
+        await multisig.connect(deployer).vote(0, 1);
+        await multisig.connect(auditor).vote(0, 1);
+
+        const transaction = await multisig.transactionAt(0);
+        expect(transaction.status).to.equal(1n);
+        expect(transaction.voteCount).to.equal(2n);
+      });
     });
 
     it("a normal user cannot log a correction", async () => {

@@ -52,10 +52,13 @@ Each append-only emission event stores:
 Positive CO2e values represent carbon minting and negative values represent
 carbon burning. The previous-event and event hashes form a tamper-evident
 chain. Each event also has an audit status: `Unaudited`, `Pending`, or
-`Audited`. The frontend reads event records with `eventAt`, counts them with
-`eventCount`, and reads `auditStatus`. The current frontend does not call the
-registry's `getEvents` or `verifyChain`; the browser Tampering Study checks
-hash presence but does not verify the on-chain hash chain.
+`Audited`. Audit status is separate mutable metadata; it does not alter the
+append-only event record or its hash. Only accounts enabled by the registry's
+status admin can change it. The frontend reads event records with `eventAt`,
+counts them with `eventCount`, and reads `auditStatus`. The current frontend
+does not call the registry's `getEvents` or `verifyChain`; the browser
+Tampering Study checks hash presence but does not verify the on-chain hash
+chain.
 
 ### Carbon token data
 
@@ -146,7 +149,11 @@ The multisig stores:
 - Vote count
 - Per-owner vote decisions
 
-It emits transaction-submitted, transaction-voted, and transaction-executed events. These records provide the on-chain approval history for multi-party administrative actions.
+It emits transaction-submitted, transaction-voted, and transaction-executed
+events. These records provide the on-chain approval history for multi-party
+administrative actions. A transaction is approved as soon as its required
+number of approvals is reached, and rejected once the remaining uncast votes
+cannot reach that number; it does not need to wait for every owner to vote.
 
 ## Frontend configuration and derived data
 
