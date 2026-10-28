@@ -30,3 +30,14 @@ If you are developing a production application, we recommend enabling type-aware
 ```
 
 See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+
+## Encrypted document storage
+
+Documents are AES-GCM encrypted in the browser before upload. Start the backend and frontend together:
+
+```sh
+npm run backend
+npm --prefix frontend run dev
+```
+
+The backend reads `PINATA_JWT` from the repository-root `.env`, uploads the encrypted bytes to Pinata, stores document metadata (including the CID) in `backend/documents.json`, and retrieves files through Pinata. `backend/documents.json` is gitignored because it contains encryption keys and should be replaced by a secure database/key-management service in production.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
-import { EMISSION_FACTORS } from "../../services/emissionFactors";
+import { loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
 import { registerProduct, type RegisteredProduct } from "./registerProduct";
 import { eventRegistryForControl } from "../../services/useContracts";
@@ -16,11 +16,11 @@ type ReviewData = {
   oemDescription: string;
 };
 
-const defaultDescription = (productNumber = EMISSION_FACTORS.productId) =>
-  `Laptop unit CMVP-${String(productNumber).padStart(3, "0")} (${EMISSION_FACTORS.referenceProduct})`;
+const defaultDescription = (factors: EmissionFactorLibrary | undefined, productNumber = factors?.productId ?? 1) =>
+  `Laptop unit CMVP-${String(productNumber).padStart(3, "0")} (${factors?.referenceProduct ?? "configuration loading from IPFS"})`;
 
 function loadReviewData(): ReviewData {
-  const fallback = defaultDescription();
+  const fallback = defaultDescription(undefined);
   if (typeof window === "undefined") {
     return { status: "draft", deployerDescription: fallback, oemDescription: fallback };
   }
@@ -50,7 +50,8 @@ function saveReviewData(data: ReviewData) {
 
 export default function Product() {
   const [product, setProduct] = useState<RegisteredProduct | undefined>();
-  const [nextProductNumber, setNextProductNumber] = useState(EMISSION_FACTORS.productId);
+  const [factors, setFactors] = useState<EmissionFactorLibrary>();
+  const [nextProductNumber, setNextProductNumber] = useState(1);
   const [isWorking, setIsWorking] = useState(false);
   const [review, setReview] = useState<ReviewData>(loadReviewData);
   const [error, setError] = useState<string>();
@@ -58,6 +59,18 @@ export default function Product() {
   const [oemAddress] = useState(() => getSigner("oem").address);
   const isDeployer = selectedRole === "deployer";
   const isOem = selectedRole === "oem";
+
+  useEffect(() => {
+    void loadEmissionFactors().then((loaded) => {
+      setFactors(loaded);
+      setNextProductNumber((current) => current === 1 ? loaded.productId : current);
+      setReview((current) => current.status === "draft" ? {
+        ...current,
+        deployerDescription: defaultDescription(loaded, nextProductNumber),
+        oemDescription: defaultDescription(loaded, nextProductNumber),
+      } : current);
+    }).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     const updateRole = () => setSelectedRole(getSelectedRole());
@@ -76,8 +89,8 @@ export default function Product() {
           if (current.status !== "draft") return current;
           const next = {
             ...current,
-            deployerDescription: defaultDescription(nextNumber),
-            oemDescription: defaultDescription(nextNumber),
+            deployerDescription: defaultDescription(factors, nextNumber),
+            oemDescription: defaultDescription(factors, nextNumber),
           };
           saveReviewData(next);
           return next;
@@ -123,9 +136,11 @@ export default function Product() {
     };
     const refreshProduct = () => void restoreRegisteredProduct();
     void restoreRegisteredProduct();
+    const statusInterval = window.setInterval(refreshProduct, 5000);
     window.addEventListener("product-selection-change", refreshProduct);
     window.addEventListener("product-registration-change", refreshProduct);
     return () => {
+      window.clearInterval(statusInterval);
       window.removeEventListener("product-selection-change", refreshProduct);
       window.removeEventListener("product-registration-change", refreshProduct);
     };
@@ -162,7 +177,6 @@ export default function Product() {
 
       if (isDeployer && review.status === "confirmed") {
         const registeredProduct = await registerProduct(review.oemDescription, oemAddress);
-        setProduct(registeredProduct);
         window.localStorage.removeItem(PRODUCT_REVIEW_KEY);
         window.localStorage.removeItem(PRODUCT_REVIEW_DATA_KEY);
         window.localStorage.setItem(
@@ -185,7 +199,7 @@ export default function Product() {
     ? `CMVP-${String(product.productId).padStart(3, "0")}`
     : selectedProductId === "new"
       ? `CMVP-${String(nextProductNumber).padStart(3, "0")}`
-      : `CMVP-${String(EMISSION_FACTORS.productId).padStart(3, "0")}`;
+      : `CMVP-${String(nextProductNumber).padStart(3, "0")}`;
   const description = product?.description ??
     (review.status === "confirmed" || (isOem && review.status === "sent")
       ? review.oemDescription
@@ -205,6 +219,7 @@ export default function Product() {
       </div>
       <div className="section-grid">
         <section className="panel wide">
+          <h2>Product Detail</h2>
           {canViewProduct ? (
             <>
               <div className="data-row">
@@ -230,7 +245,7 @@ export default function Product() {
               </div>
               <div className="data-row">
                 <span>Configuration</span>
-                <span className="mono">v{EMISSION_FACTORS.libraryVersion}</span>
+                <span className="mono">{factors ? `v${factors.libraryVersion}` : "Loading from IPFS..."}</span>
               </div>
             </>
           ) : (

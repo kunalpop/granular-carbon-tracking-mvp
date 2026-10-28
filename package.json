@@ -5,6 +5,7 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
+    "backend": "npm --prefix backend start",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "network:up": "docker compose -f network/docker-compose.yml up -d",

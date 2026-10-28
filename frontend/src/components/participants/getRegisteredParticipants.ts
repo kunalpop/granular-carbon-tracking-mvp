@@ -1,19 +1,17 @@
-import { EMISSION_FACTORS } from "../../services/emissionFactors";
-import { ACTOR_NAMES } from "../../services/getParticipants";
+import { loadEmissionFactors, loadSupplierRoleMap } from "../../services/supplyChainIpfs";
 import { getSigner } from "../../services/getSigner";
 import { getParticipantRegistryContract } from "../../hooks/useContracts";
 
 const PARTICIPANT_REGISTRY_ABI = [
   "function isRegistered(address account) view returns (bool)",
-  "function getParticipant(address account) view returns (tuple(string name, string organisationRole, bool active, uint64 registeredAt))",
-  "function canWriteStage(address account, uint8 stageId) view returns (bool)",
 ];
 
 const ADMIN = "deployer";
 
-function getStageRoles() {
+async function getStageRoles() {
+  const { stages } = await loadEmissionFactors();
   const rolesNeedingStages = new Map<string, number[]>();
-  for (const stage of EMISSION_FACTORS.stages) {
+  for (const stage of stages) {
     rolesNeedingStages.set(stage.actorRole, [
       ...(rolesNeedingStages.get(stage.actorRole) ?? []),
       stage.stageId,
@@ -27,10 +25,11 @@ export async function loadRegisteredParticipants() {
     PARTICIPANT_REGISTRY_ABI,
     getSigner(ADMIN),
   );
-  const rolesNeedingStages = getStageRoles();
-  const roles = Object.keys(ACTOR_NAMES);
-  const actorAccounts = roles.map((role) => ({
+  const rolesNeedingStages = await getStageRoles();
+  const roleMap = await loadSupplierRoleMap();
+  const actorAccounts = Object.entries(roleMap).map(([role, name]) => ({
     role,
+    name,
     address: getSigner(role as Parameters<typeof getSigner>[0]).address,
     stageIds: rolesNeedingStages.get(role) ?? [],
   }));
@@ -42,19 +41,13 @@ export async function loadRegisteredParticipants() {
   );
   if (registrationStates.some((registered) => !registered)) return undefined;
 
-  const rows = await Promise.all(
-    actorAccounts.map(async ({ address, stageIds }, index) => {
-      const record = await participants.getParticipant(address);
-
-      return {
-        id: index + 1,
-        name: String(record.name),
-        role: String(record.organisationRole),
-        address,
-        stages: stageIds.join(","),
-      };
-    }),
-  );
+  const rows = actorAccounts.map(({ role, name, address, stageIds }, index) => ({
+    id: index + 1,
+    name,
+    role,
+    address,
+    stages: stageIds.join(","),
+  }));
 
   if (rows.some((row) => row === undefined)) return undefined;
   return rows as Array<{ id: number; name: string; role: string; address: string; stages: string }>;

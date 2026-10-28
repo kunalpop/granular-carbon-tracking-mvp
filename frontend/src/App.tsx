@@ -58,6 +58,7 @@ export default function App() {
   const [participantsReady, setParticipantsReady] = useState(false);
   const [productReady, setProductReady] = useState(false);
   const [simulationComplete, setSimulationComplete] = useState(false);
+  const [carbonCaptureStatus, setCarbonCaptureStatus] = useState<"red" | "yellow" | "green">("red");
   const [studiesComplete, setStudiesComplete] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(STUDIES_COMPLETE_CACHE_KEY) === "true";
@@ -182,10 +183,25 @@ export default function App() {
           window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
         if (selectedId === "new") {
           setSimulationComplete(false);
+          setCarbonCaptureStatus("red");
         } else {
           const registry = eventRegistryForControl();
-          const count = await registry.eventCount(BigInt(selectedId));
-          setSimulationComplete(Number(count) >= SIMULATION_EVENT_COUNT);
+          const count = Number(await registry.eventCount(BigInt(selectedId)));
+          setSimulationComplete(count >= SIMULATION_EVENT_COUNT);
+          if (count === 0) {
+            setCarbonCaptureStatus("red");
+          } else {
+            const statuses = await Promise.all(
+              Array.from({ length: count }, (_, index) =>
+                registry.auditStatus(BigInt(selectedId), index),
+              ),
+            );
+            setCarbonCaptureStatus(
+              statuses.every((status) => Number(status) === 2)
+                ? "green"
+                : "yellow",
+            );
+          }
         }
       } catch {
         setSimulationComplete(false);
@@ -227,8 +243,10 @@ export default function App() {
     window.addEventListener("studies-complete", handleRegistrationChange);
 
     void syncStatus();
+    const statusInterval = window.setInterval(syncStatus, 5000);
 
     return () => {
+      window.clearInterval(statusInterval);
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener(
         "actors-registration-change",
@@ -357,15 +375,8 @@ export default function App() {
           </nav>
           <div className="sidebar-note">
             <span
-              className={
-                simulationComplete
-                  ? "live-dot participants-ready"
-                  : productReady
-                  ? "live-dot ready"
-                  : participantsReady
-                  ? "live-dot participants-ready"
-                  : "live-dot"
-              }
+              className={`live-dot carbon-capture-${carbonCaptureStatus}`}
+              aria-label={`Carbon Capture status: ${carbonCaptureStatus}`}
             />
             <strong>
               {simulationComplete ? "Simulation Completed" : "Carbon Capture"}

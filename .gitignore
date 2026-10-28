@@ -1,5 +1,6 @@
 # Dependencies (re-created by `npm install`; never committed)
 node_modules/
+backend/documents.json
 
 # Hardhat build output (re-created by `npx hardhat compile`)
 /artifacts/

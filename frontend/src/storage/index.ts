@@ -1,0 +1,12 @@
+export { uploadDocument, generateDocumentId } from "./uploadDocument";
+export { encryptDocument } from "./encryptDocument";
+export { decryptDocument } from "./decryptDocument";
+export { uploadToIPFS } from "./uploadToIPFS";
+export { pinToIPFS } from "./pinToIPFS";
+export { recordDocumentProof } from "./recordDocumentProof";
+export { retrieveFromIPFS } from "./retrieveFromIPFS";
+export { getDocument } from "./getDocument";
+export type { StoredDocument } from "./getDocument";
+export { verifyDocument } from "./verifyDocument";
+export { verifyDocumentEvidence } from "./verifyDocumentEvidence";
+export type { DocumentMetadata, DocumentProof, EncryptionEnvelope, IPFSUpload, UploadedDocument } from "./types";

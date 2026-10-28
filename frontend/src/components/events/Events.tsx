@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import Stage from "../../shared/Stage";
-import { EMISSION_FACTORS } from "../../services/emissionFactors";
+import { loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
 import { registerEmissionEvent } from "./registerEmissionEvent";
 import { getSelectedRole, type AccountRole } from "../../services/getSigner";
 import { eventRegistryForControl } from "../../services/useContracts";
 import { governanceForControl } from "../../services/controlContracts";
 
 const SELECTED_PRODUCT_KEY = "selected-product-id";
-function loadRegisteredProductDescription(): string {
-  return EMISSION_FACTORS.referenceProduct;
+function loadRegisteredProductDescription(factors?: EmissionFactorLibrary): string {
+  return factors?.referenceProduct ?? "Reference product configuration loading from IPFS";
 }
 
 type RecordedEvent = {
@@ -31,15 +31,16 @@ export default function Events() {
   const [drafts, setDrafts] = useState<
     Record<number, { activityValue: number; emissionFactor: number }>
   >({});
+  const [factors, setFactors] = useState<EmissionFactorLibrary>();
   const [productDescription, setProductDescription] = useState(
-    loadRegisteredProductDescription,
+    () => loadRegisteredProductDescription(),
   );
   const [recordedEvents, setRecordedEvents] = useState<RecordedEvent[]>([]);
   const [recordingStages, setRecordingStages] = useState<Set<number>>(
     () => new Set(),
   );
   const [recordingError, setRecordingError] = useState<string>();
-  const stages = EMISSION_FACTORS.stages;
+  const stages = factors?.stages ?? [];
   const canSeeAllStages =
     selectedRole === "deployer" || selectedRole === "auditor";
   const recordedStages = new Set(recordedEvents.map((item) => item.stageId));
@@ -48,15 +49,29 @@ export default function Events() {
     : stages.filter((item) => item.actorRole === selectedRole);
   const stage = visibleStages[currentStage] ?? visibleStages[0];
   const activeStage = stage ?? stages[0];
-  const draft = drafts[activeStage.stageId] ?? {
+
+  useEffect(() => {
+    void loadEmissionFactors()
+      .then((loaded) => {
+        setFactors(loaded);
+        setProductDescription(loaded.referenceProduct);
+      })
+      .catch((cause) => setRecordingError(cause instanceof Error ? cause.message : "Unable to load emission factors from IPFS."));
+  }, []);
+
+  const draft = activeStage ? drafts[activeStage.stageId] ?? {
     activityValue: activeStage.activityValue,
     emissionFactor: activeStage.emissionFactor_gCO2ePerUnit,
+  } : {
+    activityValue: 0,
+    emissionFactor: 0,
   };
   const previousStagesRecorded = stages
-    .filter((item) => item.stageId < activeStage.stageId)
+    .filter((item) => item.stageId < (activeStage?.stageId ?? Number.POSITIVE_INFINITY))
     .every((item) => recordedStages.has(item.stageId));
   const eventLocked =
     !canSeeAllStages &&
+    activeStage !== undefined &&
     !recordedStages.has(activeStage.stageId) &&
     !previousStagesRecorded;
 
@@ -73,7 +88,7 @@ export default function Events() {
   useEffect(() => {
     const loadSelectedProductEvents = async () => {
       const selectedId = window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "new";
-      setProductDescription(loadRegisteredProductDescription());
+      setProductDescription(loadRegisteredProductDescription(factors));
       if (selectedId === "new") {
         setRecordedEvents([]);
         return;
@@ -88,7 +103,7 @@ export default function Events() {
         const count = Number(await registry.eventCount(productId));
         const correctionCount = Number(await governance.correctionCount());
         const thresholds = new Map<number, number>();
-        for (const lifecycleStage of EMISSION_FACTORS.stages) thresholds.set(lifecycleStage.stageId, Number(await governance.stageThresholdGrams(lifecycleStage.stageId)) / 1000);
+        for (const lifecycleStage of stages) thresholds.set(lifecycleStage.stageId, Number(await governance.stageThresholdGrams(lifecycleStage.stageId)) / 1000);
         const corrections = new Map<number, { activity: number; factor: number; co2e: number }>();
         for (let correctionId = 1; correctionId <= correctionCount; correctionId++) {
           const correction = await governance.correctionAt(correctionId);
@@ -128,7 +143,12 @@ export default function Events() {
       window.removeEventListener("product-selection-change", updateProduct);
       window.removeEventListener("product-registration-change", updateProduct);
     };
-  }, []);
+  }, [factors]);
+
+  if (!factors || !activeStage) {
+    return <section className="panel"><p>{recordingError ?? "Loading lifecycle event configuration from IPFS..."}</p></section>;
+  }
+
   const recordedStage = recordedEvents.find((item) => item.stageId === activeStage.stageId);
   const displayedActivity = recordedStage?.correctedActivityValue ?? draft.activityValue;
   const displayedFactor = recordedStage?.correctedEmissionFactor ?? draft.emissionFactor;
@@ -140,7 +160,7 @@ export default function Events() {
     emissionFactor: `${displayedFactor.toFixed(2)} gCO2e per ${
       activeStage.activityUnit
     }`,
-    emissionSchema: EMISSION_FACTORS.schemaVersion,
+    emissionSchema: factors?.schemaVersion ?? "",
     co2eKg: recordedStage?.co2eKg ??
       (displayedActivity * displayedFactor) / 1000,
     thresholdKg: recordedStage?.thresholdKg,
@@ -167,7 +187,7 @@ export default function Events() {
   });
 
   const recordCurrentStage = async () => {
-    if (eventLocked || canSeeAllStages) return;
+    if (eventLocked || canSeeAllStages || !activeStage || !factors) return;
     setRecordingError(undefined);
     setRecordingStages((previous) =>
       new Set(previous).add(activeStage.stageId),
@@ -176,10 +196,11 @@ export default function Events() {
       const result = await registerEmissionEvent(
         {
           ...activeStage,
+          notes: activeStage.notes ?? "",
           activityValue: draft.activityValue,
           emissionFactor_gCO2ePerUnit: draft.emissionFactor,
         },
-        EMISSION_FACTORS.schemaVersion,
+        factors?.schemaVersion ?? "",
       );
       const nextRecordedEvents = [
         ...recordedEvents.filter(
@@ -207,7 +228,6 @@ export default function Events() {
     }
   };
 
-
   if (canSeeAllStages && recordedEvents.length === 0) {
     return (
       <>
@@ -216,11 +236,10 @@ export default function Events() {
             <div className="kicker">Lifecycle Event Capture</div>
             <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s)"}</h1>
           </div>
-          <p>No events have been recorded by participants yet.</p>
         </div>
         <section className="panel">
           <p>
-            Recorded events will appear here after participants submit them.
+            Events recorded by participants will appear here.
           </p>
         </section>
       </>
