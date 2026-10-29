@@ -50,4 +50,5 @@ figs/
 # Reference documents downloaded for factor sourcing (root-level PDFs only;
 # nothing in the repo's own folders ships PDFs)
 /*.pdf
+/data/evidence.pdf
 /DSR_ShortPaper_ICIS2026_SimReady_v3.docx
