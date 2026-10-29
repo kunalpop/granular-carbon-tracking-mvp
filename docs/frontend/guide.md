@@ -26,7 +26,16 @@ Wait for the network health check to succeed. If these contracts are already
 deployed to the running network, you can skip the deploy command. After a
 network reset, deploy the contracts again.
 
-In a second terminal, start the browser app:
+In a second terminal, start the document service used to retrieve and decrypt
+the Pinata/IPFS configuration files:
+
+```text
+cd backend
+npm install
+node server.js
+```
+
+Keep this service running on port `3001`. In a third terminal, start the browser app:
 
 ```text
 cd frontend
@@ -34,8 +43,8 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints, usually `http://localhost:5173`. Keep the network and
-the Vite server running while you use the app.
+Open the URL Vite prints, usually `http://localhost:5173`. Keep the network, the
+document service, and the Vite server running while you use the app.
 
 ## Register Participants
 

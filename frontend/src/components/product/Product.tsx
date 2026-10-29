@@ -61,15 +61,20 @@ export default function Product() {
   const isOem = selectedRole === "oem";
 
   useEffect(() => {
-    void loadEmissionFactors().then((loaded) => {
-      setFactors(loaded);
-      setNextProductNumber((current) => current === 1 ? loaded.productId : current);
-      setReview((current) => current.status === "draft" ? {
-        ...current,
-        deployerDescription: defaultDescription(loaded, nextProductNumber),
-        oemDescription: defaultDescription(loaded, nextProductNumber),
-      } : current);
-    }).catch(() => undefined);
+    const reloadFactors = () => {
+      void loadEmissionFactors().then((loaded) => {
+        setFactors(loaded);
+        setNextProductNumber((current) => current === 1 ? loaded.productId : current);
+        setReview((current) => current.status === "draft" ? {
+          ...current,
+          deployerDescription: defaultDescription(loaded, loaded.productId),
+          oemDescription: defaultDescription(loaded, loaded.productId),
+        } : current);
+      }).catch(() => undefined);
+    };
+    reloadFactors();
+    window.addEventListener("supply-chain-config-uploaded", reloadFactors);
+    return () => window.removeEventListener("supply-chain-config-uploaded", reloadFactors);
   }, []);
 
   useEffect(() => {

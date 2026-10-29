@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import Stage from "../../shared/Stage";
-import { loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
+import { clearSupplyChainIpfsCache, loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
 import { registerEmissionEvent } from "./registerEmissionEvent";
 import { getSelectedRole, type AccountRole } from "../../services/getSigner";
 import { eventRegistryForControl } from "../../services/useContracts";
@@ -51,12 +51,19 @@ export default function Events() {
   const activeStage = stage ?? stages[0];
 
   useEffect(() => {
-    void loadEmissionFactors()
-      .then((loaded) => {
-        setFactors(loaded);
-        setProductDescription(loaded.referenceProduct);
-      })
-      .catch((cause) => setRecordingError(cause instanceof Error ? cause.message : "Unable to load emission factors from IPFS."));
+    const reloadFactors = () => {
+      clearSupplyChainIpfsCache();
+      void loadEmissionFactors()
+        .then((loaded) => {
+          setFactors(loaded);
+          setProductDescription(loaded.referenceProduct);
+          setRecordingError(undefined);
+        })
+        .catch((cause) => setRecordingError(cause instanceof Error ? cause.message : "Unable to load emission factors from IPFS."));
+    };
+    reloadFactors();
+    window.addEventListener("supply-chain-config-uploaded", reloadFactors);
+    return () => window.removeEventListener("supply-chain-config-uploaded", reloadFactors);
   }, []);
 
   const draft = activeStage ? drafts[activeStage.stageId] ?? {

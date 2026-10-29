@@ -18,15 +18,35 @@ export type EmissionFactorLibrary = {
   stages: EmissionFactorStage[];
 };
 
-const cache = new Map<string, unknown>();
+export type IpfsDocumentMetadata = {
+  cid: string;
+  originalFileName: string;
+  createdAt: string;
+  participantId: string;
+  metadata?: { purpose?: string };
+};
 
-async function loadIpfsJson<T>(fileName: string): Promise<T> {
-  if (cache.has(fileName)) return cache.get(fileName) as T;
-  const response = await fetch(`/api/documents/by-name/${encodeURIComponent(fileName)}/plain`);
-  if (!response.ok) throw new Error(`IPFS configuration ${fileName} is not available yet.`);
-  const value = await response.json() as T;
-  cache.set(fileName, value);
-  return value;
+const cache = new Map<string, unknown>();
+const persistentCachePrefix = "supply-chain-ipfs:";
+
+async function loadIpfsJson<T>(fileName: string, cacheKey = fileName): Promise<T> {
+  if (cache.has(cacheKey)) return cache.get(cacheKey) as T;
+  try {
+    const response = await fetch(`/api/documents/by-name/${encodeURIComponent(fileName)}/plain`);
+    if (!response.ok) throw new Error(`IPFS configuration ${fileName} is not available yet.`);
+    const value = await response.json() as T;
+    cache.set(cacheKey, value);
+    window.localStorage.setItem(`${persistentCachePrefix}${fileName}`, JSON.stringify(value));
+    return value;
+  } catch (error) {
+    const stored = window.localStorage.getItem(`${persistentCachePrefix}${fileName}`);
+    if (stored) {
+      const value = JSON.parse(stored) as T;
+      cache.set(cacheKey, value);
+      return value;
+    }
+    throw error;
+  }
 }
 
 export function loadSupplierRoleMap() {
@@ -35,6 +55,12 @@ export function loadSupplierRoleMap() {
 
 export function loadEmissionFactors() {
   return loadIpfsJson<EmissionFactorLibrary>("emission-factors.json");
+}
+
+export async function loadIpfsDocumentMetadata(fileName: string) {
+  const response = await fetch(`/api/documents/by-name/${encodeURIComponent(fileName)}`);
+  if (!response.ok) throw new Error(`IPFS metadata ${fileName} is not available yet.`);
+  return response.json() as Promise<IpfsDocumentMetadata>;
 }
 
 export function clearSupplyChainIpfsCache() {

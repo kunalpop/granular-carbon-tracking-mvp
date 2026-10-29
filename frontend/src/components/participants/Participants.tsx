@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
-import { clearSupplyChainIpfsCache, loadEmissionFactors, loadSupplierRoleMap, type EmissionFactorLibrary, type SupplierRoleMap } from "../../services/supplyChainIpfs";
+import { clearSupplyChainIpfsCache, loadEmissionFactors, loadIpfsDocumentMetadata, loadSupplierRoleMap, type EmissionFactorLibrary, type IpfsDocumentMetadata, type SupplierRoleMap } from "../../services/supplyChainIpfs";
 import { loadRegisteredParticipants } from "./getRegisteredParticipants";
 import { registerActors } from "./registerParticipants";
 import { uploadDocument } from "../../storage/uploadDocument";
@@ -44,16 +44,34 @@ export default function Participants() {
   const [uploadingKind, setUploadingKind] = useState<"supplier" | "emissionFactors">();
   const [supplierUploadComplete, setSupplierUploadComplete] = useState(false);
   const [emissionFactorsUploadComplete, setEmissionFactorsUploadComplete] = useState(false);
+  const [showConfigurationUpload, setShowConfigurationUpload] = useState(false);
+  const [showConfiguration, setShowConfiguration] = useState(false);
+  const [ipfsMetadata, setIpfsMetadata] = useState<IpfsDocumentMetadata[]>([]);
+  const [configurationRevision, setConfigurationRevision] = useState(0);
   const [selectedRole, setSelectedRole] = useState(() => getSelectedRole());
   const isDeployer = selectedRole === "deployer";
   const configurationLoaded = Boolean(supplierRoleMap && factors);
-  const canViewParticipants = isDeployer || selectedRole === "oem";
+  const canViewParticipants = selectedRole === "oem" || isDeployer;
+
+  useEffect(() => {
+    if (supplierUploadComplete && emissionFactorsUploadComplete) {
+      setShowConfigurationUpload(false);
+    }
+  }, [supplierUploadComplete, emissionFactorsUploadComplete]);
 
   useEffect(() => {
     const updateRole = () => setSelectedRole(getSelectedRole());
     window.addEventListener("control-account-change", updateRole);
     return () => window.removeEventListener("control-account-change", updateRole);
   }, []);
+
+  useEffect(() => {
+    if (selectedRole !== "oem") return;
+    void Promise.all([
+      loadIpfsDocumentMetadata("role-participant-map.json"),
+      loadIpfsDocumentMetadata("emission-factors.json"),
+    ]).then(setIpfsMetadata).catch(() => setIpfsMetadata([]));
+  }, [selectedRole, supplierUploadComplete, emissionFactorsUploadComplete, configurationRevision]);
 
   useEffect(() => {
     void Promise.all([loadSupplierRoleMap(), loadEmissionFactors()])
@@ -131,6 +149,7 @@ export default function Participants() {
       if (kind === "supplier") setSupplierUploadComplete(true);
       else setEmissionFactorsUploadComplete(true);
       clearSupplyChainIpfsCache();
+      setConfigurationRevision((revision) => revision + 1);
       if (kind === "supplier") {
         const roles = await waitForConfigurationFile(loadSupplierRoleMap);
         setSupplierRoleMap(roles);
@@ -207,6 +226,13 @@ export default function Participants() {
         </div>
       </div>
       {selectedRole === "oem" && (
+        <div className="configuration-upload-toggle-row">
+          {!(supplierUploadComplete && emissionFactorsUploadComplete) && <Button onClick={() => setShowConfigurationUpload((visible) => !visible)}>
+            {showConfigurationUpload ? "Hide Upload Option" : "Upload Configuration Files"}
+          </Button>}
+        </div>
+      )}
+      {selectedRole === "oem" && showConfigurationUpload && !(supplierUploadComplete && emissionFactorsUploadComplete) && (
         <section className="panel configuration-panel">
           <h2>Upload supply-chain configuration to IPFS</h2>
           <div className="configuration-upload-grid">
@@ -264,7 +290,7 @@ export default function Participants() {
                       ? "Loading participant and emission-factor configuration from IPFS..."
                       : isDeployer && configurationLoaded
                         ? "No participants loaded yet. Press “Register Participants” to register."
-                        : "OEM has not provided participants list yet."}
+                        : "No participant list is available in IPFS yet."}
                   </p>
                 ) : (
                   stageCards.map(({ stage, actor }) => (
@@ -284,7 +310,7 @@ export default function Participants() {
               </div>
             </>
           ) : (
-            <p>Participants registered.</p>
+            <p>{actorsAdded ? "Participants registered." : "Participants are not yet registered."}</p>
           )}
         </section>
         <section className="panel narrow">
@@ -324,6 +350,26 @@ export default function Participants() {
                 : "Register Participants"}
             </Button>
           </div>
+          )}
+          {selectedRole === "oem" && (
+            <div className="configuration-summary">
+              <Button className="secondary" onClick={() => setShowConfiguration((visible) => !visible)}>
+                {showConfiguration ? "Hide Configuration" : "Configuration"}
+              </Button>
+              {showConfiguration && (
+                <div className="configuration-summary-card">
+                  <h3>Configuration</h3>
+                  {ipfsMetadata.map((document) => (
+                    <div className="configuration-document" key={document.originalFileName}>
+                      <span><strong>Name</strong> {document.originalFileName}</span>
+                      <span><strong>Version</strong> {document.originalFileName === "emission-factors.json" ? `${factors?.libraryVersion ?? "—"} (schema ${factors?.schemaVersion ?? "—"})` : "—"}</span>
+                      <span><strong>Date</strong> {document.createdAt && !Number.isNaN(Date.parse(document.createdAt)) ? new Date(document.createdAt).toLocaleString() : "—"}</span>
+                    </div>
+                  ))}
+                  {ipfsMetadata.length === 0 && <p>Configuration metadata is unavailable.</p>}
+                </div>
+              )}
+            </div>
           )}
           {error && <p role="alert">{error}</p>}
         </section>
