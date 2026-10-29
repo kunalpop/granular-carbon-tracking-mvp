@@ -66,6 +66,8 @@ The frontend relies on these service files in `frontend/src/services`:
   code.
 - `getParticipants.ts` provides configured actor display names.
 - `getRegisteredProducts.ts` reads registered product data.
+- `supplyChainIpfs.ts` loads cached/fresh supplier maps and emission-factor JSON through the document API and reads uploaded document metadata.
+- Storage helpers under `frontend/src/storage` encrypt files, upload them to Pinata/IPFS, record proofs, retrieve them, and verify hashes/evidence.
 
 Participant, product, event, audit, governance, and study state are managed by
 page components and workflow helpers rather than custom React hooks. The

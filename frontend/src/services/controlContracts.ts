@@ -25,12 +25,12 @@ export const GOVERNANCE_ABI = [
   "function stageThresholdGrams(uint8 stageId) view returns (uint256)",
   "function setStageThreshold(uint8 stageId, uint256 maxAbsGrams)",
   "function screenProduct(uint256 productId) returns (uint256)",
-  "function raiseEscalation(uint256 productId, uint256 eventIndex, string reason)",
+  "function raiseEscalation(uint256 productId, uint256 eventIndex, string reason, bytes32 evidenceHash)",
   "function escalationCount() view returns (uint256)",
   "function escalationResolved(uint256 index) view returns (bool)",
   "function escalationResolvedAt(uint256 index) view returns (uint64)",
   "function resolveEscalation(uint256 index)",
-  "function escalationAt(uint256 index) view returns (tuple(uint256 productId, uint256 eventIndex, int256 co2eGrams, uint256 thresholdGrams, string reason, address raisedBy, uint64 timestamp))",
+  "function escalationAt(uint256 index) view returns (tuple(uint256 productId, uint256 eventIndex, int256 co2eGrams, uint256 thresholdGrams, string reason, bytes32 evidenceHash, address raisedBy, uint64 timestamp))",
 ];
 
 export const MULTISIG_ABI = [
@@ -61,6 +61,54 @@ export function eventRegistryForControl() {
 
 export function governanceForControl() {
   return getGovernanceModuleContract(GOVERNANCE_ABI, controlSigner());
+}
+
+export async function loadStageThresholdsFromChain(stageIds: number[]) {
+  const governance = governanceForControl();
+  const entries = await Promise.all(stageIds.map(async (stageId) => [
+    stageId,
+    Number(await governance.stageThresholdGrams(stageId)) / 1000,
+  ] as const));
+  return Object.fromEntries(entries) as Record<number, number>;
+}
+
+export async function loadStageThresholdsFromChainOrIpfs(stageIds: number[]) {
+  const onChain = await loadStageThresholdsFromChain(stageIds);
+  if (stageIds.every((stageId) => onChain[stageId] > 0)) return onChain;
+  try {
+    const response = await fetch(`/api/documents/by-name/thresholds.json/plain?fresh=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) return onChain;
+    const file = await response.json() as unknown;
+    const entries = Array.isArray(file)
+      ? file
+      : file && typeof file === "object" && "thresholds" in file && Array.isArray(file.thresholds)
+        ? file.thresholds
+        : file && typeof file === "object" && "stages" in file && Array.isArray(file.stages)
+          ? file.stages
+          : [];
+    const fileThresholds = Object.fromEntries(entries.map((item) => {
+      const value = item as { stageId?: number; threshold?: number; thresholdKg?: number };
+      return [value.stageId, Number(value.threshold ?? value.thresholdKg ?? 0)];
+    }));
+    return Object.fromEntries(stageIds.map((stageId) => [stageId, onChain[stageId] > 0 ? onChain[stageId] : Number(fileThresholds[String(stageId)] ?? 0)]));
+  } catch {
+    return onChain;
+  }
+}
+
+export async function loadStageThresholdUnitsFromIpfs(stageIds: number[]) {
+  const units: Record<number, string> = {};
+  try {
+    const response = await fetch(`/api/documents/by-name/thresholds.json/plain?fresh=${Date.now()}`, { cache: "no-store" });
+    const file = await response.json() as unknown;
+    const entries = Array.isArray(file) ? file : [];
+    for (const item of entries as Array<{ stageId?: number; unit?: string }>) {
+      if (item.stageId !== undefined && item.unit) units[item.stageId] = item.unit;
+    }
+  } catch {
+    // On-chain thresholds do not include a unit field.
+  }
+  return Object.fromEntries(stageIds.map((stageId) => [stageId, units[stageId] ?? "KgCO2e"]));
 }
 
 export function multisigForControl() {

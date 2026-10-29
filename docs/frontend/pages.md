@@ -6,7 +6,7 @@ the gates below.
 
 | Route | Access and behavior |
 | --- | --- |
-| `/participants` | Always routable. Shows configured lifecycle participants; only the deployer can register them. The page checks all configured accounts, but the app's separate workflow-ready gate currently checks only whether the OEM is registered. |
+| `/participants` | Always routable. The OEM can upload supplier/role and emission-factor JSON to IPFS-backed document storage. The deployer reviews the resulting stages and can register participants. Only the deployer can register them. |
 | `/product` | Requires participant registration. The deployer/OEM complete the description review; the deployer creates the product and mints its passport after OEM confirmation. |
 | `/events` | Requires participant registration and a selected registered product. Lifecycle actors can record only their assigned stage, in order. Deployer and auditor can inspect existing events only. |
 | `/results` | Requires at least 10 events on the selected product. Runs the three browser-side study tabs. |
@@ -22,13 +22,12 @@ and the matching configured actor. The deployer registers participants and
 stage authorisations through the participant registry. The auditor is a
 configured governance account, not a lifecycle-stage actor.
 
-There is a current setup mismatch: the default authorisations are generated
-from each account's position in the actor list rather than all matching stage
-IDs in the stage metadata. For example, OEM defaults to stage 5 even though it
-owns stages 5 and 6; later actors are shifted by one, and the auditor defaults
-to stage 10. The page's stage rows are based on metadata and may not reflect
-the authorisations the registration form displays. The registration helper
-ensures the OEM is authorised for both stages 5 and 6.
+Stage rows are built from the uploaded role map and emission-factor library.
+The deployer must verify editable Name, Role, and Stage values before
+registration. The registration helper normalises comma-separated stage IDs and
+submits the configured participant and stage authorisations; participant data
+from the chain and configuration data are refreshed on registration, focus, and
+supply-chain configuration changes rather than by a page reload timer.
 
 ## Product
 

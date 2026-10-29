@@ -214,7 +214,7 @@ describe("GovernanceModule", () => {
       // Anyone may screen; the breach (96,000 > 50,000) is flagged.
       await expect(governance.connect(stranger).screenProduct(PRODUCT_ID))
         .to.emit(governance, "EscalationRaised")
-        .withArgs(PRODUCT_ID, 0, 96_000n, 50_000n, "threshold breach", stranger.address);
+        .withArgs(PRODUCT_ID, 0, 96_000n, 50_000n, "threshold breach", stranger.address, ethers.ZeroHash);
       expect(await governance.escalationCount()).to.equal(1n);
 
       // Re-screening does not duplicate the escalation.
@@ -232,13 +232,13 @@ describe("GovernanceModule", () => {
     it("an auditor can raise a manual escalation; strangers cannot", async () => {
       const { governance, auditor, stranger } = await loadFixture(deploy);
       await expect(
-        governance.connect(auditor).raiseEscalation(PRODUCT_ID, 1, "factor looks implausible for region")
+        governance.connect(auditor).raiseEscalation(PRODUCT_ID, 1, "factor looks implausible for region", ethers.ZeroHash)
       )
         .to.emit(governance, "EscalationRaised")
-        .withArgs(PRODUCT_ID, 1, 2_475n, 0n, "factor looks implausible for region", auditor.address);
+        .withArgs(PRODUCT_ID, 1, 2_475n, 0n, "factor looks implausible for region", auditor.address, ethers.ZeroHash);
 
       await expect(
-        governance.connect(stranger).raiseEscalation(PRODUCT_ID, 1, "x")
+        governance.connect(stranger).raiseEscalation(PRODUCT_ID, 1, "x", ethers.ZeroHash)
       ).to.be.revertedWithCustomError(governance, "AccessControlUnauthorizedAccount");
     });
   });

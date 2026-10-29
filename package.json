@@ -6,6 +6,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "backend": "npm --prefix backend start",
+    "backend:up": "sh -c 'pid_file=\"${TMPDIR:-/tmp}/carbon-mvp-backend.pid\"; port=\"${PORT:-3001}\"; if [ -f \"$pid_file\" ] && kill -0 \"$(cat \"$pid_file\")\" 2>/dev/null; then echo \"Backend already running: node server.js (PID $(cat \"$pid_file\")) on port $port\"; exit 0; fi; (cd backend && nohup node server.js > server.log 2>&1 & echo $! > \"$pid_file\"); echo \"Backend started: node server.js (PID $(cat \"$pid_file\")) on port $port\"'",
+    "backend:down": "sh -c 'pid_file=\"${TMPDIR:-/tmp}/carbon-mvp-backend.pid\"; port=\"${PORT:-3001}\"; stopped=0; if [ -f \"$pid_file\" ]; then pid=\"$(cat \"$pid_file\")\"; if kill -0 \"$pid\" 2>/dev/null; then kill \"$pid\"; echo \"Backend stopped: node server.js (PID $pid) on port $port\"; stopped=1; fi; rm -f \"$pid_file\"; fi; for listener in $(lsof -tiTCP:$port -sTCP:LISTEN 2>/dev/null); do kill \"$listener\" 2>/dev/null || true; echo \"Backend stopped: node server.js (PID $listener) on port $port\"; stopped=1; done; if [ \"$stopped\" -eq 0 ]; then echo \"Backend not running: node server.js on port $port\"; fi'",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "network:up": "docker compose -f network/docker-compose.yml up -d",

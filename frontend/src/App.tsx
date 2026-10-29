@@ -152,8 +152,7 @@ export default function App() {
       }
     }
     checkNetwork();
-    const interval = setInterval(checkNetwork, 5000);
-    return () => clearInterval(interval);
+    return () => undefined;
   }, []);
 
   useEffect(() => {
@@ -243,10 +242,8 @@ export default function App() {
     window.addEventListener("studies-complete", handleRegistrationChange);
 
     void syncStatus();
-    const statusInterval = window.setInterval(syncStatus, 5000);
 
     return () => {
-      window.clearInterval(statusInterval);
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener(
         "actors-registration-change",
@@ -337,9 +334,9 @@ export default function App() {
                 )}
                 {canUseEscalations && (
                   <WorkflowTab
-                    to="/escalations"
+                    to="/escalation"
                     number={isParticipant ? "02" : "03"}
-                    label="Escalations"
+                    label="Escalation"
                     enabled
                   />
                 )}
@@ -379,7 +376,7 @@ export default function App() {
               aria-label={`Carbon Capture status: ${carbonCaptureStatus}`}
             />
             <strong>
-              {simulationComplete ? "Simulation Completed" : "Carbon Capture"}
+              {simulationComplete ? "Events Recorded" : "Carbon Capture"}
             </strong>
           </div>
           {studiesComplete && (
@@ -439,7 +436,7 @@ export default function App() {
             />
             <Route path="/voting" element={<Voting />} />
             <Route
-              path="/escalations"
+              path="/escalation"
               element={
                 canUseEscalations ? (
                   <Audit initialTab="escalations" />

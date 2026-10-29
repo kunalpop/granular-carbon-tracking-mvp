@@ -28,6 +28,9 @@ configuration, evaluation assets, and project documentation.
 │   ├── qbftConfigFile.json
 │   ├── network7/
 │   └── nodes/
+├── backend/
+│   ├── server.js
+│   └── documents.json (local metadata; gitignored)
 ├── simulation/
 │   ├── emission-factors.json
 │   ├── evidence/
@@ -75,6 +78,7 @@ frontend/src/
 │   │   └── registerEmissionEvent.ts
 │   ├── governance/
 │   │   ├── Governance.tsx
+│   │   ├── Resolution.tsx
 │   │   └── Voting.tsx
 │   ├── participants/
 │   │   ├── Participants.tsx
@@ -100,10 +104,18 @@ frontend/src/
 │   ├── getSigner.ts
 │   ├── getTypes.ts
 │   ├── networkConfig.ts
+│   ├── supplyChainIpfs.ts
 │   └── useContracts.ts
+├── storage/
+│   ├── encryptDocument.ts
+│   ├── uploadDocument.ts
+│   ├── recordDocumentProof.ts
+│   └── retrieveFromIPFS.ts
 └── shared/
     ├── Button.tsx
     ├── Escalation.tsx
+    ├── EvidenceModal.tsx
+    ├── FileSelectCard.tsx
     └── Stage.tsx
 ```
 

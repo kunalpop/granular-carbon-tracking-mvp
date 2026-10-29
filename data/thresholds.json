@@ -1,0 +1,12 @@
+[
+  { "stageId": 1, "threshold": 18, "unit": "KgCO2e" },
+  { "stageId": 2, "threshold": 60, "unit": "KgCO2e" },
+  { "stageId": 3, "threshold": 5.4, "unit": "KgCO2e" },
+  { "stageId": 4, "threshold": 42, "unit": "KgCO2e" },
+  { "stageId": 5, "threshold": 13.75, "unit": "KgCO2e" },
+  { "stageId": 6, "threshold": 0.72, "unit": "KgCO2e" },
+  { "stageId": 7, "threshold": 0.75, "unit": "KgCO2e" },
+  { "stageId": 8, "threshold": 60, "unit": "KgCO2e" },
+  { "stageId": 9, "threshold": 3, "unit": "KgCO2e" },
+  { "stageId": 10, "threshold": -3, "unit": "KgCO2e" }
+]

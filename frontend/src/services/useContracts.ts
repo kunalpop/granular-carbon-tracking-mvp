@@ -25,9 +25,9 @@ export const GOVERNANCE_ABI = [
   "function stageThresholdGrams(uint8 stageId) view returns (uint256)",
   "function setStageThreshold(uint8 stageId, uint256 maxAbsGrams)",
   "function screenProduct(uint256 productId) returns (uint256)",
-  "function raiseEscalation(uint256 productId, uint256 eventIndex, string reason)",
+  "function raiseEscalation(uint256 productId, uint256 eventIndex, string reason, bytes32 evidenceHash)",
   "function escalationCount() view returns (uint256)",
-  "function escalationAt(uint256 index) view returns (tuple(uint256 productId, uint256 eventIndex, int256 co2eGrams, uint256 thresholdGrams, string reason, address raisedBy, uint64 timestamp))",
+  "function escalationAt(uint256 index) view returns (tuple(uint256 productId, uint256 eventIndex, int256 co2eGrams, uint256 thresholdGrams, string reason, bytes32 evidenceHash, address raisedBy, uint64 timestamp))",
 ];
 
 export const MULTISIG_ABI = [

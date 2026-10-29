@@ -7,9 +7,11 @@
 global stylesheet. `App.tsx` renders the header, product selector, Besu
 network indicator, account selector, sidebar, workflow navigation, and routed
 page content. The header indicator checks `eth_chainId` at the configured RPC
-endpoint on load and every five seconds. It displays green only when the RPC
-response matches the configured chain ID (2026), and red when the endpoint is
-unavailable, returns an error, or reports a different chain.
+endpoint when the application loads. It displays green only when the RPC
+response matches the configured chain ID, and red when the endpoint is
+unavailable, returns an error, or reports a different chain. Workflow pages
+refresh from their mounted state, account/product events, and explicit user
+actions rather than continuously reloading the Participants page.
 
 ## Routes and workflow gates
 
@@ -39,7 +41,7 @@ components enforce or apply their own action-level checks as well.
 
 ## Signers, provider, and contracts
 
-`services/getSigner.ts` loads demo accounts from `network/accounts.json`,
+`services/supplyChainIpfs.ts` retrieves supply-chain JSON from `/api/documents/by-name/.../plain`, with direct fresh reads and a browser local-storage fallback. `services/getSigner.ts` loads demo accounts from `network/accounts.json`,
 provides a wallet for each configured role, and stores the selected role under
 `selected-control-account`. The account selector dispatches
 `control-account-change` so components can refresh their role state.

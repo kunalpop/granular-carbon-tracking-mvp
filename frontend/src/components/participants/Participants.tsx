@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
-import { clearSupplyChainIpfsCache, loadEmissionFactors, loadIpfsDocumentMetadata, loadSupplierRoleMap, type EmissionFactorLibrary, type IpfsDocumentMetadata, type SupplierRoleMap } from "../../services/supplyChainIpfs";
+import { clearSupplyChainIpfsCache, loadEmissionFactorsDirect, loadIpfsDocumentMetadata, loadSupplierRoleMapDirect, type EmissionFactorLibrary, type IpfsDocumentMetadata, type SupplierRoleMap } from "../../services/supplyChainIpfs";
 import { loadRegisteredParticipants } from "./getRegisteredParticipants";
 import { registerActors } from "./registerParticipants";
+import { isProductRegistered } from "../product/registerProduct";
 import { uploadDocument } from "../../storage/uploadDocument";
+import FileSelectCard from "../../shared/FileSelectCard";
 
 type ActorField = {
   id: number;
@@ -35,6 +37,8 @@ export default function Participants() {
   const [supplierRoleMap, setSupplierRoleMap] = useState<SupplierRoleMap>();
   const [factors, setFactors] = useState<EmissionFactorLibrary>();
   const [actorsAdded, setActorsAdded] = useState(false);
+  const [registrationChecked, setRegistrationChecked] = useState(false);
+  const [productRegistered, setProductRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [error, setError] = useState<string>();
   const [configurationLoading, setConfigurationLoading] = useState(true);
@@ -52,6 +56,29 @@ export default function Participants() {
   const isDeployer = selectedRole === "deployer";
   const configurationLoaded = Boolean(supplierRoleMap && factors);
   const canViewParticipants = selectedRole === "oem" || isDeployer;
+
+  useEffect(() => {
+    const checkProduct = async () => {
+      const selectedProductId = window.localStorage.getItem("selected-product-id") ?? "new";
+      if (selectedProductId === "new") {
+        setProductRegistered(false);
+        return;
+      }
+      try {
+        setProductRegistered(await isProductRegistered(BigInt(selectedProductId)));
+      } catch {
+        setProductRegistered(false);
+      }
+    };
+    const refresh = () => void checkProduct();
+    refresh();
+    window.addEventListener("product-registration-change", refresh);
+    window.addEventListener("product-selection-change", refresh);
+    return () => {
+      window.removeEventListener("product-registration-change", refresh);
+      window.removeEventListener("product-selection-change", refresh);
+    };
+  }, []);
 
   useEffect(() => {
     if (supplierUploadComplete && emissionFactorsUploadComplete) {
@@ -74,11 +101,10 @@ export default function Participants() {
   }, [selectedRole, supplierUploadComplete, emissionFactorsUploadComplete, configurationRevision]);
 
   useEffect(() => {
-    void Promise.all([loadSupplierRoleMap(), loadEmissionFactors()])
+    void Promise.all([loadSupplierRoleMapDirect(), loadEmissionFactorsDirect()])
       .then(([roles, loadedFactors]) => {
         setSupplierRoleMap(roles);
         setFactors(loadedFactors);
-        setActorFields(buildActors(roles, loadedFactors));
       })
       .catch(() => {
         // Initial absence is shown in the page status; it is not an upload error.
@@ -88,11 +114,12 @@ export default function Participants() {
 
   useEffect(() => {
     const verifyActors = async () => {
+      setRegistrationChecked(false);
       try {
         const registered = await loadRegisteredParticipants();
         if (!registered) {
           setActorsAdded(false);
-          if (!canViewParticipants && supplierRoleMap && factors) setActorFields(buildActors(supplierRoleMap, factors));
+          if (supplierRoleMap && factors) setActorFields(buildActors(supplierRoleMap, factors));
           return;
         }
         setActorFields(registered);
@@ -104,17 +131,15 @@ export default function Participants() {
         if (!(cause instanceof Error) || !cause.message.startsWith("IPFS configuration")) {
           setError(cause instanceof Error ? cause.message : "Unable to read registered participants from the chain.");
         }
+      } finally {
+        setRegistrationChecked(true);
       }
     };
 
     const refresh = () => void verifyActors();
     refresh();
-    const interval = window.setInterval(refresh, 5000);
-    window.addEventListener("focus", refresh);
     window.addEventListener("actors-registration-change", refresh);
     return () => {
-      window.clearInterval(interval);
-      window.removeEventListener("focus", refresh);
       window.removeEventListener("actors-registration-change", refresh);
     };
   }, [canViewParticipants, supplierRoleMap, factors]);
@@ -133,7 +158,7 @@ export default function Participants() {
   const uploadConfigurationToIpfs = async (kind: "supplier" | "emissionFactors") => {
     const file = kind === "supplier" ? supplierFile : emissionFactorsFile;
     const complete = kind === "supplier" ? supplierUploadComplete : emissionFactorsUploadComplete;
-    if (!file || selectedRole !== "oem" || configurationUploading || complete) return;
+    if (!file || selectedRole !== "oem" || productRegistered || actorsAdded || configurationUploading || complete) return;
     setConfigurationUploading(true);
     setUploadingKind(kind);
     setError(undefined);
@@ -151,22 +176,22 @@ export default function Participants() {
       clearSupplyChainIpfsCache();
       setConfigurationRevision((revision) => revision + 1);
       if (kind === "supplier") {
-        const roles = await waitForConfigurationFile(loadSupplierRoleMap);
+        const roles = await waitForConfigurationFile(loadSupplierRoleMapDirect);
         setSupplierRoleMap(roles);
         // Refresh factors as well when available so the stage cards are
         // rebuilt from the latest pair of IPFS configuration files.
         try {
-          const loadedFactors = await waitForConfigurationFile(loadEmissionFactors);
+          const loadedFactors = await waitForConfigurationFile(loadEmissionFactorsDirect);
           setFactors(loadedFactors);
           setActorFields(buildActors(roles, loadedFactors));
         } catch {
           if (factors) setActorFields(buildActors(roles, factors));
         }
       } else {
-        const loadedFactors = await waitForConfigurationFile(loadEmissionFactors);
+        const loadedFactors = await waitForConfigurationFile(loadEmissionFactorsDirect);
         setFactors(loadedFactors);
         try {
-          const roles = await waitForConfigurationFile(loadSupplierRoleMap);
+          const roles = await waitForConfigurationFile(loadSupplierRoleMapDirect);
           setSupplierRoleMap(roles);
           setActorFields(buildActors(roles, loadedFactors));
         } catch {
@@ -192,7 +217,7 @@ export default function Participants() {
     setError(undefined);
 
     try {
-      const [roles, loadedFactors] = await Promise.all([loadSupplierRoleMap(), loadEmissionFactors()]);
+      const [roles, loadedFactors] = await Promise.all([loadSupplierRoleMapDirect(), loadEmissionFactorsDirect()]);
       const actors = buildActors(roles, loadedFactors);
       setActorFields(actors);
       await registerActors(actors);
@@ -221,59 +246,49 @@ export default function Participants() {
     <>
       <div className="page-heading">
         <div>
-          <div className="kicker">Participants</div>
+          <div className="kicker">PRODUCT FOOTPRINTS</div>
           <h1>Register Participants</h1>
         </div>
       </div>
-      {selectedRole === "oem" && (
+      {selectedRole === "oem" && !productRegistered && !actorsAdded && (
         <div className="configuration-upload-toggle-row">
           {!(supplierUploadComplete && emissionFactorsUploadComplete) && <Button onClick={() => setShowConfigurationUpload((visible) => !visible)}>
             {showConfigurationUpload ? "Hide Upload Option" : "Upload Configuration Files"}
           </Button>}
         </div>
       )}
-      {selectedRole === "oem" && showConfigurationUpload && !(supplierUploadComplete && emissionFactorsUploadComplete) && (
+      {selectedRole === "oem" && !productRegistered && !actorsAdded && showConfigurationUpload && !(supplierUploadComplete && emissionFactorsUploadComplete) && (
         <section className="panel configuration-panel">
           <h2>Upload supply-chain configuration to IPFS</h2>
           <div className="configuration-upload-grid">
-              <label className={`configuration-upload-card${supplierUploadComplete ? " configuration-upload-card-locked" : ""}`}>
-                <span className="configuration-upload-icon" aria-hidden="true">JSON</span>
-                <span className="configuration-upload-copy">
-                  <strong>Supplier list</strong>
-                  <small>{supplierFile?.name ?? "No file selected"}</small>
-                </span>
-                <span className="configuration-browse-button">Browse file</span>
-                <input
-                  type="file"
-                  accept="application/json,.json"
-                  disabled={supplierUploadComplete}
-                  onChange={(event) => {
-                    setSupplierFile(event.target.files?.[0]);
-                  }}
-                />
+              <FileSelectCard
+                iconText="JSON"
+                className={supplierUploadComplete ? "configuration-upload-card-locked" : ""}
+                title="Supplier list"
+                fileName={supplierFile?.name}
+                accept="application/json,.json"
+                disabled={supplierUploadComplete}
+                onFileChange={(file) => setSupplierFile(file)}
+                action={(
                 <Button onClick={() => void uploadConfigurationToIpfs("supplier")} disabled={!supplierFile || configurationUploading || supplierUploadComplete}>
                   {uploadingKind === "supplier" ? "Uploading..." : supplierUploadComplete ? "Uploaded" : "Upload"}
                 </Button>
-              </label>
-              <label className={`configuration-upload-card${emissionFactorsUploadComplete ? " configuration-upload-card-locked" : ""}`}>
-                <span className="configuration-upload-icon" aria-hidden="true">JSON</span>
-                <span className="configuration-upload-copy">
-                  <strong>Emission factors</strong>
-                  <small>{emissionFactorsFile?.name ?? "No file selected"}</small>
-                </span>
-                <span className="configuration-browse-button">Browse file</span>
-                <input
-                  type="file"
-                  accept="application/json,.json"
-                  disabled={emissionFactorsUploadComplete}
-                  onChange={(event) => {
-                    setEmissionFactorsFile(event.target.files?.[0]);
-                  }}
-                />
+                )}
+              />
+              <FileSelectCard
+                iconText="JSON"
+                className={emissionFactorsUploadComplete ? "configuration-upload-card-locked" : ""}
+                title="Emission factors"
+                fileName={emissionFactorsFile?.name}
+                accept="application/json,.json"
+                disabled={emissionFactorsUploadComplete}
+                onFileChange={(file) => setEmissionFactorsFile(file)}
+                action={(
                 <Button onClick={() => void uploadConfigurationToIpfs("emissionFactors")} disabled={!emissionFactorsFile || configurationUploading || emissionFactorsUploadComplete}>
                   {uploadingKind === "emissionFactors" ? "Uploading..." : emissionFactorsUploadComplete ? "Uploaded" : "Upload"}
                 </Button>
-              </label>
+                )}
+              />
           </div>
         </section>
       )}
@@ -284,7 +299,9 @@ export default function Participants() {
             <>
 
               <div className="stage-list">
-                {stageCards.length === 0 ? (
+                {!registrationChecked ? (
+                  <p>Checking participant registration on the blockchain...</p>
+                ) : stageCards.length === 0 ? (
                   <p>
                     {configurationLoading
                       ? "Loading participant and emission-factor configuration from IPFS..."
@@ -310,13 +327,13 @@ export default function Participants() {
               </div>
             </>
           ) : (
-            <p>{actorsAdded ? "Participants registered." : "Participants are not yet registered."}</p>
+            <p>{!registrationChecked ? "Checking participant registration..." : actorsAdded ? "Participants registered." : "Participants are not yet registered."}</p>
           )}
         </section>
         <section className="panel narrow">
           <div
             className={`product-status ${
-              actorsAdded ? "participants-registered" : "ready-to-register"
+              !registrationChecked ? "ready-to-register" : actorsAdded ? "participants-registered" : "ready-to-register"
             }`}
           >
             <span
@@ -325,7 +342,9 @@ export default function Participants() {
               }
             />
             <strong>
-              {actorsAdded
+              {!registrationChecked
+                ? "Checking participant registration..."
+                : actorsAdded
                 ? "Participants registered"
                 : isDeployer
                 ? "Register participants"
@@ -341,7 +360,7 @@ export default function Participants() {
           <div className="action-row">
             <Button
               onClick={handleRegisterParticipants}
-              disabled={!isDeployer || actorsAdded || registering || !configurationLoaded}
+              disabled={!isDeployer || !registrationChecked || actorsAdded || registering || !configurationLoaded}
             >
               {registering
                 ? "Registering..."

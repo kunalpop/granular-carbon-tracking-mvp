@@ -4,7 +4,7 @@
 
 - `App.tsx` renders the header, product selector, network indicator, account
   selector, role/workflow-aware sidebar, route gates, and local reset control.
-  The header indicator polls the configured RPC endpoint every five seconds;
+  The header indicator checks the configured RPC endpoint once when the application loads;
   it is green only when the endpoint responds with the configured chain ID and
   red when the check fails or a different chain is returned.
 - `main.tsx` provides `BrowserRouter`, `React.StrictMode`, and a render error
@@ -26,8 +26,7 @@
   pending vote only while its multisig transaction is open, unexecuted, and
   still has enough eligible event-owner votes available to reach the approval
   threshold. This also handles older multisig deployments whose status can
-  remain pending after every eligible owner has voted. Proposal status refreshes
-  every five seconds and when the page regains focus.
+  remain pending after every eligible owner has voted. Proposal status refreshes every five seconds and when the page regains focus.
   Event-owner multisig proposals use a two-of-three outcome: two eligible
   approvals approve, and two eligible rejections reject. Existing deployments
   must be redeployed to apply the corrected on-chain status calculation.
@@ -64,23 +63,21 @@
 
 ## Participants
 
-- `Participants.tsx` lists the lifecycle actors represented in
-  `simulation/emission-factors.json`; the deployer can register configured
-  accounts and stage permissions.
-- `getRegisteredParticipants.ts` reads registration state and participant
-  names/roles from the registry, then derives displayed stage IDs from the
-  local stage metadata; it does not read on-chain stage authorisations.
+- `Participants.tsx` loads the supplier-role map and emission-factor library
+  through `supplyChainIpfs.ts`; the OEM uploads both JSON configurations, and
+  the deployer can register the configured accounts and stage permissions.
+- `getRegisteredParticipants.ts` combines participant names and roles from the
+  registry with uploaded role and stage configuration; it does not read or
+  expose on-chain stage-authorisation values in the participant table.
 - `registerParticipants.ts` submits participant registrations and stage
   authorisations.
 
 The account configuration includes an auditor. The page renders rows from the
-stage metadata, so the auditor is not shown as a lifecycle stage. The current
-participant form builds its submitted stage defaults by account-list position
-instead of matching all stage IDs for each role: OEM defaults to stage 5
-(although it owns stages 5 and 6), logistics to 6 (not 7), use-phase to 7 (not
-8), repairer to 8 (not 9), recycler to 9 (not 10), and auditor to 10. The
-stage rows shown in the form are based on metadata and can therefore differ
-from the authorisations the registration helper submits.
+stage metadata, so the auditor is not shown as a lifecycle stage. The participant table can be refreshed by registration events and window focus.
+Editable submitted stage IDs are normalised by the registration helper, and
+configuration rows come from the uploaded supplier map plus stage metadata.
+The Auditor is a governance account rather than a lifecycle stage and is not
+rendered in the stage-card table.
 
 ## Product
 

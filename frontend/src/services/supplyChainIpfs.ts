@@ -49,6 +49,15 @@ async function loadIpfsJson<T>(fileName: string, cacheKey = fileName): Promise<T
   }
 }
 
+async function loadIpfsJsonDirect<T>(fileName: string): Promise<T> {
+  const response = await fetch(
+    `/api/documents/by-name/${encodeURIComponent(fileName)}/plain?fresh=${Date.now()}`,
+    { cache: "no-store" },
+  );
+  if (!response.ok) throw new Error(`IPFS configuration ${fileName} is not available yet.`);
+  return response.json() as Promise<T>;
+}
+
 export function loadSupplierRoleMap() {
   return loadIpfsJson<SupplierRoleMap>("role-participant-map.json");
 }
@@ -57,8 +66,19 @@ export function loadEmissionFactors() {
   return loadIpfsJson<EmissionFactorLibrary>("emission-factors.json");
 }
 
+export function loadSupplierRoleMapDirect() {
+  return loadIpfsJsonDirect<SupplierRoleMap>("role-participant-map.json");
+}
+
+export function loadEmissionFactorsDirect() {
+  return loadIpfsJsonDirect<EmissionFactorLibrary>("emission-factors.json");
+}
+
 export async function loadIpfsDocumentMetadata(fileName: string) {
-  const response = await fetch(`/api/documents/by-name/${encodeURIComponent(fileName)}`);
+  const response = await fetch(
+    `/api/documents/by-name/${encodeURIComponent(fileName)}?fresh=${Date.now()}`,
+    { cache: "no-store" },
+  );
   if (!response.ok) throw new Error(`IPFS metadata ${fileName} is not available yet.`);
   return response.json() as Promise<IpfsDocumentMetadata>;
 }

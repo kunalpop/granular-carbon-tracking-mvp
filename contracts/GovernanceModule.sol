@@ -57,6 +57,7 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         int256 co2eGrams;
         uint256 thresholdGrams; // 0 for manual escalations
         string reason;
+        bytes32 evidenceHash;
         address raisedBy;
         uint64 timestamp;
     }
@@ -83,7 +84,8 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
         int256 co2eGrams,
         uint256 thresholdGrams,
         string reason,
-        address indexed raisedBy
+        address indexed raisedBy,
+        bytes32 evidenceHash
     );
     event EscalationResolved(uint256 indexed escalationIndex, address indexed resolvedBy, uint64 timestamp);
     event StageThresholdSet(uint8 indexed stageId, uint256 maxAbsGrams);
@@ -228,13 +230,14 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
             EmissionEventRegistry.EmissionEvent memory e = eventRegistry.eventAt(productId, i);
             uint256 threshold = stageThresholdGrams[e.stageId];
             if (threshold == 0 || _autoEscalated[productId][i]) continue;
-            uint256 magnitude = e.co2eGrams < 0 ? uint256(-e.co2eGrams) : uint256(e.co2eGrams);
+            int256 effective = effectiveCo2e(productId, i);
+            uint256 magnitude = effective < 0 ? uint256(-effective) : uint256(effective);
             if (magnitude > threshold) {
                 _autoEscalated[productId][i] = true;
                 _escalations.push(
-                    Escalation(productId, i, e.co2eGrams, threshold, "threshold breach", msg.sender, uint64(block.timestamp))
+                    Escalation(productId, i, effective, threshold, "threshold breach", bytes32(0), msg.sender, uint64(block.timestamp))
                 );
-                emit EscalationRaised(productId, i, e.co2eGrams, threshold, "threshold breach", msg.sender);
+                emit EscalationRaised(productId, i, effective, threshold, "threshold breach", msg.sender, bytes32(0));
                 flagged++;
             }
         }
@@ -244,16 +247,17 @@ contract GovernanceModule is Initializable, AccessControlUpgradeable, UUPSUpgrad
     function raiseEscalation(
         uint256 productId,
         uint256 eventIndex,
-        string calldata reason
+        string calldata reason,
+        bytes32 evidenceHash
     ) external {
         EmissionEventRegistry.EmissionEvent memory e = eventRegistry.eventAt(productId, eventIndex);
         if (!hasRole(AUDITOR_ROLE, msg.sender) && msg.sender != e.actor) {
             revert AccessControlUnauthorizedAccount(msg.sender, AUDITOR_ROLE);
         }
         _escalations.push(
-            Escalation(productId, eventIndex, e.co2eGrams, 0, reason, msg.sender, uint64(block.timestamp))
+            Escalation(productId, eventIndex, e.co2eGrams, stageThresholdGrams[e.stageId], reason, evidenceHash, msg.sender, uint64(block.timestamp))
         );
-        emit EscalationRaised(productId, eventIndex, e.co2eGrams, 0, reason, msg.sender);
+        emit EscalationRaised(productId, eventIndex, e.co2eGrams, stageThresholdGrams[e.stageId], reason, msg.sender, evidenceHash);
     }
 
     function escalationCount() external view returns (uint256) {

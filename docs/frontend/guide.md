@@ -26,7 +26,7 @@ Wait for the network health check to succeed. If these contracts are already
 deployed to the running network, you can skip the deploy command. After a
 network reset, deploy the contracts again.
 
-In a second terminal, start the document service used to retrieve and decrypt
+In a second terminal, start the document service used to upload, retrieve, and decrypt
 the Pinata/IPFS configuration files:
 
 ```text
@@ -35,7 +35,12 @@ npm install
 node server.js
 ```
 
-Keep this service running on port `3001`. In a third terminal, start the browser app:
+Keep this service running on port `3001`. Set `PINATA_JWT` in the repository-root
+`.env` before starting it; the service uses that credential to store encrypted
+files on Pinata/IPFS and rejects uploads when it is missing or malformed.
+
+Use the terminal where you ran the network commands. In a third terminal (or a
+new VS Code terminal), start the browser app:
 
 ```text
 cd frontend
@@ -43,14 +48,44 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints, usually `http://localhost:5173`. Keep the network, the
-document service, and the Vite server running while you use the app.
+Open the URL Vite prints, usually `http://localhost:5173`. If the page does not
+open, verify both terminal processes are still running and retry that URL. Keep
+Docker, the network, the document service, and the Vite server running while you
+use the app. Do not close the terminal windows used for the backend and frontend.
+The network indicator at the top must show **Network online** before transactions
+will succeed; if it shows offline, return to the terminal and run
+`npm run network:health` again.
+
+## Upload and Retrieve Documents
+
+The browser encrypts supported files with AES-GCM before they leave the page.
+The document service uploads the encrypted bytes to Pinata/IPFS, stores its
+metadata in `backend/documents.json`, and creates an on-chain document proof
+from the document ID, original hash, encrypted hash, participant ID, and CID.
+PDF, CSV, text, image, and JSON files up to 25 MB are accepted; a maximum-size
+1 MB check also applies to audit and escalation evidence.
+
+- Supply-chain configuration is retrieved by its exact filename through
+  `/api/documents/by-name/.../plain`. The newest uploaded
+  `role-participant-map.json` and `emission-factors.json` supply the participant
+  names and stage defaults shown by the app.
+- Evidence selected for a correction, escalation, or event audit is encrypted
+  and uploaded with product/event metadata. Related records can fetch the
+  decrypted file by its original document hash from an **evidence** link.
+- Configuration metadata and the latest plain JSON are cached in the browser.
+  A direct fresh read and cache fallback are used when the service or a new
+  Pinata upload is still becoming available.
+
+Document encryption keys and records are local-demo data. In production, use a
+protected document database and managed key service rather than
+`backend/documents.json`.
 
 ## Register Participants
 
-1. Choose the <span style="color: #765600;"><strong>Deployer</strong></span>
-   role in the header, then open **Participants**.
-2. Check the **Stage** fields before registering. Set each lifecycle actor's
+1. Choose the <span style="color: #6842a6;"><strong>OEM</strong></span> role from the **Account name** dropdown and open **Participants** in the sidebar. If participants have already been registered, the upload controls are intentionally hidden; start again from a fresh network deployment before uploading new configuration.
+2. If the supplier map and emission-factor files are not present, choose **Upload Configuration Files**. Under **Supplier list**, choose the local `role-participant-map.json` file and press its **Upload** button. Under **Emission factors**, choose `emission-factors.json` and press its **Upload** button. Wait for both cards to show **Uploaded** and for the participant cards to be populated from the retrieved JSON.
+3. Choose the <span style="color: #765600;"><strong>Deployer</strong></span> role from **Account name** and reopen **Participants**.
+4. Check the **Stage** fields before registering. Set each lifecycle actor's
    stage IDs to match this list:
 
    | Lifecycle actor | Stage IDs |
@@ -67,11 +102,11 @@ document service, and the Vite server running while you use the app.
 
    Enter multiple stage IDs separated by commas. The OEM appears on two stage
    cards; both fields refer to the same account.
-3. Choose **Register Participants** and wait for the success message.
+5. Choose **Register Participants** and wait for the success message.
 
-The current form also gives the <span style="color: #70405f;"><strong>Auditor</strong></span>
-stage 10 by default, but does not show an auditor stage field to change it.
-This extra permission is a current frontend limitation. The stage assignments
+Review the form before submission because the uploaded configuration controls
+participant names and stage rows. The <span style="color: #70405f;"><strong>Auditor</strong></span>
+is a governance account and is not a lifecycle stage. The stage assignments
 above are needed so the correct lifecycle actors can submit their events.
 
 ## Review and Mint Product
@@ -132,7 +167,11 @@ data.
 
 Thresholds are set separately for each stage. The Events page displays the
 configured threshold alongside a recorded event; changing a threshold does
-not change the event's emission value.
+not change the event's emission value. The deployer can also upload
+`thresholds.json` under Governance → Emission Thresholds as a named encrypted
+configuration document. The configuration card displays the latest uploaded
+filename and date; a later upload replaces the named document shown to the app.
+Individual threshold edits remain the on-chain source of truth.
 
 ## Audit, Vote and Verify Correction
 
@@ -145,17 +184,21 @@ automatically verify every event hash.
 
 1. Choose the <span style="color: #70405f;"><strong>Auditor</strong></span>
    role and open **Audit** → **Tasks**.
-2. Review each event's details. If it needs no correction, choose
-   **Discard**. This closes the task and marks the event audited on chain.
-3. Use **History** to review correction proposals, voting outcomes, and
-   completed corrections.
+2. Review each event's details. If it needs no correction, choose **Discard**.
+   This closes the task and marks the event audited on chain.
+3. Use **History** to review correction proposals, voting outcomes, completed
+   corrections, and any **evidence** links. Opening the link retrieves the
+   encrypted file by its original hash, decrypts it on the document service,
+   and displays it in the evidence viewer.
 
 ### Propose and Vote on a Correction
 
 1. To correct an event, the
    <span style="color: #70405f;"><strong>Auditor</strong></span> edits its
-   activity or emission factor, enters a reason, and chooses **Submit** in
-   **Audit** → **Tasks**.
+   activity or emission factor, enters a reason, optionally selects an
+   evidence document, and chooses **Submit** in **Audit** → **Tasks**. The
+   original hash of the uploaded document is attached to the proposal and can
+   be used to retrieve the decrypted evidence from the History view.
 2. The proposal goes to the consortium multisig. It does not change the
    original event. The event's
    <span style="color: #176b5b;"><strong>lifecycle actor</strong></span>, the
@@ -181,7 +224,9 @@ the proposal.
 1. Select the <span style="color: #70405f;"><strong>Auditor</strong></span>
    or the <span style="color: #176b5b;"><strong>lifecycle actor</strong></span>
    who recorded the event.
-2. Open **Escalations**, enter the event index and a reason, then submit.
+2. Open **Escalation** in the sidebar, enter the event index and a reason, optionally select
+   supporting evidence, then submit. Evidence is encrypted, uploaded, and
+   linked to the escalation's product and event metadata.
 
 The page is visible to non-deployer accounts, but the blockchain accepts a
 manual escalation only from the auditor or the actor who recorded that event.
@@ -189,7 +234,7 @@ manual escalation only from the auditor or the actor who recorded that event.
 ### Resolve an Escalation
 
 1. Select the <span style="color: #765600;"><strong>Deployer</strong></span>
-   role and open **Governance** → **Escalations**.
+   role and open **Governance**, then choose the **Escalation** tab.
 2. Review the escalation, enter a resolution comment, and choose **Resolve**.
 
 The app requires a comment before resolving. It saves the comment in this

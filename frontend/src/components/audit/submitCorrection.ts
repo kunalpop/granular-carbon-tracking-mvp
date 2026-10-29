@@ -1,5 +1,5 @@
-import { Interface, keccak256, toUtf8Bytes } from "ethers";
-import { eventRegistryForControl, multisigForControl } from "../../services/controlContracts";
+import { Interface } from "ethers";
+import { multisigForControl } from "../../services/controlContracts";
 import { CONTRACT_ADDRESSES } from "../../services/contractAddresses";
 
 const GOVERNANCE_CORRECTION_ABI = [
@@ -13,8 +13,9 @@ export async function submitCorrection(
   emissionFactor: number,
   reason: string,
   eventOwner: string,
+  evidenceHash?: string,
 ) {
-  const evidenceHash = keccak256(toUtf8Bytes(JSON.stringify({ productId, eventIndex, activityData, emissionFactor, reason })));
+  const resolvedEvidenceHash = evidenceHash ?? `0x${"00".repeat(32)}`;
   const iface = new Interface(GOVERNANCE_CORRECTION_ABI);
   const data = iface.encodeFunctionData("correctEvent", [
     productId,
@@ -22,10 +23,9 @@ export async function submitCorrection(
     BigInt(Math.round(activityData * 1000)),
     BigInt(Math.round(emissionFactor * 1000)),
     reason,
-    evidenceHash,
+    resolvedEvidenceHash,
   ]);
   const multisig = multisigForControl();
   const transaction = await multisig["submit(address,bytes,address)"](CONTRACT_ADDRESSES.governanceModule, data, eventOwner);
   await transaction.wait();
-  await (await eventRegistryForControl().setAuditStatus(productId, eventIndex, 1)).wait();
 }

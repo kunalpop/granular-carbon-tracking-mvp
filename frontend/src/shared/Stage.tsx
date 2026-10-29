@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import Button from "./Button";
 
 export type StageEvent = {
@@ -21,6 +22,7 @@ type StageProps = StageEvent & {
   recording?: boolean;
   discarding?: boolean;
   thresholdBreached?: boolean;
+  escalated?: boolean;
   pendingVote?: boolean;
   auditStatus?: "Unaudited" | "Pending" | "Audited";
   thresholdKg?: number;
@@ -36,6 +38,9 @@ type StageProps = StageEvent & {
   onEmissionFactorBlur?: () => void;
   onReasonChange?: (value: string) => void;
   onDiscard?: () => void;
+  actionContent?: ReactNode;
+  evidence?: ReactNode;
+  editControl?: ReactNode;
 };
 
 export default function Stage({
@@ -53,6 +58,7 @@ export default function Stage({
   recording = false,
   discarding = false,
   thresholdBreached = false,
+  escalated = false,
   pendingVote = false,
   auditStatus,
   thresholdKg,
@@ -70,6 +76,9 @@ export default function Stage({
   reason,
   onReasonChange,
   onDiscard,
+  actionContent,
+  evidence,
+  editControl,
 }: StageProps) {
   const [activityInput, setActivityInput] = useState(activity.split(" ")[0]);
   const [emissionFactorInput, setEmissionFactorInput] = useState(emissionFactor.split(" ")[0]);
@@ -97,9 +106,14 @@ export default function Stage({
     <article className="stage-event-card" id={`event-${stageId}`}>
       <div className="stage-event-heading">
         <span className="card-id">{String(stageId).padStart(2, "0")}</span>
+        {editControl}
         <span
-          className={`status ${
-            thresholdBreached ? "threshold" : pendingVote || recorded ? "ready" : ""
+          className={`status stage-audit-status ${
+            auditStatus === "Audited" || pendingVote || recorded
+              ? "ready"
+              : thresholdBreached
+                ? "threshold"
+                : ""
           }`}
         >
           {statusLabel}
@@ -168,15 +182,27 @@ export default function Stage({
         </div>
         {reason !== undefined && (
           <div className="data-row reason-row">
-            <span>Reason / evidence</span>
+            <span>Reason</span>
             {editable ? (
               <textarea value={reason} onChange={(event) => onReasonChange?.(event.target.value)} placeholder="Describe the correction or provide evidence" />
             ) : <span>{reason}</span>}
           </div>
         )}
+        {evidence !== undefined && (
+          <div className="data-row">
+            <span>Evidence</span>
+            <span>{evidence}</span>
+          </div>
+        )}
       </div>
+      {escalated && (
+        <div className="stage-escalation-tag">
+          <span className="status escalation">ESCALATED</span>
+        </div>
+      )}
       {canRecord && (
         <div className="action-row">
+          {actionContent}
           <Button onClick={onRecord} disabled={recorded || recording || discarding || locked || recordDisabled}>
             {recording ? (actionLabel === "Submit" ? "Submitting..." : actionLabel === "Correct" ? "Correct..." : "Recording...") : recorded ? (actionLabel === "Submit" ? "Submitted" : actionLabel === "Correct" ? "Corrected" : "Event Recorded") : actionLabel}
           </Button>

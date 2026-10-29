@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
 import Stage from "../../shared/Stage";
-import { clearSupplyChainIpfsCache, loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
+import { loadEmissionFactorsDirect, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
 import { registerEmissionEvent } from "./registerEmissionEvent";
-import { getSelectedRole, type AccountRole } from "../../services/getSigner";
+import { getSelectedRole, getSigner, type AccountRole } from "../../services/getSigner";
 import { eventRegistryForControl } from "../../services/useContracts";
-import { governanceForControl } from "../../services/controlContracts";
+import { governanceForControl, loadStageThresholdsFromChainOrIpfs } from "../../services/controlContracts";
+import { submitCorrection } from "../audit/submitCorrection";
 
 const SELECTED_PRODUCT_KEY = "selected-product-id";
 function loadRegisteredProductDescription(factors?: EmissionFactorLibrary): string {
@@ -13,7 +14,11 @@ function loadRegisteredProductDescription(factors?: EmissionFactorLibrary): stri
 }
 
 type RecordedEvent = {
+  eventIndex: number;
   stageId: number;
+  activityValue: number;
+  emissionFactor: number;
+  eventOwner: string;
   co2eKg: number;
   eventHash: string;
   auditStatus: number;
@@ -36,10 +41,14 @@ export default function Events() {
     () => loadRegisteredProductDescription(),
   );
   const [recordedEvents, setRecordedEvents] = useState<RecordedEvent[]>([]);
+  const [onChainThresholds, setOnChainThresholds] = useState<Record<number, number>>({});
+  const [onChainEventThresholds, setOnChainEventThresholds] = useState<Record<number, number>>({});
+  const [escalatedEvents, setEscalatedEvents] = useState<Set<number>>(() => new Set());
   const [recordingStages, setRecordingStages] = useState<Set<number>>(
     () => new Set(),
   );
   const [recordingError, setRecordingError] = useState<string>();
+  const [editingStages, setEditingStages] = useState<Set<number>>(() => new Set());
   const stages = factors?.stages ?? [];
   const canSeeAllStages =
     selectedRole === "deployer" || selectedRole === "auditor";
@@ -52,8 +61,7 @@ export default function Events() {
 
   useEffect(() => {
     const reloadFactors = () => {
-      clearSupplyChainIpfsCache();
-      void loadEmissionFactors()
+      void loadEmissionFactorsDirect()
         .then((loaded) => {
           setFactors(loaded);
           setProductDescription(loaded.referenceProduct);
@@ -66,9 +74,10 @@ export default function Events() {
     return () => window.removeEventListener("supply-chain-config-uploaded", reloadFactors);
   }, []);
 
+  const recordedStage = activeStage ? recordedEvents.find((item) => item.stageId === activeStage.stageId) : undefined;
   const draft = activeStage ? drafts[activeStage.stageId] ?? {
-    activityValue: activeStage.activityValue,
-    emissionFactor: activeStage.emissionFactor_gCO2ePerUnit,
+    activityValue: recordedStage?.activityValue ?? activeStage.activityValue,
+    emissionFactor: recordedStage?.emissionFactor ?? activeStage.emissionFactor_gCO2ePerUnit,
   } : {
     activityValue: 0,
     emissionFactor: 0,
@@ -109,8 +118,8 @@ export default function Events() {
         setProductDescription(String(product.description));
         const count = Number(await registry.eventCount(productId));
         const correctionCount = Number(await governance.correctionCount());
-        const thresholds = new Map<number, number>();
-        for (const lifecycleStage of stages) thresholds.set(lifecycleStage.stageId, Number(await governance.stageThresholdGrams(lifecycleStage.stageId)) / 1000);
+        const thresholds = await loadStageThresholdsFromChainOrIpfs(stages.map((item) => item.stageId));
+        setOnChainThresholds(thresholds);
         const corrections = new Map<number, { activity: number; factor: number; co2e: number }>();
         for (let correctionId = 1; correctionId <= correctionCount; correctionId++) {
           const correction = await governance.correctionAt(correctionId);
@@ -124,19 +133,32 @@ export default function Events() {
         const events = await Promise.all(
           Array.from({ length: count }, (_, index) => registry.eventAt(productId, index)),
         );
-        setRecordedEvents(await Promise.all(events.map(async (record, index) => {
+        const escalationCount = Number(await governance.escalationCount());
+        const escalatedIndexes = new Set<number>();
+        for (let index = 0; index < escalationCount; index++) {
+          const escalation = await governance.escalationAt(index);
+          if (BigInt(escalation[0].toString()) === productId) escalatedIndexes.add(Number(escalation[1]));
+        }
+        const loadedRecordedEvents = await Promise.all(events.map(async (record, index) => {
           const correction = corrections.get(index);
           return {
+            eventIndex: index,
             stageId: Number(record.stageId),
+            activityValue: Number(record.activityData) / 1000,
+            emissionFactor: Number(record.emissionFactor) / 1000,
+            eventOwner: String(record.actor),
             co2eKg: correction?.co2e ?? Number(record.co2eGrams) / 1000,
             eventHash: String(record.eventHash),
             auditStatus: Number(await registry.auditStatus(productId, BigInt(index))),
             correctedActivityValue: correction?.activity,
             correctedEmissionFactor: correction?.factor,
             correctedCo2eKg: correction?.co2e,
-            thresholdKg: thresholds.get(Number(record.stageId)) ?? 0,
+            thresholdKg: thresholds[Number(record.stageId)] ?? 0,
           };
-        })));
+        }));
+        setRecordedEvents(loadedRecordedEvents);
+        setEscalatedEvents(escalatedIndexes);
+        setOnChainEventThresholds(Object.fromEntries(loadedRecordedEvents.map((item) => [item.eventIndex, thresholds[item.stageId] ?? 0])));
       } catch {
         setRecordedEvents([]);
       }
@@ -146,19 +168,21 @@ export default function Events() {
     void loadSelectedProductEvents();
     window.addEventListener("product-selection-change", updateProduct);
     window.addEventListener("product-registration-change", updateProduct);
+      window.addEventListener("governance-screening-change", updateProduct);
     return () => {
       window.removeEventListener("product-selection-change", updateProduct);
       window.removeEventListener("product-registration-change", updateProduct);
+        window.removeEventListener("governance-screening-change", updateProduct);
     };
   }, [factors]);
 
   if (!factors || !activeStage) {
-    return <section className="panel"><p>{recordingError ?? "Loading lifecycle event configuration from IPFS..."}</p></section>;
+    return recordingError ? <section className="panel"><p>{recordingError}</p></section> : null;
   }
 
-  const recordedStage = recordedEvents.find((item) => item.stageId === activeStage.stageId);
   const displayedActivity = recordedStage?.correctedActivityValue ?? draft.activityValue;
   const displayedFactor = recordedStage?.correctedEmissionFactor ?? draft.emissionFactor;
+  const isEditing = selectedRole === "deployer" && editingStages.has(activeStage.stageId);
   const event = {
     stageId: activeStage.stageId,
     title: activeStage.name,
@@ -168,9 +192,9 @@ export default function Events() {
       activeStage.activityUnit
     }`,
     emissionSchema: factors?.schemaVersion ?? "",
-    co2eKg: recordedStage?.co2eKg ??
+    co2eKg: isEditing ? (draft.activityValue * draft.emissionFactor) / 1000 : recordedStage?.co2eKg ??
       (displayedActivity * displayedFactor) / 1000,
-    thresholdKg: recordedStage?.thresholdKg,
+    thresholdKg: onChainEventThresholds[recordedStage?.eventIndex ?? activeStage.stageId - 1] ?? onChainThresholds[activeStage.stageId] ?? 0,
     reportingStandard: activeStage.methodology,
     previousEvent:
       currentStage > 0 ? `event-${stages[currentStage - 1].stageId}` : null,
@@ -209,15 +233,23 @@ export default function Events() {
         },
         factors?.schemaVersion ?? "",
       );
+      const onChainThresholdKg = Number(
+        await governanceForControl().stageThresholdGrams(activeStage.stageId),
+      ) / 1000;
       const nextRecordedEvents = [
         ...recordedEvents.filter(
           (item) => item.stageId !== activeStage.stageId,
         ),
         {
+          eventIndex: activeStage.stageId - 1,
           stageId: activeStage.stageId,
+          activityValue: draft.activityValue,
+          emissionFactor: draft.emissionFactor,
+          eventOwner: getSigner(activeStage.actorRole as AccountRole).address,
           co2eKg: result.co2eKg,
           eventHash: result.eventHash,
           auditStatus: 0,
+          thresholdKg: onChainThresholdKg,
         },
       ];
       setRecordedEvents(nextRecordedEvents);
@@ -240,7 +272,7 @@ export default function Events() {
       <>
         <div className="page-heading">
           <div>
-            <div className="kicker">Lifecycle Event Capture</div>
+            <div className="kicker">PRODUCT FOOTPRINTS</div>
             <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s)"}</h1>
           </div>
         </div>
@@ -257,7 +289,7 @@ export default function Events() {
     <>
       <div className="page-heading">
         <div>
-          <div className="kicker">Lifecycle Event Capture</div>
+          <div className="kicker">PRODUCT FOOTPRINTS</div>
           <h1>{canSeeAllStages ? "Walk The Product Lifecycle" : "Record Event(s)"}</h1>
         </div>
       </div>
@@ -283,7 +315,8 @@ export default function Events() {
             <Stage
               {...event}
               editable={
-                !canSeeAllStages && !recordedStages.has(activeStage.stageId)
+                (!canSeeAllStages && !recordedStages.has(activeStage.stageId)) ||
+                (selectedRole === "deployer" && editingStages.has(activeStage.stageId))
               }
               canRecord={!canSeeAllStages}
               locked={eventLocked}
@@ -314,10 +347,42 @@ export default function Events() {
                     : "Unaudited"
               }
               recording={recordingStages.has(activeStage.stageId)}
-              thresholdKg={recordedStage?.thresholdKg}
+              thresholdKg={onChainEventThresholds[recordedStage?.eventIndex ?? activeStage.stageId - 1] ?? onChainThresholds[activeStage.stageId] ?? 0}
               thresholdBreached={
-                recordedStages.has(activeStage.stageId) && recordedStage?.thresholdKg !== undefined && recordedStage.thresholdKg > 0 && event.co2eKg > recordedStage.thresholdKg
+                recordedStages.has(activeStage.stageId) && (event.thresholdKg ?? 0) > 0 && event.co2eKg > (event.thresholdKg ?? 0)
               }
+              escalated={(escalatedEvents.has(recordedStage?.eventIndex ?? activeStage.stageId - 1) || recordedStage?.auditStatus === 2) && (event.thresholdKg ?? 0) > 0 && event.co2eKg > (event.thresholdKg ?? 0)}
+              editControl={selectedRole === "deployer" && recordedStages.has(activeStage.stageId) ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="stage-edit-button"
+                  onClick={() => void (async () => {
+                    if (!editingStages.has(activeStage.stageId)) {
+                      setDrafts((current) => ({ ...current, [activeStage.stageId]: draft }));
+                      setEditingStages((current) => new Set(current).add(activeStage.stageId));
+                      return;
+                    }
+                    setRecordingError(undefined);
+                    try {
+                      const productId = BigInt(window.localStorage.getItem(SELECTED_PRODUCT_KEY) ?? "0");
+                      await submitCorrection(
+                        productId.toString(),
+                        String(recordedStage?.eventIndex ?? activeStage.stageId - 1),
+                        draft.activityValue,
+                        draft.emissionFactor,
+                        "Deployer event edit",
+                        recordedStage?.eventOwner ?? getSigner(activeStage.actorRole as AccountRole).address,
+                      );
+                      setEditingStages((current) => { const next = new Set(current); next.delete(activeStage.stageId); return next; });
+                    } catch (cause) {
+                      setRecordingError(cause instanceof Error ? cause.message : "Unable to update event on chain.");
+                    }
+                  })()}
+                >
+                  {editingStages.has(activeStage.stageId) ? "Done" : "Edit"}
+                </Button>
+              ) : undefined}
               onRecord={recordCurrentStage}
             />
             {currentStage < visibleStages.length - 1 ? (

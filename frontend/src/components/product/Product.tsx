@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "../../shared/Button";
-import { loadEmissionFactors, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
+import { loadEmissionFactorsDirect, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
 import { getSelectedRole, getSigner } from "../../services/getSigner";
 import { registerProduct, type RegisteredProduct } from "./registerProduct";
 import { eventRegistryForControl } from "../../services/useContracts";
@@ -16,8 +16,8 @@ type ReviewData = {
   oemDescription: string;
 };
 
-const defaultDescription = (factors: EmissionFactorLibrary | undefined, productNumber = factors?.productId ?? 1) =>
-  `Laptop unit CMVP-${String(productNumber).padStart(3, "0")} (${factors?.referenceProduct ?? "configuration loading from IPFS"})`;
+const defaultDescription = (factors: EmissionFactorLibrary | undefined) =>
+  factors?.referenceProduct ?? "Loading product description from IPFS...";
 
 function loadReviewData(): ReviewData {
   const fallback = defaultDescription(undefined);
@@ -62,13 +62,13 @@ export default function Product() {
 
   useEffect(() => {
     const reloadFactors = () => {
-      void loadEmissionFactors().then((loaded) => {
+      void loadEmissionFactorsDirect().then((loaded) => {
         setFactors(loaded);
         setNextProductNumber((current) => current === 1 ? loaded.productId : current);
         setReview((current) => current.status === "draft" ? {
           ...current,
-          deployerDescription: defaultDescription(loaded, loaded.productId),
-          oemDescription: defaultDescription(loaded, loaded.productId),
+          deployerDescription: defaultDescription(loaded),
+          oemDescription: defaultDescription(loaded),
         } : current);
       }).catch(() => undefined);
     };
@@ -94,8 +94,8 @@ export default function Product() {
           if (current.status !== "draft") return current;
           const next = {
             ...current,
-            deployerDescription: defaultDescription(factors, nextNumber),
-            oemDescription: defaultDescription(factors, nextNumber),
+            deployerDescription: defaultDescription(factors),
+            oemDescription: defaultDescription(factors),
           };
           saveReviewData(next);
           return next;
@@ -218,7 +218,7 @@ export default function Product() {
     <>
       <div className="page-heading">
         <div>
-          <div className="kicker">Product Genesis</div>
+          <div className="kicker">PRODUCT FOOTPRINTS</div>
           <h1>Register Product</h1>
         </div>
       </div>
@@ -249,8 +249,12 @@ export default function Product() {
                 <span className="mono">{productLabel}</span>
               </div>
               <div className="data-row">
-                <span>Configuration</span>
+                <span>Library Version</span>
                 <span className="mono">{factors ? `v${factors.libraryVersion}` : "Loading from IPFS..."}</span>
+              </div>
+              <div className="data-row">
+                <span>Schema Version</span>
+                <span className="mono">{factors?.schemaVersion ?? "Loading from IPFS..."}</span>
               </div>
             </>
           ) : (

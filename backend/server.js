@@ -148,5 +148,52 @@ app.get("/api/documents/:documentId/file", async (request, response) => {
   }
 });
 
+app.get("/api/documents/:documentId/plain-file", async (request, response) => {
+  try {
+    const document = (await readDatabase()).find(({ documentId }) => documentId === request.params.documentId);
+    if (!document) return response.status(404).send("Document not found.");
+    const ciphertext = await fetchEncryptedDocument(document);
+    const plaintext = decryptDocumentEnvelope(document, ciphertext);
+    response.setHeader("Content-Type", document.originalFileType || "application/octet-stream");
+    response.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(document.originalFileName)}`);
+    response.send(plaintext);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send("Unable to retrieve document.");
+  }
+});
+
+app.get("/api/documents/by-original-hash/:hash", async (request, response) => {
+  const productId = request.query.productId?.toString();
+  const eventIndex = request.query.eventIndex?.toString();
+  const document = (await readDatabase()).find((candidate) =>
+    String(candidate.originalHash).toLowerCase() === request.params.hash.toLowerCase() &&
+    (!productId || String(candidate.metadata?.productId) === productId) &&
+    (!eventIndex || String(candidate.metadata?.eventIndex) === eventIndex),
+  );
+  if (!document) return response.status(404).json({ error: "Document not found." });
+  response.json(document);
+});
+
+app.get("/api/documents/by-original-hash/:hash/plain-file", async (request, response) => {
+  try {
+    const productId = request.query.productId?.toString();
+    const eventIndex = request.query.eventIndex?.toString();
+    const document = (await readDatabase()).find((candidate) =>
+      String(candidate.originalHash).toLowerCase() === request.params.hash.toLowerCase() &&
+      (!productId || String(candidate.metadata?.productId) === productId) &&
+      (!eventIndex || String(candidate.metadata?.eventIndex) === eventIndex),
+    );
+    if (!document) return response.status(404).send("Document not found.");
+    const plaintext = decryptDocumentEnvelope(document, await fetchEncryptedDocument(document));
+    response.setHeader("Content-Type", document.originalFileType || "application/octet-stream");
+    response.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(document.originalFileName)}`);
+    response.send(plaintext);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send("Unable to retrieve document.");
+  }
+});
+
 const port = Number(process.env.PORT || 3001);
 app.listen(port, () => console.log(`Document backend listening on http://127.0.0.1:${port}`));

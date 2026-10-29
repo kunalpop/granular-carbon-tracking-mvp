@@ -157,6 +157,11 @@ cannot reach that number; it does not need to wait for every owner to vote.
 
 ## Frontend configuration and derived data
 
+Supply-chain configuration files are encrypted browser uploads rather than the
+only read path for application metadata. `role-participant-map.json` maps actor
+roles to display names and `emission-factors.json` defines stages, factors, and
+activity defaults.
+
 - `frontend/src/services/emissionFactors.ts` imports
   `simulation/emission-factors.json`, which defines lifecycle stages, actor
   roles, units, default activities/factors, sources, and methodologies.
@@ -164,6 +169,7 @@ cannot reach that number; it does not need to wait for every owner to vote.
   addresses. It includes lifecycle actors and governance accounts.
 - `frontend/src/services/contractAddresses.ts` reads deployed addresses from
   `simulation/deployed-addresses.json`.
+- AES-GCM encrypted document uploads may contain event evidence, product evidence, governance files, and supplier/factor configuration. The backend stores encrypted metadata and plaintext is not retained by the browser. Document proofs are recorded on the ontology contract.
 - `evaluation/study-c-performance/results/*.json` contains committed benchmark
   data loaded by the browser Performance Study.
 - The Results page fetches event records from the selected product's registry
@@ -188,8 +194,7 @@ and governance actions.
 - `performance-study-result` — serialized Performance Study benchmark metrics.
 - `evaluation-studies-complete` — completion flag set after all three studies finish; controls visibility of the sidebar reset button.
 
-Participant, product, and event data are fetched from contracts rather than
-cached under separate actor, product, or event keys. The application reset
+Participant, product, event, and configuration availability are refreshed from contracts and the document API rather than maintained as authoritative caches. Supply-chain JSON can be retained in origin-specific local storage as an offline fallback. The application reset
 control calls `localStorage.clear()`, clearing all browser storage for the
 origin. Clearing browser storage does not remove or modify any on-chain data.
 

@@ -4,17 +4,19 @@ import Corrections from "./Corrections";
 import AuditHistory from "./AuditHistory";
 import {
   eventRegistryForControl,
-  formatAddress,
-  formatGrams,
   governanceForControl,
 } from "../../services/controlContracts";
 import {
   ACCOUNT_CHANGE_EVENT,
   getSelectedRole,
   getSigner,
-  type AccountRole,
 } from "../../services/getSigner";
-import { EMISSION_FACTORS } from "../../services/emissionFactors";
+import { loadEmissionFactorsDirect, type EmissionFactorLibrary } from "../../services/supplyChainIpfs";
+import { uploadDocument } from "../../storage/uploadDocument";
+import FileSelectCard from "../../shared/FileSelectCard";
+import { EscalationFormLayout } from "../../shared/Escalation";
+import EvidenceModal from "../../shared/EvidenceModal";
+import type { AccountRole } from "../../services/getSigner";
 
 type AuditTab = "corrections" | "escalations" | "history";
 type Escalation = {
@@ -23,6 +25,8 @@ type Escalation = {
   co2eGrams: bigint;
   thresholdGrams: bigint;
   reason: string;
+  evidenceHash: string;
+  evidenceAvailable: boolean;
   raisedBy: string;
   timestamp: bigint;
   resolved: boolean;
@@ -55,6 +59,16 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
   const [eventOptions, setEventOptions] = useState<EscalationEventOption[]>([]);
   const [eventsError, setEventsError] = useState("");
   const [error, setError] = useState("");
+  const [factors, setFactors] = useState<EmissionFactorLibrary>();
+  const [viewingEvidence, setViewingEvidence] = useState<string>();
+
+  useEffect(() => {
+    setTab(initialAuditTab);
+  }, [initialAuditTab]);
+
+  useEffect(() => {
+    void loadEmissionFactorsDirect().then(setFactors).catch(() => setFactors(undefined));
+  }, []);
 
   const loadEscalations = async () => {
     try {
@@ -76,13 +90,26 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
           co2eGrams: escalation[2],
           thresholdGrams: escalation[3],
           reason: escalation[4],
-          raisedBy: escalation[5],
-          timestamp: escalation[6],
+          evidenceHash: String(escalation[4]) === "threshold breach" ? `0x${"00".repeat(32)}` : String(escalation[5]),
+          evidenceAvailable: false,
+          raisedBy: escalation[6],
+          timestamp: escalation[7],
           resolved,
           resolvedAt,
         });
       }
-      setEscalations(next);
+        const verified = await Promise.all(next.map(async (item) => {
+          if (!item.evidenceHash || item.evidenceHash === `0x${"00".repeat(32)}`) return item;
+          try {
+            const response = await fetch(`/api/documents/by-original-hash/${encodeURIComponent(item.evidenceHash)}`);
+            if (!response.ok) return item;
+            const document = await response.json() as { originalHash?: string };
+            return { ...item, evidenceAvailable: String(document.originalHash).toLowerCase() === item.evidenceHash.toLowerCase() };
+          } catch {
+            return item;
+          }
+        }));
+        setEscalations(verified);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load audit data.");
     }
@@ -155,7 +182,7 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
       <div className="page-heading">
         <div>
           <div className="kicker">Lifecycle Control</div>
-          <h1>{initialTab === "escalations" ? "Escalations" : "Audit"}</h1>
+          <h1>{initialTab === "escalations" ? "Escalation" : "Audit"}</h1>
         </div>
       </div>
       {error && <p className="feedback error" role="alert">{error}</p>}
@@ -164,7 +191,6 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
           <span>Selected Product ID</span>
           <input value={productId || "No product selected"} readOnly />
         </label>
-        <span className="status ready">{role} signer active</span>
       </div>
       {initialTab !== "escalations" && <div
         className="result-tabs control-tabs"
@@ -195,6 +221,7 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
             role={role}
             events={eventOptions}
             eventsError={eventsError}
+            factors={factors}
             onSubmitted={loadEscalations}
           />
         ) : (
@@ -203,7 +230,8 @@ export default function Audit({ initialTab = "corrections" }: { initialTab?: Aud
             an event owner can raise an escalation.
           </p>
         )}
-        <EscalationList escalations={escalations} currentAddress={getSigner(role).address} />
+        <EscalationList escalations={escalations} currentAddress={getSigner(role).address} role={role} onViewEvidence={setViewingEvidence} />
+        {viewingEvidence && <EvidenceModal evidenceHash={viewingEvidence} onClose={() => setViewingEvidence(undefined)} />}
       </>)}
       {tab === "history" && <AuditHistory />}
     </>
@@ -216,16 +244,19 @@ function EscalationForm({
   role,
   events,
   eventsError,
+  factors,
   onSubmitted,
 }: {
   productId: string;
   role: AccountRole;
   events: EscalationEventOption[];
   eventsError: string;
+  factors?: EmissionFactorLibrary;
   onSubmitted: () => Promise<void>;
 }) {
   const [eventIndex, setEventIndex] = useState("");
   const [reason, setReason] = useState("");
+  const [evidenceFile, setEvidenceFile] = useState<File>();
   const [status, setStatus] = useState<"idle" | "submitting" | "submitted">("idle");
   const [error, setError] = useState("");
 
@@ -245,11 +276,27 @@ function EscalationForm({
         throw new Error("Select a registered event that this account may escalate.");
       }
 
-      const transaction = await governanceForControl().raiseEscalation(productId, eventIndex, reason);
+      if (evidenceFile && evidenceFile.size > 1024 * 1024) {
+        throw new Error("Evidence file must not exceed 1 MB.");
+      }
+      const uploadedEvidence = evidenceFile
+        ? await uploadDocument(evidenceFile, getSigner(role).address, {
+          productId,
+          eventIndex,
+          documentType: "escalation-evidence",
+        })
+        : undefined;
+      const transaction = await governanceForControl().raiseEscalation(
+        productId,
+        eventIndex,
+        reason,
+        uploadedEvidence?.originalHash ?? `0x${"00".repeat(32)}`,
+      );
       await transaction.wait();
       setStatus("submitted");
       setEventIndex("");
       setReason("");
+      setEvidenceFile(undefined);
       await onSubmitted();
     } catch (cause) {
       setStatus("idle");
@@ -258,17 +305,7 @@ function EscalationForm({
   };
 
   return (
-    <form className="panel control-form escalation-form" onSubmit={submit}>
-      <div className="form-heading">
-        <div>
-          <h2>Raise escalation</h2>
-          <p>
-            {role === "auditor"
-              ? "Select any registered event for investigation."
-              : "Select a registered event recorded by this account."}
-          </p>
-        </div>
-      </div>
+    <EscalationFormLayout onSubmit={submit}>
       <div className="form-grid">
         <label className="field">
           <span>Event Index</span>
@@ -286,14 +323,12 @@ function EscalationForm({
                   : "No registered events"}
             </option>
             {events.map((registeredEvent) => {
-              const stage = EMISSION_FACTORS.stages.find(
+              const stage = factors?.stages.find(
                 (item) => item.stageId === registeredEvent.stageId,
               );
               return (
                 <option key={registeredEvent.index} value={registeredEvent.index}>
-                  {role === "auditor"
-                    ? `Event: Stage ${registeredEvent.stageId}${stage ? ` — ${stage.name}` : ""}`
-                    : `Event ${registeredEvent.index} - ${stage?.name ?? `Stage ${registeredEvent.stageId}`}`}
+                  {`Event ${registeredEvent.index} - ${stage?.name ?? `Stage ${registeredEvent.stageId}`}`}
                 </option>
               );
             })}
@@ -303,6 +338,23 @@ function EscalationForm({
           <span>Reason</span>
           <textarea value={reason} onChange={(input) => setReason(input.target.value)} placeholder="Describe the issue" required />
         </label>
+        <FileSelectCard
+          className="evidence-upload-card"
+          title="Evidence file"
+          fileName={evidenceFile?.name}
+          emptyLabel="No file selected · max 1 MB"
+          disabled={status === "submitting"}
+          onFileChange={(file, input) => {
+            if (file && file.size > 1024 * 1024) {
+              setError("Evidence file must not exceed 1 MB.");
+              input.currentTarget.value = "";
+              setEvidenceFile(undefined);
+              return;
+            }
+            setError("");
+            setEvidenceFile(file);
+          }}
+        />
       </div>
       {eventsError && <p className="feedback error" role="alert">{eventsError}</p>}
       {error && <p className="feedback error" role="alert">{error}</p>}
@@ -314,46 +366,46 @@ function EscalationForm({
           {status === "submitting" ? "Submitting..." : status === "submitted" ? "Submitted" : "Submit"}
         </Button>
       </div>
-    </form>
+    </EscalationFormLayout>
   );
 }
 
 function EscalationList({
   escalations,
   currentAddress,
+  role,
+  onViewEvidence,
 }: {
   escalations: Escalation[];
   currentAddress: string;
+  role: AccountRole;
+  onViewEvidence: (hash: string) => void;
 }) {
-  const accountEscalations = escalations.filter(
-    (item) => item.raisedBy.toLowerCase() === currentAddress.toLowerCase(),
-  );
+  const accountEscalations = role === "deployer"
+    ? escalations
+    : escalations.filter((item) => item.raisedBy.toLowerCase() === currentAddress.toLowerCase());
+  if (accountEscalations.length === 0) return null;
+
   return (
-    <section className="panel">
-      <div className="form-heading">
-        <div>
-          <h2>Escalation log</h2>
-          <p>Automatic and manual escalations are immutable audit records.</p>
-        </div>
+    <section className="panel escalation-log-panel">
+      <div className="escalation-log-header" aria-hidden="true">
+        <span>Escalation</span>
+        <span>Event</span>
+        <span>Reason</span>
+        <span>Evidence</span>
+        <span>Last Modified</span>
+        <span>Status</span>
       </div>
-      {accountEscalations.length === 0 && (
-        <p>No escalations recorded by the current account.</p>
-      )}
       {accountEscalations.map((item, index) => (
         <div
-          className="audit-row"
+          className="escalation-log-row"
           key={`${String(item.eventIndex ?? 0n)}-${index}`}
         >
-          <div>
-            <span className="card-id">ESCALATION #{index + 1}</span>
-            <strong>
-              Event {String(item.eventIndex ?? 0n)} · {formatGrams(item.co2eGrams)}
-            </strong>
-            <small>
-              {item.reason} · raised by {formatAddress(item.raisedBy)} · {new Date(Number(item.timestamp) * 1000).toLocaleString()}
-            </small>
-            {item.resolved && <small>Resolved on chain{item.resolvedAt > 0n ? ` · ${new Date(Number(item.resolvedAt) * 1000).toLocaleString()}` : " · timestamp unavailable on this deployment"}</small>}
-          </div>
+          <span className="card-id">ESCALATION #{index + 1}</span>
+          <strong>Event {String((item.eventIndex ?? 0n) + 1n)}</strong>
+          <span>{item.reason}</span>
+          {item.evidenceAvailable ? <button type="button" className="evidence-link" onClick={() => onViewEvidence(item.evidenceHash)}>evidence</button> : <span aria-hidden="true" />}
+          <span>{new Date(Number((item.resolved && item.resolvedAt > 0n ? item.resolvedAt : item.timestamp)) * 1000).toLocaleString()}</span>
           <span className={item.resolved ? "status ready" : "status threshold"}>
             {item.resolved ? "Resolved" : "Pending"}
           </span>

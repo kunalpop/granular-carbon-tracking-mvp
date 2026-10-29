@@ -33,8 +33,8 @@ to `/participants`. Access gates and role-specific controls are described in
 
 - Participant, product, event, correction, escalation, threshold, vote, and
   token records are read from the deployed contracts.
-- `simulation/emission-factors.json` supplies the frontend's stage metadata and
-  default activity/factor values.
+- The backend and IPFS supply the OEM-uploaded `role-participant-map.json` and
+  `emission-factors.json`; successful reads also have an origin-local fallback.
 - `simulation/deployed-addresses.json` supplies the deployed contract
   addresses; workflow helpers pass function-signature ABIs to ethers.
 - `localStorage` is not a replacement for chain state. It stores selected
